@@ -310,7 +310,7 @@ export default function Page() {
             {services.map((service, i) => (
               <div
                 key={i}
-                className="group relative bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm border border-gray-100/50 rounded-3xl p-8 
+                className="group relative bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm border border-gray-200 rounded-3xl p-8 
                  hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:border-gray-200/60
                  transition-all duration-500 hover:-translate-y-3 
                  before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-transparent before:to-orange-50/20 
@@ -319,26 +319,13 @@ export default function Page() {
                 data-aos-duration="1000"
                 data-aos-delay={i * 150}
               >
-                <div
-                  className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ffb87a] via-[#ff9a56] to-[#ffb87a] rounded-t-3xl 
-                      transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out"
-                ></div>
-
-                <div
-                  className="w-10  h-10 bg-gradient-to-br from-[#ffb87a] to-[#ff9a56] rounded-2xl mb-5 
-                      flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 
-                      transition-all duration-500 shadow-lg shadow-orange-200/30"
-                >
-                  <div className="w-6 h-6 bg-white rounded-lg opacity-90"></div>
-                </div>
-
                 <h4
                   className="text-gray-800 text-xl font-semibold mb-4 group-hover:text-[#ff9a56] 
                      transition-colors duration-300 leading-tight"
                 >
                   {service.title}
                 </h4>
-
+                
                 <p
                   className="text-gray-600 text-sm md:text-base font-normal leading-relaxed mb-8 
                     group-hover:text-gray-700 transition-colors duration-300"
