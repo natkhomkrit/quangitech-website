@@ -30,7 +30,7 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
               {item.children.map((child) => (
                 <li key={child.id}>
                   <Link
-                    href={child.href || "#"}
+                    href={child.url || child.href || "#"}
                     className="block px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                     onClick={isMobile ? onMenuClick : undefined}
                   >
@@ -44,10 +44,9 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
       ) : (
         <NavigationMenuLink asChild>
           <Link
-            href={item.href || "#"}
-            className={`transition-colors duration-200 px-4 py-2 rounded-md ${
-              scrolled ? "text-gray-900" : "text-white"
-            }`}
+            href={item.url || item.href || "#"}
+            className={`transition-colors duration-200 px-4 py-2 rounded-md ${scrolled ? "text-gray-900" : "text-white"
+              }`}
             onClick={isMobile ? onMenuClick : undefined}
           >
             {item.name}
@@ -74,17 +73,17 @@ export default function Navbar() {
       } catch (err) {
         console.error("Failed to fetch menu", err);
         setMenuData([
-          { id: 1, name: "หน้าแรก", href: "/" },
+          { id: 1, name: "หน้าแรก", url: "/" },
           {
             id: 2,
             name: "บริการ",
             children: [
-              { id: 21, name: "บริการ A", href: "/service-a" },
-              { id: 22, name: "บริการ B", href: "/service-b" },
+              { id: 21, name: "บริการ A", url: "/service-a" },
+              { id: 22, name: "บริการ B", url: "/service-b" },
             ],
           },
-          { id: 3, name: "เกี่ยวกับเรา", href: "/about" },
-          { id: 4, name: "ติดต่อ", href: "/contact" },
+          { id: 3, name: "เกี่ยวกับเรา", url: "/about" },
+          { id: 4, name: "ติดต่อ", url: "/contact" },
         ]);
       }
     };
@@ -144,16 +143,14 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed w-full transition-all duration-300 ease-in-out ${
-          scrolled
+        className={`fixed w-full transition-all duration-300 ease-in-out ${scrolled
             ? "bg-white/95 backdrop-blur-sm shadow-lg"
             : "bg-transparent"
-        } ${showNavbar ? "translate-y-0" : "-translate-y-full"} z-50`}
+          } ${showNavbar ? "translate-y-0" : "-translate-y-full"} z-50`}
       >
         <div
-          className={`max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 transition-all duration-300 ${
-            scrolled ? "h-16" : "h-20"
-          }`}
+          className={`max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 transition-all duration-300 ${scrolled ? "h-16" : "h-20"
+            }`}
         >
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
@@ -169,7 +166,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <NavigationMenu>
+            <NavigationMenu viewport={false}>
               <NavigationMenuList className="space-x-4">
                 {menuData.map((item) => (
                   <MenuItem key={item.id} item={item} scrolled={scrolled} />
@@ -181,11 +178,10 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className={`md:hidden p-2 rounded-md transition-colors ${
-              scrolled
+            className={`md:hidden p-2 rounded-md transition-colors ${scrolled
                 ? "text-gray-700 hover:bg-gray-100"
                 : "text-white hover:bg-white/20"
-            }`}
+              }`}
             aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -194,11 +190,10 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         <div
-          className={`md:hidden transition-all duration-300 ease-in-out ${
-            mobileMenuOpen
+          className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen
               ? "max-h-screen opacity-100"
               : "max-h-0 opacity-0 overflow-hidden"
-          } bg-white shadow-lg border-t border-gray-200`}
+            } bg-white shadow-lg border-t border-gray-200`}
         >
           <div className="px-4 py-4 space-y-2">
             {menuData.map((item) => (
@@ -212,7 +207,7 @@ export default function Navbar() {
                       {item.children.map((child) => (
                         <Link
                           key={child.id}
-                          href={child.href || "#"}
+                          href={child.url || child.href || "#"}
                           className="block py-2 px-4 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                           onClick={closeMobileMenu}
                         >
@@ -223,7 +218,7 @@ export default function Navbar() {
                   </div>
                 ) : (
                   <Link
-                    href={item.href || "#"}
+                    href={item.url || item.href || "#"}
                     className="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                     onClick={closeMobileMenu}
                   >

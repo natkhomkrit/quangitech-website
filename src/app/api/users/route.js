@@ -89,6 +89,21 @@ export async function POST(req) {
       },
     });
 
+    // record activity for user creation (actor = current admin)
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "user",
+          action: "created",
+          title: newUser.username,
+          postId: null,
+          userId: currentUser.id,
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record user-create activity:", actErr);
+    }
+
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
     console.error(error);

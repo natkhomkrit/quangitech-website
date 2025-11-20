@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth"; 
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 
@@ -25,6 +25,22 @@ export async function PUT(req, { params }) {
       data: { sortOrder },
     });
 
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "menuItem",
+          action: "edited",
+          title: updatedItem.name || updatedItem.url || `menuItem:${updatedItem.id}`,
+          userId: session.user.id,
+          metadata: {
+            id: updatedItem.id,
+            menuId: updatedItem.menuId,
+          },
+        }
+      })
+    } catch (actErr) {
+      console.error("Failed to record activity: ", actErr)
+    }
     return NextResponse.json(updatedItem);
   } catch (error) {
     console.error("Failed to update menu item:", error);
@@ -52,6 +68,20 @@ export async function DELETE(req, { params }) {
     const deletedItem = await prisma.menuItem.delete({
       where: { id: itemId },
     });
+
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "menuItem",
+          action: "deleted",
+          title: deletedItem.name || deletedItem.url || `menuItem:${deletedItem.id}`,
+          userId: session.user.id,
+          metadata: { id: deletedItem.id, menuId: deletedItem.menuId, parentId: deletedItem.parentId || null },
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record menuItem delete activity:", actErr);
+    }
 
     return NextResponse.json(deletedItem, { status: 200 });
   } catch (error) {

@@ -91,7 +91,7 @@ function MenuItemCard({
 
   const handleCopyUrl = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(`http://localhost:8000${item.url}`);
+    navigator.clipboard.writeText(`http://localhost:3000${item.url}`);
   };
 
   const handleAddSubmenu = (e) => {
@@ -141,7 +141,7 @@ function MenuItemCard({
                   onClick={handleCopyUrl}
                   className="truncate max-w-xs text-muted-foreground"
                 >
-                  {`http://localhost:8000${item.url}`}
+                  {`http://localhost:3000${item.url}`}
                 </span>
                 <Copy
                   size={16}
@@ -255,91 +255,6 @@ function RenderMenuItem({
     </div>
   );
 }
-
-/* function AddSubmenuSheet({ parentItem, menu, onAdd, open, onOpenChange }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    url: "",
-    sortOrder: (parentItem?.children?.length || 0) + 1,
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch("/api/menu-items", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          menuId: menu.id,
-          parentId: parentItem.id, // Set parent ID for submenu
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to create submenu item");
-
-      const newItem = await response.json();
-      onAdd(newItem);
-      setFormData({ name: "", url: "" });
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error creating submenu item:", error);
-      toast.error("Failed to create submenu item");
-    }
-  };
-
-  if (!open) return null;
-
-  return (
-    <Dialog className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <h2 className="text-lg font-semibold mb-4">
-          Add Submenu Item to "{parentItem?.name}"
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full px-3 py-2 border rounded-md"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">URL</label>
-            <input
-              type="text"
-              value={formData.url}
-              onChange={(e) =>
-                setFormData({ ...formData, url: e.target.value })
-              }
-              className="w-full px-3 py-2 border rounded-md"
-              placeholder="/submenu-page"
-              required
-            />
-          </div>
-          <div className="flex gap-2 justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Add Submenu Item</Button>
-          </div>
-        </form>
-      </div>
-    </Dialog>
-  );
-} */
 
 export default function Menus() {
   const [menus, setMenus] = useState([]);

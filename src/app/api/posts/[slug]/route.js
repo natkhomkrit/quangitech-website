@@ -53,6 +53,21 @@ export async function DELETE(req, { params }) {
 
     await prisma.post.delete({ where: { slug } });
 
+    // record delete activity
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "post",
+          action: "deleted",
+          title: post.title,
+          postId: post.id,
+          userId: session.user.id,
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record delete activity:", actErr);
+    }
+
     return NextResponse.json(
       { message: `Deleted item with slug: ${slug}` },
       { status: 200 }
@@ -127,6 +142,21 @@ export async function PUT(req, { params }) {
         publishedAt: status === "published" ? new Date() : null,
       },
     });
+
+    // record edit activity
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "post",
+          action: "edited",
+          title: updatedPost.title,
+          postId: updatedPost.id,
+          userId: session.user.id,
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record update activity:", actErr);
+    }
 
     return NextResponse.json(updatedPost, { status: 200 });
   } catch (error) {

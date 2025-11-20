@@ -1,55 +1,84 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import { ExternalLink, ChevronDown } from "lucide-react"; // <-- import ChevronDown
+import { ExternalLink, ChevronDown } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function NewsEvents() {
   const categories = ["ข่าว", "กิจกรรม"];
-  const [selectedCategory, setSelectedCategory] = useState("ข่าว"); // <-- default เป็นข่าว
+  const searchParams = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam === "All") {
+      setSelectedCategory("All");
+    } else if (categoryParam === "ข่าว" || categoryParam === "News") {
+      setSelectedCategory("ข่าว");
+    } else if (categoryParam === "กิจกรรม" || categoryParam === "Events") {
+      setSelectedCategory("กิจกรรม");
+    }
+  }, [searchParams]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false); // <-- ประกาศ state
   const itemsPerPage = 9;
 
-  const items = [
-    {
-      slug: "open-project",
-      title: "เปิดตัวโครงการใหม่",
-      category: "ข่าว",
-      description: "โครงการพัฒนาระบบจัดการฐานข้อมูล",
-      image: "/img/default.png",
-      date: "15 ก.ย. 2023",
-    },
-    {
-      slug: "training-program",
-      title: "อบรมการใช้งานโปรแกรม",
-      category: "กิจกรรม",
-      description: "กิจกรรมอบรมการใช้ระบบสำหรับเจ้าหน้าที่",
-      image: "/img/default.png",
-      date: "20 ก.ย. 2023",
-    },
-    {
-      slug: "new-feature-update",
-      title: "อัปเดตฟีเจอร์ใหม่",
-      category: "ข่าว",
-      description: "เพิ่มระบบการวิเคราะห์ข้อมูลเชิงลึก",
-      image: "/img/default.png",
-      date: "5 ต.ค. 2023",
-    },
-    {
-      slug: "annual-seminar",
-      title: "งานสัมมนาประจำปี",
-      category: "กิจกรรม",
-      description: "ร่วมงานสัมมนาและพบปะเครือข่าย",
-      image: "/img/default.png",
-      date: "12 ต.ค. 2023",
-    },
-  ];
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredItems = items.filter(
-    (i) => selectedCategory === "All" || i.category === selectedCategory
-  );
+  const categoryMap = {
+    ข่าว: "News",
+    กิจกรรม: "Events",
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchItems = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        let data = [];
+
+        if (selectedCategory === "All") {
+          const [resNews, resEvents] = await Promise.all([
+            fetch(`/api/posts?category=News&status=published`),
+            fetch(`/api/posts?category=Events&status=published`),
+          ]);
+          if (!resNews.ok || !resEvents.ok) throw new Error("Failed to fetch posts");
+          const news = await resNews.json();
+          const events = await resEvents.json();
+          data = [...news, ...events];
+        } else {
+          const apiCat = categoryMap[selectedCategory] || "News";
+          const res = await fetch(`/api/posts?category=${apiCat}&status=published`);
+          if (!res.ok) throw new Error("Failed to fetch posts");
+          data = await res.json();
+        }
+
+        // sort by createdAt desc
+        data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        if (mounted) setItems(data);
+      } catch (err) {
+        console.error(err);
+        if (mounted) setError(err.message || "Failed to load posts");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchItems();
+
+    return () => {
+      mounted = false;
+    };
+  }, [selectedCategory]);
+
+  const filteredItems = items;
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -57,7 +86,6 @@ export default function NewsEvents() {
 
   return (
     <>
-      {/* Hero Section */}
       <div className="relative w-full h-[80px] bg-gradient-to-b from-[#1a5c48]/95 via-[#216452]/90 to-[#1a5c48]/95"></div>
 
       <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
@@ -74,14 +102,13 @@ export default function NewsEvents() {
       </div>
 
       <div className="max-w-[1200px] mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row gap-8">
-        {/* Sidebar */}
         <aside className="hidden md:block md:w-1/4 bg-white rounded-xl shadow p-6 sticky top-24 h-fit">
           <h3 className="text-xl font-bold mb-4">หมวดหมู่</h3>
           <ul className="space-y-2">
             <li
               className={`px-4 py-2 rounded-lg transition cursor-pointer ${selectedCategory === "All"
-                  ? "bg-white text-[#1a5c48] shadow-md"
-                  : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
+                ? "bg-gray-300 text-gray-700 shadow-md"
+                : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
                 }`}
               onClick={() => {
                 setSelectedCategory("All");
@@ -94,8 +121,8 @@ export default function NewsEvents() {
               <li
                 key={cat}
                 className={`px-4 py-2 rounded-lg transition cursor-pointer ${selectedCategory === cat
-                    ? "bg-white text-[#1a5c48] shadow-md"
-                    : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
+                  ? "bg-gray-300 text-gray-700 shadow-md"
+                  : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
                   }`}
                 onClick={() => {
                   setSelectedCategory(cat);
@@ -108,7 +135,6 @@ export default function NewsEvents() {
           </ul>
         </aside>
 
-        {/* Accordion (Mobile) */}
         <div className="md:hidden mb-6 w-full">
           <button
             onClick={() => setIsAccordionOpen(!isAccordionOpen)}
@@ -154,44 +180,66 @@ export default function NewsEvents() {
           )}
         </div>
 
-        {/* Main Content */}
         <main className="flex-1 w-full md:w-3/4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentItems.map((item) => (
-              <div
-                key={item.slug}
-                className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
-              >
-                <div className="relative group">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <div className="text-white">
-                      <h4 className="font-semibold">{item.title}</h4>
-                      <p className="text-sm opacity-90">{item.category}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+            {loading ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            ) : error ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-red-600">{error}</p>
+              </div>
+            ) : currentItems.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-600">ไม่พบข่าวสารหรือกิจกรรม</p>
+              </div>
+            ) : (
+              currentItems.map((item) => {
+                const imgSrc = item.thumbnail || item.image || "/img/default.png";
+                const description = item.excerpt || item.description || "";
+                const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("th-TH") : item.date || "";
+                const catName = item.category?.name || item.category || "";
+                const displayCategory = catName === "News" ? "ข่าว" : catName === "Events" ? "กิจกรรม" : catName;
+
+                return (
+                  <div
+                    key={item.slug}
+                    className="bg-white rounded-md overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                  >
+                    <div className="relative group overflow-hidden">
+                      <img
+                        src={imgSrc}
+                        alt={item.title}
+                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <Link
+                        href={`/news/${item.slug}`}
+                        className="absolute inset-0"
+                      />
+                      {/* <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+
+                      </div> */}
+                    </div>
+                    <div className="p-6">
+                      <p className="text-gray-700 text-sm line-clamp-2">{item.title}</p>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-xs text-gray-500">{dateStr}</span>
+                        <Link
+                          href={`/news/${item.slug}`}
+                          className="inline-flex items-center gap-1 text-sm text-gray-800 font-semibold hover:underline"
+                        >
+                          อ่านต่อ <ExternalLink size={14} />
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-gray-700 text-sm line-clamp-2">{item.description}</p>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-gray-500">{item.date}</span>
-                    <Link
-                      href={`/news/${item.slug}`}
-                      className="inline-flex items-center gap-1 text-sm text-gray-800 font-semibold hover:underline"
-                    >
-                      อ่านต่อ <ExternalLink size={14} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+                );
+              })
+            )}
           </div>
 
-          {/* Pagination */}
           <div className="flex justify-center mt-8 gap-2">
             <button
               disabled={currentPage === 1}

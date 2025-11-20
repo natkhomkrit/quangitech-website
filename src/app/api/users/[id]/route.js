@@ -19,9 +19,27 @@ export async function DELETE(req, { params }) {
 
     const { id: userId } = await params;
 
+    // get target user info for logging
+    const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+
     await prisma.user.delete({
       where: { id: userId },
     });
+
+    // record activity: user deleted (actor = admin)
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "user",
+          action: "deleted",
+          title: targetUser ? targetUser.username : userId,
+          postId: null,
+          userId: session.user.id,
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record user-delete activity:", actErr);
+    }
 
     return NextResponse.json({ message: "User deleted successfully" });
   } catch (error) {
@@ -63,6 +81,21 @@ export async function PUT(req, { params }) {
       where: { id: userId },
       data: updateData,
     });
+
+    // record activity: user edited (actor = admin)
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "user",
+          action: "edited",
+          title: updatedUser.username,
+          postId: null,
+          userId: session.user.id,
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record user-edit activity:", actErr);
+    }
 
     return NextResponse.json(updatedUser, { status: 200 });
   } catch (error) {

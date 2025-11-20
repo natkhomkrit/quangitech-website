@@ -1,9 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
 import { Mail, Phone, MapPin } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -14,6 +21,40 @@ export default function Contact() {
             once: true,
         });
     }, []);
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [message, setMessage] = useState("");
+    const [sending, setSending] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSending(true);
+        setError("");
+        setSuccess(false);
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, phone, message }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || "Failed to send message");
+            setSuccess(true);
+            setName("");
+            setEmail("");
+            setPhone("");
+            setMessage("");
+        } catch (err) {
+            console.error(err);
+            setError(err.message || "Failed to send message");
+        } finally {
+            setSending(false);
+        }
+    };
 
     return (
         <div className="bg-gray-50">
@@ -31,98 +72,148 @@ export default function Contact() {
             {/* Contact Section */}
             <section className="py-20 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-6">
-                    {/* Contact Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                        {[
-                            {
-                                icon: <MapPin className="w-10 h-10 mx-auto text-[#1a5c48]" />,
-                                title: "Address",
-                                detail: "234/145 Thepharak Rd. \n Mueang District, Samut Prakan",
-                            },
-                            {
-                                icon: <Phone className="w-10 h-10 mx-auto text-[#1a5c48]" />,
-                                title: "Phone",
-                                detail: "081-234-5678",
-                            },
-                            {
-                                icon: <Mail className="w-10 h-10 mx-auto text-[#1a5c48]" />,
-                                title: "Email",
-                                detail: "quangitech@gmail.com",
-                            },
-                        ].map((item, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-2xl shadow-lg p-8 text-center space-y-3 hover:shadow-2xl hover:scale-105 transition duration-300"
-                                data-aos="fade-up"
-                                data-aos-delay={index * 150}
-                            >
-                                {item.icon}
-                                <h3 className="text-2xl md:text-xl font-light text-gray-900 leading-relaxed">{item.title}</h3>
-                                <p className="text-gray-600 leading-[1.8] font-light text-base">{item.detail}</p>
-                            </div>
-                        ))}
+
+                    {/* 🔹 SECTION 1 — MAP ON TOP */}
+                    <div
+                        className="w-full h-[400px] rounded-2xl overflow-hidden shadow-lg mb-16"
+                        data-aos="fade-down"
+                    >
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3877.4229951814614!2d100.61326217455682!3d13.632014100056663!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e2a1bd6535f4d9%3A0xeb748e81ae4eb918!2z4Lia4Lij4Li04Lip4Lix4LiXIOC4hOC4p-C4reC4meC4iOC4tOC5gOC4l-C4hCDguIjguLPguIHguLHguJQ!5e0!3m2!1sth!2sth!4v1756442145141!5m2!1sth!2sth"
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allowFullScreen=""
+                            loading="lazy"
+                        ></iframe>
                     </div>
 
-                    {/* Contact Form */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                        <div data-aos="fade-right">
-                            <h2 className="text-2xl md:text-3xl font-light text-gray-900 leading-relaxed">
+                    {/* 🔹 SECTION 2 — CONTACT INFO (LEFT) + FORM (RIGHT) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+
+                        {/* LEFT — Contact Info */}
+                        <div className="max-w-lg text-left" data-aos="fade-right">
+                            <img
+                                src="/img/logocontact.png"
+                                alt="Quangitech Logo"
+                                className="w-36 h-auto mb-4 object-contain"
+                                onError={(e) => { e.target.src = "/img/default.png"; }}
+                            />
+
+                            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                                บริษัท ควอนจิเทค จำกัด
+                            </h3>
+
+                            <address className="not-italic text-gray-600 mb-4 whitespace-pre-line">
+                                234/145 Thepharak Rd. Mueang District, Samut Prakan
+                            </address>
+
+                            <div className="space-y-3 text-gray-700">
+                                <div className="flex items-center gap-3">
+                                    <Phone className="w-5 h-5 text-[#1a5c48]" />
+                                    <a href="tel:0812345678" className="text-gray-800 hover:underline">
+                                        081-234-5678
+                                    </a>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <Mail className="w-5 h-5 text-[#1a5c48]" />
+                                    <a href="mailto:quangitech@gmail.com" className="text-gray-800 hover:underline">
+                                        quangitech@gmail.com
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT — Contact Form */}
+                        <div data-aos="fade-left">
+                            <h2 className="text-2xl md:text-3xl font-light text-gray-900 leading-relaxed mb-4">
                                 Let’s Get in Touch
                             </h2>
                             <p className="text-gray-600 leading-[1.8] font-light text-base mb-8">
                                 Have questions or want to work with us? Fill out the form and our team
                                 will get back to you as soon as possible.
                             </p>
-                            <form className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+
+                            <form className="bg-white rounded-2xl shadow-lg p-8 space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <input
                                         type="text"
                                         placeholder="Your Name"
                                         className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         required
                                     />
                                     <input
                                         type="email"
                                         placeholder="Your Email"
                                         className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
                                 </div>
+
                                 <input
                                     type="text"
                                     placeholder="Your Phone"
                                     className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
-                                    required
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
                                 />
+
                                 <textarea
                                     placeholder="Your Message"
                                     className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
                                     rows="5"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
                                     required
                                 ></textarea>
-                                <button className="w-full py-3 bg-[#1a5c48] text-white rounded-xl font-semibold hover:bg-[#154a39] transition">
-                                    Send Message
-                                </button>
+
+                                <div>
+                                    <button
+                                        type="submit"
+                                        disabled={sending}
+                                        className="w-full py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition disabled:opacity-60"
+                                    >
+                                        {sending ? "Sending..." : "Send Message"}
+                                    </button>
+                                </div>
                             </form>
+
+                            {/* Success Alert Popup */}
+                            <AlertDialog open={success} onOpenChange={setSuccess}>
+                                <AlertDialogContent>
+                                    <AlertDialogTitle className="text-green-600">✓ Success</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Message sent successfully. We'll get back to you soon!
+                                    </AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => setSuccess(false)}>
+                                        Close
+                                    </AlertDialogAction>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
+                            {/* Error Alert Popup */}
+                            <AlertDialog open={!!error} onOpenChange={() => setError("")}>
+                                <AlertDialogContent>
+                                    <AlertDialogTitle className="text-red-600">✗ Error</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        {error}
+                                    </AlertDialogDescription>
+                                    <AlertDialogAction onClick={() => setError("")}>
+                                        Close
+                                    </AlertDialogAction>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
 
-                        {/* Google Map */}
-                        <div
-                            className="w-full h-[600px] rounded-2xl overflow-hidden shadow-lg"
-                            data-aos="fade-left"
-                        >
-                            <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3877.4229951814614!2d100.61326217455682!3d13.632014100056663!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e2a1bd6535f4d9%3A0xeb748e81ae4eb918!2z4Lia4Lij4Li04Lip4Lix4LiXIOC4hOC4p-C4reC4meC4iOC4tOC5gOC4l-C4hCDguIjguLPguIHguLHguJQ!5e0!3m2!1sth!2sth!4v1756442145141!5m2!1sth!2sth"
-                                width="100%"
-                                height="100%"
-                                style={{ border: 0 }}
-                                allowFullScreen=""
-                                loading="lazy"
-                            ></iframe>
-                        </div>
                     </div>
                 </div>
             </section>
+
 
 
             <Footer />

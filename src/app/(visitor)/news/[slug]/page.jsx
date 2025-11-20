@@ -1,58 +1,71 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Footer from "@/components/ui/footer";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
 export default function NewsEventDetail() {
   const params = useParams();
-  const { slug } = params;
+  const slug = params?.slug;
 
-  const items = [
-    {
-      slug: "open-project",
-      title: "เปิดตัวโครงการใหม่",
-      category: "ข่าว",
-      description: "โครงการพัฒนาระบบจัดการฐานข้อมูล",
-      content: "รายละเอียดเพิ่มเติมเกี่ยวกับโครงการพัฒนาระบบจัดการฐานข้อมูล...",
-      image: "/img/new1.png",
-      date: "15 ก.ย. 2023",
-      gallery: [
-        "/img/new1.png",
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-      ],
-    },
-    {
-      slug: "training-program",
-      title: "อบรมการใช้งานโปรแกรม",
-      category: "กิจกรรม",
-      description: "กิจกรรมอบรมการใช้ระบบสำหรับเจ้าหน้าที่",
-      content: "รายละเอียดกิจกรรมอบรมการใช้ระบบสำหรับเจ้าหน้าที่...",
-      image: "/img/default.png",
-      date: "20 ก.ย. 2023",
-      gallery: [
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-      ],
-    },
-  ];
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [mainImage, setMainImage] = useState("");
 
-  const item = items.find((i) => i.slug === slug);
+  useEffect(() => {
+    if (!slug) return;
+
+    const fetchNewsItem = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/posts?slug=${slug}`);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch news item");
+        }
+
+        const data = await res.json();
+        console.log("news item data:", data);
+
+        if (data && data.length > 0) {
+          const newsData = data[0];
+          setItem(newsData);
+          setMainImage(newsData.thumbnail || "");
+        } else {
+          setError("ไม่พบข่าวหรือกิจกรรมนี้");
+        }
+      } catch (err) {
+        console.error("Error fetching news item:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewsItem();
+  }, [slug]);
 
   const scrollRef = useRef(null);
-  const [mainImage, setMainImage] = useState(item ? item.image : "");
 
-  if (!item) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">ไม่พบข่าวหรือกิจกรรมนี้</p>
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 text-lg">{error || "ไม่พบข่าวหรือกิจกรรมนี้"}</p>
+          <Link href="/news" className="text-blue-600 hover:underline mt-4 inline-block">
+            กลับไปยังข่าวสารและกิจกรรม
+          </Link>
+        </div>
       </div>
     );
   }
@@ -77,70 +90,30 @@ export default function NewsEventDetail() {
         </nav>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row gap-12">
-        <div className="md:w-1/2 flex flex-col gap-6">
-          <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
-            <img
-              src={mainImage}
-              alt={item.title}
-              className="max-w-full max-h-full object-contain bg-white transition-transform duration-300 ease-in-out"
-            />
-          </div>
-          {/* Gallery */}
-          <div
-            className="flex overflow-x-auto gap-4 py-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 cursor-grab"
-            ref={scrollRef}
-            onMouseDown={(e) => {
-              const slider = e.currentTarget;
-              slider.isDown = true;
-              slider.startX = e.pageX - slider.offsetLeft;
-              slider.scrollLeftStart = slider.scrollLeft;
-              slider.classList.add("cursor-grabbing");
-            }}
-            onMouseLeave={(e) => {
-              const slider = e.currentTarget;
-              slider.isDown = false;
-              slider.classList.remove("cursor-grabbing");
-            }}
-            onMouseUp={(e) => {
-              const slider = e.currentTarget;
-              slider.isDown = false;
-              slider.classList.remove("cursor-grabbing");
-            }}
-            onMouseMove={(e) => {
-              const slider = e.currentTarget;
-              if (!slider.isDown) return;
-              e.preventDefault();
-              const x = e.pageX - slider.offsetLeft;
-              const walk = (x - slider.startX) * 2;
-              slider.scrollLeft = slider.scrollLeftStart - walk;
-            }}
-          >
-            {item.gallery.map((img, idx) => (
-              <div
-                key={idx}
-                className={`flex-shrink-0 w-30 h-20 md:w-30 md:h-20 rounded-lg overflow-hidden cursor-pointer shadow-md transition-transform hover:scale-105 border-2 ${mainImage === img ? "border-gray-400" : "border-transparent"
-                  }`}
-                onClick={() => setMainImage(img)}
-              >
-                <img
-                  src={img}
-                  alt={`Gallery ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-gray-100 rounded-xl border-2 border-gray-200 p-6 md:w-1/2 flex flex-col justify-start">
-          <span className="text-sm text-gray-500 mb-2">
-            {item.date} | {item.category}
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-8 shadow-sm">
+          <span className="text-sm text-gray-500 mb-3 block">
+            {new Date(item.createdAt).toLocaleDateString("th-TH")} | {item.category?.name}
           </span>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">{item.title}</h2>
-          <p className="text-gray-700 mb-4">{item.description}</p>
-          <div className="text-gray-600 leading-relaxed">{item.content}</div>
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">{item.title}</h2>
+          <p className="text-gray-700 mb-6 text-lg leading-relaxed">{item.excerpt}</p>
+
+          {/* Display HTML content */}
+          {item.content && (
+            <div
+              className="prose prose-sm max-w-none text-gray-600"
+              dangerouslySetInnerHTML={{ __html: item.content }}
+            />
+          )}
         </div>
+        <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
+          <img
+            src={mainImage}
+            alt={item.title}
+            className="max-w-full max-h-full object-contain bg-white transition-transform duration-300 ease-in-out"
+          />
+        </div>
+        {/* Gallery - temporarily hidden */}
       </div>
 
       <Footer />

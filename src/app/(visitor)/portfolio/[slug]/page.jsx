@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
 import RecentWorks from "@/components/RecentWorks";
@@ -8,58 +9,76 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 export default function PortfolioDetail() {
-  const relatedWorks = [
-    {
-      slug: "1",
-      title: "System Development",
-      description:
-        "บริการพัฒนาซอฟต์แวร์และระบบครบวงจร ครอบคลุมตั้งแต่การวิเคราะห์ความต้องการ ออกแบบ พัฒนา จนถึงการดูแลรักษา",
-      content: [
-        {
-          title: "วัตถุประสงค์ของการจัดทำเว็บไซต์ ",
-          detail:
-            "GreenArea เป็นแพลตฟอร์มกลาง “Green Digital Platform” ที่ทำหน้าที่รายงานข้อมูลพื้นที่สีเขียวในเขตเมืองและชุมชน เพื่อช่วยให้หน่วยงานต่าง ๆ มีเครื่องมือในการประเมิน พัฒนา และวางนโยบายเป้าหมายเมืองสิ่งแวดล้อมยั่งยืนได้ โดยรายงานได้ทั้งพื้นที่สีเขียว (ไร่) และปริมาณการกักเก็บคาร์บอน (CO₂ eq) ของพื้นที่สีเขียวตามเกณฑ์ยุทธศาสตร์ชาติ 20 ปี",
-        },
-        {
-          title: "แพ็กเกจเว็บไซต์ ",
-          detail:
-            "Starter GreenArea Platform: Basic Monitoring Package (อาจปรับเป็นระบุระดับการใช้งานหรือฟีเจอร์เป็นแพ็กเกจเบื้องต้น)",
-        },
-        {
-          title: "ภาษา ",
-          detail: "รองรับ 1 ภาษา (ภาษาไทย) – เน้นใช้งานในประเทศไทย",
-        },
-        {
-          title: "เข้าชมเว็บไซต์ได้ที่ ",
-          detail: "https://greenarea.dcce.go.th/",
-        },
-      ],
-      image: "/img/port5.png",
-      gallery: [
-        "/img/port5.png",
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-        "/img/default.png",
-      ],
-      date: "20 ก.พ. 2023",
-      category: "System Development",
-    },
-  ];
+  const params = useParams();
+  const slug = params?.slug;
 
-  const Title = relatedWorks[0]; // ตอนนี้ใช้ static เลือกตัวแรกไปก่อน
+  const [portfolio, setPortfolio] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [mainImage, setMainImage] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef(null);
 
-  const [mainImage, setMainImage] = useState(Title.image);
-  const [isDragging, setIsDragging] = useState(false);
+  useEffect(() => {
+    if (!slug) return;
+
+    const fetchPortfolio = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/posts?slug=${slug}`);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch portfolio");
+        }
+
+        const data = await res.json();
+        console.log("portfolio data:", data);
+
+        if (data && data.length > 0) {
+          const portfolioData = data[0];
+          setPortfolio(portfolioData);
+          setMainImage(portfolioData.thumbnail || "");
+        } else {
+          setError("Portfolio not found");
+        }
+      } catch (err) {
+        console.error("Error fetching portfolio:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolio();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error || !portfolio) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600">{error || "Portfolio not found"}</p>
+          <Link href="/portfolio" className="text-blue-600 hover:underline mt-4 inline-block">
+            Back to Portfolio
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="relative w-full h-[80px] bg-gradient-to-b from-[#1a5c48]/95 via-[#216452]/90 to-[#1a5c48]/95"></div>
-
       <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
         <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4">
-          System Development
+          {portfolio.title}
         </h1>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:text-gray-800">
@@ -70,92 +89,38 @@ export default function PortfolioDetail() {
             ผลงานของเรา
           </Link>
           <span className="text-gray-400">/</span>
-          <span className="text-gray-800">{Title.title}</span>
+          <span className="text-gray-800">{portfolio.title}</span>
         </nav>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row gap-12">
-        <div className="md:w-1/2 flex flex-col gap-6">
-          <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-8 shadow-sm">
+          <span className="text-sm text-gray-500 mb-3 block">
+            {new Date(portfolio.createdAt).toLocaleDateString("th-TH")} | {portfolio.category?.name}
+          </span>
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">{portfolio.title}</h2>
+          <p className="text-gray-700 mb-6 text-lg leading-relaxed">{portfolio.excerpt}</p>
+
+          {/* Display HTML content */}
+          {portfolio.content && (
+            <div
+              className="prose prose-sm max-w-none text-gray-600"
+              dangerouslySetInnerHTML={{ __html: portfolio.content }}
+            />
+          )}
+        </div>
+        <div className="flex flex-col gap-6">
+          <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 bg-white">
             <img
-              src={mainImage}
-              alt={Title.title}
-              className="max-w-full max-h-full object-contain bg-white transition-transform duration-300 ease-in-out"
+              src={mainImage || portfolio.thumbnail || "/img/default.png"}
+              alt={portfolio.title}
+              className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
             />
           </div>
 
-          {/* Gallery */}
-          <div
-            className="flex overflow-x-auto gap-4 py-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 cursor-grab"
-            ref={scrollRef}
-            onMouseDown={(e) => {
-              const slider = scrollRef.current;
-              if (!slider) return;
-              slider.isDown = true;
-              slider.startX = e.pageX - slider.offsetLeft;
-              slider.scrollLeftStart = slider.scrollLeft;
-              slider.classList.add("cursor-grabbing");
-              setIsDragging(false);
-            }}
-            onMouseLeave={() => {
-              const slider = scrollRef.current;
-              if (!slider) return;
-              slider.isDown = false;
-              slider.classList.remove("cursor-grabbing");
-            }}
-            onMouseUp={() => {
-              const slider = scrollRef.current;
-              if (!slider) return;
-              slider.isDown = false;
-              slider.classList.remove("cursor-grabbing");
-            }}
-            onMouseMove={(e) => {
-              const slider = scrollRef.current;
-              if (!slider || !slider.isDown) return;
-              e.preventDefault();
-              const x = e.pageX - slider.startX;
-              const walk = x * 2;
-              slider.scrollLeft = slider.scrollLeftStart - walk;
-              setIsDragging(true);
-            }}
-          >
-            {Title.gallery.map((img, idx) => (
-              <div
-                key={idx}
-                className={`flex-shrink-0 w-30 h-20 md:w-30 md:h-20 rounded-lg overflow-hidden cursor-pointer shadow-md transition-transform hover:scale-105 border-2 ${
-                  mainImage === img ? "border-white-400" : "border-transparent"
-                }`}
-                onClick={() => {
-                  if (!isDragging) setMainImage(img);
-                }}
-              >
-                <img
-                  src={img}
-                  alt={`Gallery ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-gray-100 rounded-xl border-2 border-gray-200 p-6 md:w-1/2 flex flex-col justify-start">
-          <span className="text-sm text-gray-500 mb-2">
-            {Title.date} | {Title.category}
-          </span>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">{Title.title}</h2>
-          <p className="text-gray-700 mb-4">{Title.description}</p>
-          <ul className="list-disc list-inside text-gray-600 leading-relaxed space-y-4">
-            {Title.content.map((line, idx) => (
-              <li key={idx}>
-                <strong className="text-gray-800">{line.title}:</strong>{" "}
-                <span>{line.detail}</span>
-              </li>
-            ))}
-          </ul>
+          {/* Gallery Thumbnails - temporarily hidden */}
         </div>
       </div>
-
       <RecentWorks />
       <Footer />
     </>

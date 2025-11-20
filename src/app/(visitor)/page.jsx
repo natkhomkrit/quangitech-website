@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import RecentWorks from "@/components/RecentWorks";
 import CallToAction from "@/components/ui/calltoaction";
 import Footer from "@/components/ui/footer";
-import clsx from "clsx";
+import { useCounter } from "@/hooks/useCounter";
 import {
   FaRocket,
   FaUsers,
@@ -29,57 +29,83 @@ import GradientButton from "@/components/ui/GradientButton";
 
 export default function Page() {
   const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [servicesError, setServicesError] = useState("");
+  const [newsItems, setNewsItems] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState("");
+  const [eventsItems, setEventsItems] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [eventsError, setEventsError] = useState("");
+  const { count: projectCount, ref: projectRef } = useCounter(50, 2000);
+  const { count: experienceCount, ref: experienceRef } = useCounter(5, 2000);
+  const { count: satisfactionCount, ref: satisfactionRef } = useCounter(98, 2000);
 
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: true,
     });
-
     const fetchServices = async () => {
       try {
-        const res = await fetch("/api/posts");
+        setServicesLoading(true);
+        setServicesError("");
+        // fetch only posts in category "Service"
+        const res = await fetch("/api/posts?category=Service&status=published&isFeatured=true");
 
         if (!res.ok) throw new Error("Failed to fetch posts");
         const data = await res.json();
-        console.log(data);
+        console.log("services:", data);
 
         setServices(data);
       } catch (err) {
         console.error(err);
+        setServicesError(err.message || "Failed to load services");
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    const fetchNews = async () => {
+      try {
+        setNewsLoading(true);
+        setNewsError("");
+        const res = await fetch("/api/posts?category=News&status=published&isFeatured=true");
+        if (!res.ok) throw new Error("Failed to fetch news");
+        const data = await res.json();
+        console.log("news items:", data);
+        setNewsItems(data);
+      } catch (err) {
+        console.error(err);
+        setNewsError(err.message || "Failed to load news");
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+
+    const fetchEvents = async () => {
+      try {
+        setEventsLoading(true);
+        setEventsError("");
+        const res = await fetch("/api/posts?category=Events&status=published&isFeatured=true");
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const data = await res.json();
+        console.log("events items:", data);
+        setEventsItems(data);
+      } catch (err) {
+        console.error(err);
+        setEventsError(err.message || "Failed to load events");
+      } finally {
+        setEventsLoading(false);
       }
     };
 
     fetchServices();
+    fetchNews();
+    fetchEvents();
+    // replace manual fetches with polling hook usage in component scope (see below)
   }, []);
 
-  // Works section data
-  const works = [
-    {
-      id: 1,
-      image: "img/port3.png",
-    },
-    {
-      id: 2,
-      image: "img/port4.png",
-    },
-    {
-      id: 3,
-      image: "img/port5.png",
-    },
-    {
-      id: 4,
-      image: "img/port7.png",
-    },
-    {
-      id: 5,
-      image: "img/port8.png",
-    },
-    {
-      id: 6,
-      image: "img/port6.png",
-    },
-  ];
 
   // Clients section data
   const clients = [
@@ -121,45 +147,8 @@ export default function Page() {
     },
   ];
 
-  const [activeTab, setActiveTab] = useState("news");
-
-  const items = [
-    {
-      title: "เปิดตัวโปรเจกต์ใหม่",
-      date: "25 กันยายน 2568",
-      excerpt: "เราภูมิใจเสนอโปรเจกต์ใหม่ล่าสุด...",
-      image: "/img/cont11.png",
-      slug: "new-project-launch",
-      category: "news",
-    },
-    {
-      title: "กิจกรรมสัมมนา IT",
-      date: "10 กันยายน 2568",
-      excerpt: "เข้าร่วมสัมมนา IT ฟรี พร้อมเรียนรู้...",
-      image: "/img/cont1.png",
-      slug: "it-seminar-event",
-      category: "events",
-    },
-    {
-      title: "รางวัลความเป็นเลิศด้านดิจิทัล",
-      date: "5 กันยายน 2568",
-      excerpt: "บริษัทควอนจิเทคได้รับรางวัล...",
-      image: "/img/cont2.png",
-      slug: "digital-excellence-award",
-      category: "news",
-    },
-    {
-      title: "กิจกรรมอบรมความปลอดภัยไซเบอร์",
-      date: "5 กันยายน 2568",
-      excerpt: "บริษัทควอนจิเทคได้รับรางวัล...",
-      image: "/img/cont1.png",
-      slug: "digital-excellence-award",
-      category: "news",
-    },
-  ];
-
-  // filter ตาม tab ที่เลือก
-  const filteredItems = items.filter((item) => item.category === activeTab);
+  // combine news + events for frontend (show all)
+  const combinedItems = [...newsItems, ...eventsItems].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <div>
@@ -168,9 +157,7 @@ export default function Page() {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/welcome_bg.jpg')" }}
         ></div>
-
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a5c48]/95 via-[#216452]/90 to-[#1a5c48]/95"></div>
-
         <div className="relative z-10 max-w-[1200px] mx-auto flex flex-col items-center justify-center px-6 md:px-12 text-center">
           <div
             className="flex-1 space-y-6 text-center"
@@ -187,7 +174,6 @@ export default function Page() {
               เราเป็นพันธมิตรด้านดิจิทัลและไอที ที่พร้อมวางแผน พัฒนา และดูแล
               ระบบครบวงจร เพื่อช่วยขับเคลื่อนธุรกิจของคุณในยุคดิจิทัล
             </p>
-
             <div className="flex flex-col sm:flex-row gap-4 mt-6 justify-center">
               <Link href="/company">
                 <Button
@@ -198,7 +184,6 @@ export default function Page() {
                   ข้อมูลองค์กร
                 </Button>
               </Link>
-
               <Link href="/contact">
                 <Button
                   className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-medium rounded-full px-8 py-4"
@@ -230,7 +215,6 @@ export default function Page() {
             Quantum, Digital และ IT เพื่อช่วยองค์กรปรับตัวและเติบโตในยุคดิจิทัล
             ด้วยประสบการณ์มากกว่า 10 ปี
           </p>
-
           <div className="space-y-6">
             {[
               {
@@ -270,7 +254,6 @@ export default function Page() {
             ))}
           </div>
         </div>
-
         <div data-aos="fade-left" className="relative">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100">
             <img
@@ -305,14 +288,23 @@ export default function Page() {
             เราผสมผสานความคิดสร้างสรรค์ เทคโนโลยี และกลยุทธ์
             เพื่อสร้างโซลูชันดิจิทัลที่ทันสมัย และช่วยธุรกิจคุณเติบโตอย่างมั่นคง
           </p>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {services.map((service, i) => (
+            {servicesLoading && (
+              <div className="col-span-full text-center py-10 text-gray-500 text-sm">
+                กำลังโหลดข้อมูล...
+              </div>
+            )}
+            {servicesError && (
+              <div className="col-span-full text-center py-10 text-red-600 text-sm">
+                เกิดข้อผิดพลาดในการโหลดข้อมูล: {servicesError}
+              </div>
+            )}
+            {/* Services List */}
+            {!servicesLoading && !servicesError && services.map((service, i) => (
               <div
                 key={i}
                 className="group relative bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm border border-gray-200 rounded-3xl p-8 
                  hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:border-gray-200/60
-                 transition-all duration-500 hover:-translate-y-3 
                  before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-transparent before:to-orange-50/20 
                  before:opacity-0 before:transition-all before:duration-500 hover:before:opacity-100"
                 data-aos="fade-up"
@@ -325,7 +317,7 @@ export default function Page() {
                 >
                   {service.title}
                 </h4>
-                
+
                 <p
                   className="text-gray-600 text-sm md:text-base font-normal leading-relaxed mb-8 
                     group-hover:text-gray-700 transition-colors duration-300"
@@ -361,7 +353,6 @@ export default function Page() {
                     </span>
                   </Button>
                 </Link>
-
                 <div
                   className="absolute -top-2 -right-2 w-20 h-20 bg-gradient-to-br from-orange-100/40 to-transparent 
                       rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"
@@ -375,13 +366,12 @@ export default function Page() {
           </div>
         </div>
       </section>
-
-      <RecentWorks works={works} />
+      <RecentWorks />
 
       {/* News & Events Section */}
       <section className="bg-white py-20">
         <div className="max-w-[1140px] mx-auto px-6">
-          <div className="text-center mb-5 flex flex-col items-center" data-aos="fade-up">
+          <div className="text-center mb-10 flex flex-col items-center" data-aos="fade-up">
             <h2 className="text-2xl md:text-3xl font-medium text-gray-800 tracking-[0.1em] uppercase">
               ข่าวสารและกิจกรรม
             </h2>
@@ -390,31 +380,21 @@ export default function Page() {
               ติดตามข่าวสารและกิจกรรมล่าสุดของเรา เพื่อไม่พลาดทุกความเคลื่อนไหว
             </p>
           </div>
-
           <section className="max-w-6xl mx-auto px-2">
-            <div className="flex justify-center mb-10">
-              <div className="inline-flex rounded-full overflow-hidden border border-gray-300 shadow-sm">
-                {["news", "events"].map((tab, index) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-6 py-2 font-medium transition-all duration-300
-          ${activeTab === tab
-                        ? "bg-gray-200 text-gray-800"       // active: สีพื้นอ่อน + ข้อความเข้ม
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800" // inactive + hover
-                      }
-          ${index === 0 ? "rounded-l-full" : ""}
-          ${index === 1 ? "rounded-r-full" : ""}
-        `}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-              {filteredItems.map((item, index) => (
+              {/* Loading UI */}
+              {(newsLoading || eventsLoading) && (
+                <div className="col-span-full text-center py-10 text-gray-500 text-sm">
+                  กำลังโหลดข้อมูล...
+                </div>
+              )}
+              {/* Error UI */}
+              {(newsError || eventsError) && (
+                <div className="col-span-full text-center py-10 text-red-600 text-sm">
+                  เกิดข้อผิดพลาดในการโหลดข้อมูล: {newsError || eventsError}
+                </div>
+              )}
+              {!(newsLoading || eventsLoading) && !(newsError || eventsError) && combinedItems.map((item, index) => (
                 <div
                   key={index}
                   className="group bg-white border border-gray-300 rounded-3xl overflow-hidden
@@ -423,16 +403,11 @@ export default function Page() {
                 >
                   <div className="relative overflow-hidden">
                     <img
-                      src={item.image}
+                      src={item.thumbnail || "/img/default.png"}
                       alt={item.title}
                       className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-gray-700 
-                text-xs font-medium px-3 py-1.5 rounded-full shadow-sm">
-                      {item.date}
-                    </div>
                   </div>
-
                   <div className="p-6">
                     <h3 className="text-xl font-semibold text-gray-800 mb-2 leading-tight">
                       {item.title}
@@ -441,8 +416,8 @@ export default function Page() {
                       {item.excerpt}
                     </p>
                     <Link href={`/news/${item.slug}`}>
-                      <div className="inline-flex items-center gap-2 text-[#ffb87a] font-medium
-                  hover:text-[#ff9a56] transition-all duration-200">
+                      <div className="inline-flex items-center gap-2 text-gray-600 font-medium
+                  hover:text-gray-800 transition-all duration-200">
                         <span className="text-sm">อ่านเพิ่มเติม</span>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -454,7 +429,6 @@ export default function Page() {
               ))}
             </div>
           </section>
-
           <div className="text-center">
             <GradientButton href="/news">ดูข่าวสารทั้งหมด</GradientButton>
           </div>
@@ -479,7 +453,6 @@ export default function Page() {
                 พร้อมสร้างโซลูชันที่ตอบโจทย์และขับเคลื่อนการเติบโตอย่างยั่งยืน
               </p>
             </div>
-
             <div className="space-y-6">
               {features.map((feature, index) => (
                 <div
@@ -502,23 +475,21 @@ export default function Page() {
                 </div>
               ))}
             </div>
-
             <div className="grid grid-cols-3 gap-6 pt-6" data-aos="fade-up">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#216452]">50+</div>
+              <div className="text-center" ref={projectRef}>
+                <div className="text-4xl font-bold text-gray-800">{projectCount}+</div>
                 <div className="text-sm text-gray-600">โปรเจกต์สำเร็จ</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#216452]">5+</div>
+              <div className="text-center" ref={experienceRef}>
+                <div className="text-4xl font-bold text-gray-800">{experienceCount}+</div>
                 <div className="text-sm text-gray-600">ปีประสบการณ์</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#216452]">98%</div>
+              <div className="text-center" ref={satisfactionRef}>
+                <div className="text-4xl font-bold text-gray-800">{satisfactionCount}%</div>
                 <div className="text-sm text-gray-600">ความพึงพอใจ</div>
               </div>
             </div>
           </div>
-
           <div data-aos="fade-left" className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100">
               <img
@@ -534,7 +505,6 @@ export default function Page() {
           </div>
         </div>
       </section>
-
       <CallToAction />
       <section className="bg-white py-16 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
@@ -546,7 +516,6 @@ export default function Page() {
           <div className="relative">
             <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
             <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
-
             <Swiper
               modules={[Autoplay, Navigation, Pagination]}
               spaceBetween={30}
@@ -596,7 +565,6 @@ export default function Page() {
               ))}
             </Swiper>
           </div>
-
           <div className="flex justify-center mt-8">
             <div className="flex space-x-2">
               {[...Array(Math.ceil(clients.length / 6))].map((_, idx) => (

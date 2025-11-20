@@ -94,7 +94,6 @@ export default function Company() {
                                     <span className="font-normal text-[#1a5c48]"> ควอนจิเทค</span>
                                 </h2>
                             </header>
-
                             <div className="prose prose-lg max-w-none mb-10">
                                 <p className="text-gray-600 leading-[1.8] font-light text-base md:text-lg">
                                     บริษัท ควอนจิเทค จำกัด พร้อมที่จะก้าวขึ้นสู่ความเป็นผู้นำทางธุรกิจอย่างเต็มรูปแบบด้วยนโยบาย
@@ -103,22 +102,6 @@ export default function Company() {
                                     เราภูมิใจอย่างยิ่งที่ได้มีโอกาสใช้ความรู้ความสามารถให้บริการแก่ลูกค้าทุกท่าน
                                 </p>
                             </div>
-
-                            <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100/50">
-                                <div className="flex items-start space-x-4">
-                                    <div className="flex-shrink-0 w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center mt-1">
-                                        <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-gray-700 leading-[1.8] font-light flex-1">
-                                        เรามุ่งเน้นการนำเสนอโซลูชันเทคโนโลยีที่ล้ำสมัยและมีประสิทธิภาพ
-                                        เพื่อช่วยให้ลูกค้าของเราเติบโตและแข่งขันได้ในยุคดิจิทัล
-                                        โดยยึดหลักความจริงใจ ความรับผิดชอบ และความเป็นมืออาชีพในการให้บริการ
-                                    </p>
-                                </div>
-                            </div>
-
                             <figure className="mt-12">
                                 <div className="relative overflow-hidden rounded-2xl bg-gray-100">
                                     <img

@@ -73,7 +73,10 @@ export default function create() {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to save post");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.details || errorData.error || "Failed to save post");
+      }
 
       const savedPost = await res.json();
       console.log("Saved post:", savedPost);

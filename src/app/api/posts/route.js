@@ -29,7 +29,7 @@ export async function POST(req) {
   const metaTitle = formData.get("metaTitle")?.toString();
   const metaDescription = formData.get("metaDescription")?.toString();
   const metaKeyword = formData.get("metaKeyword")?.toString();
-  const categoryId = parseInt(formData.get("categoryId")?.toString());
+  const categoryId = formData.get("categoryId")?.toString();
 
   if (!title || !slug || !content || !categoryId) {
     return NextResponse.json(
@@ -67,25 +67,64 @@ export async function POST(req) {
         metaDescription,
         metaKeyword,
         category: { connect: { id: categoryId } },
-        author: { connect: { id: parseInt(session.user.id) } },
+        author: { connect: { id: session.user.id } },
         thumbnail: thumbnailPath,
         publishedAt: status === "published" ? new Date() : null,
       },
     });
 
+    // record activity
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "post",
+          action: "created",
+          title: newPost.title,
+          postId: newPost.id,
+          userId: session.user.id,
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record activity:", actErr);
+    }
+
     return NextResponse.json(newPost, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating post:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Server Error", details: error.message },
       { status: 500 }
     );
   }
 }
 
-export async function GET() {
+export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+    const slugs = searchParams.getAll("slug");
+    const postType = searchParams.get("postType");
+    const categoryName = searchParams.get("category");
+    const categoryId = searchParams.get("categoryId");
+    const status = searchParams.get("status");
+    const isFeatured = searchParams.get("isFeatured");
+
+    // build dynamic where
+    const where = {};
+
+    if (slugs && slugs.length > 0) where.slug = { in: slugs };
+    if (postType) where.postType = postType;
+    if (status) where.status = status;
+    if (isFeatured !== null) where.isFeatured = isFeatured === "true";
+
+    if (categoryName) {
+      // filter by related category name
+      where.category = { is: { name: categoryName } };
+    } else if (categoryId) {
+      where.category = { is: { id: categoryId } };
+    }
+
     const posts = await prisma.post.findMany({
+      where: Object.keys(where).length ? where : undefined,
       include: {
         author: {
           select: {
@@ -102,9 +141,9 @@ export async function GET() {
 
     return NextResponse.json(posts, { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching posts:", error);
     return NextResponse.json(
-      { error: "Failed to fetch posts" },
+      { error: "Failed to fetch posts", details: error.message },
       { status: 500 }
     );
   }

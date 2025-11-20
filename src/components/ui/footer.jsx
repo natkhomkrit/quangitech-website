@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Footer() {
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  useEffect(() => {
+    const fetchFooterMenu = async () => {
+      try {
+        setServicesLoading(true);
+        const res = await fetch("/api/menus?name=Footer");
+        if (!res.ok) throw new Error("Failed to fetch footer menu");
+        const data = await res.json();
+        // Expecting API to return an array of menus; take the first one and its items
+        const items = data?.[0]?.items || [];
+        setServices(items);
+      } catch (err) {
+        console.error("Error fetching footer menu:", err);
+        setServices([]);
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    fetchFooterMenu();
+  }, []);
+
   return (
     <footer className="bg-[#1a5c48] text-white">
       {/* Footer Top */}
@@ -70,25 +93,42 @@ export default function Footer() {
 
             {/* Column 3 */}
             <div>
-              <h3 className="font-medium text-[#ffb87a] tracking-[0.1em] uppercase mb-4">สินค้าและบริการ</h3>
+              <h3 className="font-medium text-[#ffb87a] tracking-[0.1em] uppercase mb-4">Quick Links</h3>
               <ul className="space-y-2 text-sm uppercase text-white/80">
-                {[
-                  "System Development",
-                  "Office Supplies",
-                  "Data Analysis & Cleaning",
-                  "Printing Services",
-                  "Computer Training",
-                  "Package Programs",
-                ].map((service, idx) => (
-                  <li key={idx}>
-                    <a
-                      href="#"
-                      className="relative inline-block hover:text-[#ffb87a] transition"
-                    >
-                      {service}
-                    </a>
-                  </li>
-                ))}
+                {servicesLoading ? (
+                  <li className="text-white/60">กำลังโหลด...</li>
+                ) : services.length > 0 ? (
+                  services.map((item, idx) => (
+                    <li key={idx}>
+                      {item.children && item.children.length > 0 ? (
+                        <div>
+                          <div className="font-semibold text-white/90 mb-1">{item.title || item.name}</div>
+                          <ul className="pl-2 space-y-1">
+                            {item.children.map((child, cidx) => (
+                              <li key={cidx}>
+                                <a
+                                  href={child.url || child.href || child.link || child.path || (child.slug ? `/${child.slug}` : "#")}
+                                  className="inline-block text-sm text-white/80 hover:text-[#ffb87a] transition"
+                                >
+                                  {child.title || child.name || child.label}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        <a
+                          href={item.url || item.href || item.link || item.path || (item.slug ? `/${item.slug}` : "#")}
+                          className="relative inline-block hover:text-[#ffb87a] transition"
+                        >
+                          {item.title || item.name}
+                        </a>
+                      )}
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-white/60">ไม่มีเมนู</li>
+                )}
               </ul>
             </div>
           </div>

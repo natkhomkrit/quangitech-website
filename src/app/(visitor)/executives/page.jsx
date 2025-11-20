@@ -46,10 +46,9 @@ export default function Executives() {
               <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-12">
                 <div className="flex-shrink-0 mx-auto lg:mx-0">
                   <div className="relative w-64 h-64 lg:w-80 lg:h-80">
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-blue-100 rounded-3xl transform rotate-3 group-hover:rotate-6 transition-transform duration-700"></div>
                     <div className="relative overflow-hidden rounded-3xl bg-white shadow-lg">
                       <Image
-                        src="/img/cont3.png"
+                        src="/img/cont10.png"
                         alt="นายกรสิกร ออมสิน - ประธานกรรมการบริหาร"
                         width={400}
                         height={400}
@@ -74,16 +73,12 @@ export default function Executives() {
                     </div>
                   </div>
                   <blockquote className="relative">
-                    <div className="absolute -top-2 -left-2 text-4xl text-orange-200 font-serif">
-                      "
-                    </div>
-                    <div className="pl-8 pr-4">
+                    <div>
                       <p className="text-lg font-light italic text-gray-700 leading-relaxed mb-4">
                         ความสำเร็จไม่ได้เกิดจากโชค
                         <br />
                         แต่เกิดจากวิสัยทัศน์และการลงมือทำอย่างต่อเนื่อง
                       </p>
-                      <div className="h-px bg-gradient-to-r from-orange-200 to-transparent"></div>
                     </div>
                   </blockquote>
                 </div>
@@ -108,14 +103,8 @@ export default function Executives() {
 
               <figure className="relative">
                 <div className="relative overflow-hidden rounded-2xl bg-gray-50 p-6">
-                  <div className="absolute top-4 right-4 flex space-x-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                    <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  </div>
-
                   <Image
-                    src="/img/org_structure.png"
+                    src="/img/default4.png"
                     alt="โครงสร้างองค์กรบริษัท ควอนจิเทค จำกัด"
                     width={800}
                     height={600}
