@@ -15,28 +15,28 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  username  String  @unique
-  email     String  @unique
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  username  String    @unique
+  email     String    @unique
   password  String?
   fullName  String
   avatarUrl String?
 
-  isActive  Boolean  @default(true)
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive  Boolean   @default(true)
+  role      String    @default("user")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  posts    Post[]
-  accounts Account[]
-  Activity Activity[]
+  posts     Post[]
+  accounts  Account[]
+  activities Activity[]
 
   @@map("users")
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @db.ObjectId
   type              String
   provider          String
   providerAccountId String
@@ -55,62 +55,62 @@ model Account {
 }
 
 model Post {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
   title           String
-  slug            String    @unique
+  slug            String     @unique
   excerpt         String?
   content         String
   status          String
   postType        String
-  authorId        String    @db.ObjectId
+  authorId        String     @db.ObjectId
   thumbnail       String?
-  author          User      @relation(fields: [authorId], references: [id])
-  categoryId      String    @db.ObjectId
-  category        Category  @relation(fields: [categoryId], references: [id])
-  isFeatured      Boolean   @default(false)
+  author          User       @relation(fields: [authorId], references: [id])
+  categoryId      String     @db.ObjectId
+  category        Category   @relation(fields: [categoryId], references: [id])
+  isFeatured      Boolean    @default(false)
   publishedAt     DateTime?
   scheduledAt     DateTime?
   metaTitle       String?
   metaDescription String?
   metaKeyword     String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
   @@map("posts")
 }
 
 model Category {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   @unique
-  slug        String   @unique
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String    @unique
+  slug        String    @unique
   description String?
   posts       Post[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("categories")
 }
 
 model Menu {
-  id    String     @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  items MenuItem[]
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  items  MenuItem[]
 
   @@map("menus")
 }
 
 model MenuItem {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  menuId String @db.ObjectId
-  menu   Menu   @relation(fields: [menuId], references: [id])
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  menuId    String      @db.ObjectId
+  menu      Menu        @relation(fields: [menuId], references: [id])
 
-  parentId String?    @db.ObjectId
-  parent   MenuItem?  @relation("SubMenuItems", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children MenuItem[] @relation("SubMenuItems")
+  parentId  String?     @db.ObjectId
+  parent    MenuItem?   @relation("SubMenuItems", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  MenuItem[]  @relation("SubMenuItems")
 
-  name      String
-  url       String
-  sortOrder Int
+  name       String
+  url        String
+  sortOrder  Int
 
   @@map("menu_items")
 }
@@ -126,5 +126,5 @@ model Activity {
   metadata  Json?
   createdAt DateTime @default(now())
 
-  @@map("activities")
+  @@map("activities") 
 }

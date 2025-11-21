@@ -206,7 +206,6 @@ export default function Portfolio() {
             ) : (
               currentWorks.map((work) => {
                 const imgSrc = work.thumbnail || work.image || "/img/default.png";
-                const description = work.excerpt || work.description || "";
                 const dateStr = work.createdAt ? new Date(work.createdAt).toLocaleDateString("th-TH") : work.date || "";
 
                 return (

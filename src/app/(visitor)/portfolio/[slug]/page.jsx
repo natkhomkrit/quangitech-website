@@ -37,7 +37,6 @@ export default function PortfolioDetail() {
         if (data && data.length > 0) {
           const portfolioData = data[0];
           setPortfolio(portfolioData);
-          setMainImage(portfolioData.thumbnail || "");
         } else {
           setError("Portfolio not found");
         }
@@ -108,17 +107,6 @@ export default function PortfolioDetail() {
               dangerouslySetInnerHTML={{ __html: portfolio.content }}
             />
           )}
-        </div>
-        <div className="flex flex-col gap-6">
-          <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 bg-white">
-            <img
-              src={mainImage || portfolio.thumbnail || "/img/default.png"}
-              alt={portfolio.title}
-              className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
-            />
-          </div>
-
-          {/* Gallery Thumbnails - temporarily hidden */}
         </div>
       </div>
       <RecentWorks />

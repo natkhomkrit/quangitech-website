@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,6 +15,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 export default function Contact() {
+
     useEffect(() => {
         AOS.init({
             duration: 1000,
@@ -30,24 +31,69 @@ export default function Contact() {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
+    // ✔ sanitizeInput เวอร์ชันเดียว
+    function sanitizeInput(value) {
+        return value
+            .replace(/script.*?>.*?<\/script>/gi, "")
+            .replace(/[<>"/']/g, "")
+            .replace(/\//g, "")
+            .trim();
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSending(true);
         setError("");
         setSuccess(false);
+
+        // ✔ validation ความยาว name/phone
+        if (name.length > 10) {
+            setError("Name cannot exceed 10 characters.");
+            setSending(false);
+            return;
+        }
+        if (phone.length > 10) {
+            setError("Phone number cannot exceed 10 characters.");
+            setSending(false);
+            return;
+        }
+
+        // ✔ sanitize ข้อมูล
+        const cleanName = sanitizeInput(name);
+        const cleanEmail = sanitizeInput(email);
+        const cleanPhone = sanitizeInput(phone);
+        const cleanMessage = sanitizeInput(message);
+
+        // ✔ ตรวจสอบหลัง sanitize
+        if (!cleanName || !cleanMessage) {
+            setError("Invalid input detected.");
+            setSending(false);
+            return;
+        }
+
         try {
             const res = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, phone, message }),
+                // ✔ ส่งข้อมูล clean เท่านั้น
+                body: JSON.stringify({
+                    name: cleanName,
+                    email: cleanEmail,
+                    phone: cleanPhone,
+                    message: cleanMessage,
+                }),
             });
+
             const data = await res.json();
+
             if (!res.ok) throw new Error(data?.error || "Failed to send message");
+
             setSuccess(true);
             setName("");
             setEmail("");
             setPhone("");
             setMessage("");
+
         } catch (err) {
             console.error(err);
             setError(err.message || "Failed to send message");
@@ -58,22 +104,26 @@ export default function Contact() {
 
     return (
         <div className="bg-gray-50">
+
             {/* Hero Section */}
             <div className="relative w-full h-[80px] bg-gradient-to-b from-[#1a5c48]/95 via-[#216452]/90 to-[#1a5c48]/95"></div>
 
             <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
-                <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4">Contact Us</h1>
+                <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4">
+                    Contact Us
+                </h1>
                 <nav className="text-sm font-light text-gray-600 mb-4 flex items-center gap-2">
                     <Link href="/" className="hover:text-gray-900">หน้าหลัก</Link>
                     <span className="text-gray-400">/</span>
                     <span className="text-gray-800">ติดต่อเรา</span>
                 </nav>
             </div>
+
             {/* Contact Section */}
             <section className="py-20 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-6">
 
-                    {/* 🔹 SECTION 1 — MAP ON TOP */}
+                    {/* Map */}
                     <div
                         className="w-full h-[400px] rounded-2xl overflow-hidden shadow-lg mb-16"
                         data-aos="fade-down"
@@ -88,10 +138,9 @@ export default function Contact() {
                         ></iframe>
                     </div>
 
-                    {/* 🔹 SECTION 2 — CONTACT INFO (LEFT) + FORM (RIGHT) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 
-                        {/* LEFT — Contact Info */}
+                        {/* LEFT INFO */}
                         <div className="max-w-lg text-left" data-aos="fade-right">
                             <img
                                 src="/img/logocontact.png"
@@ -125,24 +174,29 @@ export default function Contact() {
                             </div>
                         </div>
 
-                        {/* RIGHT — Contact Form */}
+                        {/* RIGHT FORM */}
                         <div data-aos="fade-left">
                             <h2 className="text-2xl md:text-3xl font-light text-gray-900 leading-relaxed mb-4">
                                 Let’s Get in Touch
                             </h2>
+
                             <p className="text-gray-600 leading-[1.8] font-light text-base mb-8">
                                 Have questions or want to work with us? Fill out the form and our team
                                 will get back to you as soon as possible.
                             </p>
 
-                            <form className="bg-white rounded-2xl shadow-lg p-8 space-y-6" onSubmit={handleSubmit}>
+                            <form
+                                className="bg-white rounded-2xl shadow-lg p-8 space-y-6"
+                                onSubmit={handleSubmit}
+                            >
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <input
                                         type="text"
                                         placeholder="Your Name"
                                         className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
                                         value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        maxLength={10}
+                                        onChange={(e) => setName(sanitizeInput(e.target.value))}
                                         required
                                     />
                                     <input
@@ -156,11 +210,14 @@ export default function Contact() {
                                 </div>
 
                                 <input
-                                    type="text"
+                                    type="tel"
+                                    pattern="[0-9]*"
+                                    inputMode="numeric"
+                                    maxLength={10}
                                     placeholder="Your Phone"
                                     className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
                                     value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
+                                    onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))}
                                 />
 
                                 <textarea
@@ -168,7 +225,7 @@ export default function Contact() {
                                     className="w-full p-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1a5c48]"
                                     rows="5"
                                     value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
+                                    onChange={(e) => setMessage(sanitizeInput(e.target.value))}
                                     required
                                 ></textarea>
 
@@ -183,7 +240,7 @@ export default function Contact() {
                                 </div>
                             </form>
 
-                            {/* Success Alert Popup */}
+                            {/* SUCCESS ALERT */}
                             <AlertDialog open={success} onOpenChange={setSuccess}>
                                 <AlertDialogContent>
                                     <AlertDialogTitle className="text-green-600">✓ Success</AlertDialogTitle>
@@ -196,13 +253,11 @@ export default function Contact() {
                                 </AlertDialogContent>
                             </AlertDialog>
 
-                            {/* Error Alert Popup */}
+                            {/* ERROR ALERT */}
                             <AlertDialog open={!!error} onOpenChange={() => setError("")}>
                                 <AlertDialogContent>
                                     <AlertDialogTitle className="text-red-600">✗ Error</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        {error}
-                                    </AlertDialogDescription>
+                                    <AlertDialogDescription>{error}</AlertDialogDescription>
                                     <AlertDialogAction onClick={() => setError("")}>
                                         Close
                                     </AlertDialogAction>
@@ -213,8 +268,6 @@ export default function Contact() {
                     </div>
                 </div>
             </section>
-
-
 
             <Footer />
         </div>

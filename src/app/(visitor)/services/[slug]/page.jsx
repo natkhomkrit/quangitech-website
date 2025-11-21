@@ -12,7 +12,7 @@ export default function ServiceDetail() {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mainImage, setMainImage] = useState("");
+  // const [mainImage, setMainImage] = useState("");
 
   useEffect(() => {
     if (!slug) return;
@@ -32,7 +32,7 @@ export default function ServiceDetail() {
         if (data && data.length > 0) {
           const serviceData = data[0];
           setService(serviceData);
-          setMainImage(serviceData.thumbnail || "");
+          // setMainImage(serviceData.thumbnail || "");
         } else {
           setError("Service not found");
         }
@@ -101,14 +101,13 @@ export default function ServiceDetail() {
             />
           )}
         </div>
-        <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
+        {/* <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
           <img
             src={mainImage || service.thumbnail || "/img/default.png"}
             alt={service.title}
             className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
           />
-        </div>
-        {/* Gallery - temporarily hidden */}
+        </div> */}
       </div>
 
       <Footer />

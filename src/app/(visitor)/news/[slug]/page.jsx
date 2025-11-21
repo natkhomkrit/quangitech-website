@@ -12,7 +12,6 @@ export default function NewsEventDetail() {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mainImage, setMainImage] = useState("");
 
   useEffect(() => {
     if (!slug) return;
@@ -32,7 +31,6 @@ export default function NewsEventDetail() {
         if (data && data.length > 0) {
           const newsData = data[0];
           setItem(newsData);
-          setMainImage(newsData.thumbnail || "");
         } else {
           setError("ไม่พบข่าวหรือกิจกรรมนี้");
         }
@@ -106,16 +104,7 @@ export default function NewsEventDetail() {
             />
           )}
         </div>
-        <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
-          <img
-            src={mainImage}
-            alt={item.title}
-            className="max-w-full max-h-full object-contain bg-white transition-transform duration-300 ease-in-out"
-          />
-        </div>
-        {/* Gallery - temporarily hidden */}
       </div>
-
       <Footer />
     </>
   );
