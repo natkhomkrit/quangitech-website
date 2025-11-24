@@ -117,11 +117,30 @@ export async function GET(req) {
     if (isFeatured !== null) where.isFeatured = isFeatured === "true";
 
     if (categoryName) {
-      // filter by related category name
-      where.category = { is: { name: categoryName } };
+      // For Mongo/prisma safety: resolve category name to id first,
+      // then filter by categoryId instead of using a relation-filter object.
+      try {
+        const cat = await prisma.category.findFirst({ where: { name: categoryName } });
+        if (cat && cat.id) {
+          where.categoryId = cat.id;
+        } else {
+          // no matching category -> return empty list early
+          return NextResponse.json([], { status: 200 });
+        }
+      } catch (catErr) {
+        console.error("Error resolving category by name:", catErr);
+        if (catErr && catErr.stack) console.error(catErr.stack);
+        return NextResponse.json(
+          { error: "Failed to resolve category", details: catErr.message },
+          { status: 500 }
+        );
+      }
     } else if (categoryId) {
-      where.category = { is: { id: categoryId } };
+      // direct id-based filter
+      where.categoryId = categoryId;
     }
+
+    console.debug("[DEBUG] posts where:", JSON.stringify(where));
 
     const posts = await prisma.post.findMany({
       where: Object.keys(where).length ? where : undefined,
@@ -142,6 +161,7 @@ export async function GET(req) {
     return NextResponse.json(posts, { status: 200 });
   } catch (error) {
     console.error("Error fetching posts:", error);
+    if (error && error.stack) console.error(error.stack);
     return NextResponse.json(
       { error: "Failed to fetch posts", details: error.message },
       { status: 500 }

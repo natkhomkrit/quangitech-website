@@ -40,7 +40,8 @@ export async function GET(req) {
 
     return NextResponse.json(result);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching menus:", err);
+    if (err && err.stack) console.error(err.stack);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
