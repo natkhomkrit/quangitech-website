@@ -1,7 +1,13 @@
+/* ===========================
+   1. External imports
+=========================== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
 
+/* ===========================
+   2. Custom variants / themes
+=========================== */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -44,6 +50,9 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ===========================
+   3. Root variables
+=========================== */
 :root {
   --font-inter: "Inter", sans-serif;
   --radius: 0.625rem;
@@ -70,14 +79,14 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.2 0.05 250); /* พื้นหลัง sidebar - dark navy */
-  --sidebar-foreground: oklch(0.98 0 260); /* ตัวอักษรสีขาว */
-  --sidebar-primary: oklch(0.28 0.06 250); /* สีเมนู primary */
-  --sidebar-primary-foreground: oklch(0.98 0 260); /* ตัวอักษร primary */
-  --sidebar-accent: oklch(0.32 0.08 250); /* สีปุ่ม/ไฮไลต์ */
-  --sidebar-accent-foreground: oklch(0.98 0 260); /* ตัวอักษรของ accent */
-  --sidebar-border: oklch(0.25 0.02 250 / 30%); /* เส้นขอบ sidebar */
-  --sidebar-ring: oklch(0.3 0.04 250); /* ring/focus outline */
+  --sidebar: oklch(0.2 0.05 250);
+  --sidebar-foreground: oklch(0.98 0 260);
+  --sidebar-primary: oklch(0.28 0.06 250);
+  --sidebar-primary-foreground: oklch(0.98 0 260);
+  --sidebar-accent: oklch(0.32 0.08 250);
+  --sidebar-accent-foreground: oklch(0.98 0 260);
+  --sidebar-border: oklch(0.25 0.02 250 / 30%);
+  --sidebar-ring: oklch(0.3 0.04 250);
 }
 
 .dark {
@@ -92,7 +101,7 @@
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
+  --muted-foreground: oklch(0.705 0.015 286.938);
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
@@ -114,15 +123,22 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
+/* ===========================
+   4. Base layer
+=========================== */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
+/* ===========================
+   5. Custom body/font/animations
+=========================== */
 body {
   font-family: "Kanit", sans-serif;
 }
@@ -131,14 +147,11 @@ body {
   0% {
     width: 0%;
   }
+
   100% {
     width: 100%;
   }
 }
-
-/* * {
-  font-family: var(--font-inter);
-} */
 
 .animate-load {
   animation: load 2s linear infinite;
