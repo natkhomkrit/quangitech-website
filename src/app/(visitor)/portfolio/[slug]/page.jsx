@@ -132,7 +132,7 @@ export default function PortfolioDetail() {
           })()}
         </div>
 
-        {/* แสดงรูปภาพ thumbnail */}
+        {/* แสดงรูปภาพ thumbnail
         {portfolio.thumbnail && (
           <div className="w-full rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white mb-8">
             <img
@@ -141,7 +141,7 @@ export default function PortfolioDetail() {
               className="max-w-full max-h-full object-contain"
             />
           </div>
-        )}
+        )} */}
       </div>
       <RecentWorks />
       <Footer />
