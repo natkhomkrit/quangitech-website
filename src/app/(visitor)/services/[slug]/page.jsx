@@ -94,12 +94,35 @@ export default function ServiceDetail() {
           <p className="text-gray-700 mb-6 text-lg leading-relaxed">{service.excerpt}</p>
 
           {/* Display HTML content */}
-          {service.content && (
-            <div
-              className="prose prose-sm max-w-none text-gray-600"
-              dangerouslySetInnerHTML={{ __html: service.content }}
-            />
-          )}
+          {service.content && (() => {
+            // Sanitize content HTML so image src/href that are relative (e.g. "uploads/...")
+            // become root-relative ("/uploads/...") and remove localhost origins.
+            const sanitizeContent = (html) => {
+              if (!html) return html;
+              let out = html;
+              // remove local dev origin if present
+              out = out.replace(/https?:\/\/localhost:\d+/gi, '');
+              // ensure relative src/href become root-relative
+              out = out.replace(/(src|href)=("|')(?!(?:https?:|\/))(.*?)\2/gi, (m, attr, q, url) => {
+                // add leading slash
+                return `${attr}=${q}/${url}${q}`;
+              });
+              // specifically fix common uploads paths without leading slash
+              out = out.replace(/(src|href)=("|')\/?(uploads\/[^"]+)\2/gi, (m, attr, q, url) => {
+                return `${attr}=${q}/${url}${q}`;
+              });
+              return out;
+            };
+
+            const processedContent = sanitizeContent(service.content);
+
+            return (
+              <div
+                className="prose prose-sm max-w-none text-gray-600"
+                dangerouslySetInnerHTML={{ __html: processedContent }}
+              />
+            );
+          })()}
         </div>
         {/* <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 flex items-center justify-center bg-white">
           <img
