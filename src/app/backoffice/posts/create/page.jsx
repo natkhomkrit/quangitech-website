@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import React, { useEffect, useRef, useState } from "react";
 import { Save, Upload } from "lucide-react";
-import FroalaEditor from "@/components/froala-editor";
+import TinyMCEEditor from "@/components/tinymce-editor";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ThumbnailPicker } from "@/components/thumbnail-picker";
 import CategorySelector from "@/components/category-selector";
@@ -51,6 +51,12 @@ export default function create() {
   };
 
   const handleSave = async (publish = false) => {
+    // Client-side validation for required fields
+    if (!title || !slug || !content || !categoryId) {
+      toast.error("Please fill Title, Slug, Content, and Category before saving");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -180,12 +186,7 @@ export default function create() {
             <Label className="text-sm font-medium mb-2 block">
               Content <span className="text-red-500">*</span>
             </Label>
-            {/* <Editor ref={editorRef} /> */}
-
-            <FroalaEditor content={content} onChange={handleModelChange} />
-            {/* <FroalaEditorView model={content} /> */}
-
-            {/* <MyCKEditor /> */}
+            <TinyMCEEditor content={content} onChange={handleModelChange} />
           </div>
         </div>
 

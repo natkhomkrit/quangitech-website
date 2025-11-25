@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Save, Upload } from "lucide-react";
-import FroalaEditor from "@/components/froala-editor";
+import TinyMCEEditor from "@/components/tinymce-editor";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ThumbnailPicker } from "@/components/thumbnail-picker";
 import CategorySelector from "@/components/category-selector";
@@ -200,7 +200,7 @@ export default function EditPost() {
           {/* Content */}
           <div className="mb-4">
             <Label className="text-sm font-medium mb-2 block">Content</Label>
-            <FroalaEditor content={content} onChange={setContent} />
+            <TinyMCEEditor content={content} onChange={setContent} />
           </div>
         </div>
 

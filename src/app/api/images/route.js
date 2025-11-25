@@ -49,7 +49,8 @@ export async function POST(req) {
     await writeFile(filePath, buffer);
 
     const imageUrl = getFullUrl(req, `/uploads/${filename}`);
-    return NextResponse.json({ link: imageUrl });
+    // Return both `location` (TinyMCE) and `link` (legacy/client) for compatibility
+    return NextResponse.json({ location: imageUrl, link: imageUrl });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
