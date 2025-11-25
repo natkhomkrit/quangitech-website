@@ -3,19 +3,36 @@ import { put, del, list } from "@vercel/blob";
 
 export async function GET(req) {
   try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return NextResponse.json(
+        { error: "Blob storage not configured. Add BLOB_READ_WRITE_TOKEN to Vercel environment variables." },
+        { status: 500 }
+      );
+    }
+
     const { blobs } = await list();
     const images = blobs.map((blob) => ({
       url: blob.url,
     }));
     return NextResponse.json(images);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to load images" }, { status: 500 });
+    console.error("GET /api/images error:", err);
+    return NextResponse.json(
+      { error: err.message || "Failed to load images" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req) {
   try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return NextResponse.json(
+        { error: "Blob storage not configured. Add BLOB_READ_WRITE_TOKEN to Vercel environment variables." },
+        { status: 500 }
+      );
+    }
+
     const formData = await req.formData();
     // Support both "file" (from Froala) and "image" (from TinyMCE)
     const file = formData.get("file") || formData.get("image");
@@ -33,13 +50,23 @@ export async function POST(req) {
     // Return format for compatibility (Froala expects "link", TinyMCE expects various formats)
     return NextResponse.json({ link: blob.url });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    console.error("POST /api/images error:", err);
+    return NextResponse.json(
+      { error: err.message || "Upload failed" },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(req) {
   try {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return NextResponse.json(
+        { error: "Blob storage not configured" },
+        { status: 500 }
+      );
+    }
+
     const formData = await req.formData();
     const url = formData.get("url")?.toString();
 
@@ -51,7 +78,10 @@ export async function DELETE(req) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Delete error:", err);
-    return NextResponse.json({ error: "File not found" }, { status: 404 });
+    console.error("DELETE /api/images error:", err);
+    return NextResponse.json(
+      { error: err.message || "File not found" },
+      { status: 404 }
+    );
   }
 }
