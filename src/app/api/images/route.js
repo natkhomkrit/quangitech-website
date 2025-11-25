@@ -37,7 +37,8 @@ export async function POST(req) {
   try {
     await ensureUploadDir();
     const formData = await req.formData();
-    const file = formData.get("file");
+    // Support both "file" (from Froala) and "image" (from React Quill)
+    const file = formData.get("file") || formData.get("image");
 
     if (!file || !(file instanceof File)) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -48,9 +49,9 @@ export async function POST(req) {
     const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(filePath, buffer);
 
+    // Return both formats for compatibility (Froala expects "link", Quill expects "url")
     const imageUrl = getFullUrl(req, `/uploads/${filename}`);
-    // Return both `location` (TinyMCE) and `link` (legacy/client) for compatibility
-    return NextResponse.json({ location: imageUrl, link: imageUrl });
+    return NextResponse.json({ link: imageUrl });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
