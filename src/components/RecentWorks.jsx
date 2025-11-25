@@ -111,16 +111,17 @@ export default function RecentWorks() {
                         {displayData.map(item => (
                             <SwiperSlide key={item.id}>
                                 <div className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-white">
-                                    <div className="relative overflow-hidden">
-                                        <img
-                                            src={item.thumbnail || item.img}
-                                            alt={item.title}
-                                            className="w-full h-56 sm:h-60 object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-                                    </div>
-
-                                    <div className="flex justify-end items-end absolute inset-0 p-6">
+                                    <Link href={`/portfolio/${item.slug}`}>
+                                        <div className="relative overflow-hidden">
+                                            <img
+                                                src={item.thumbnail || item.img}
+                                                alt={item.title}
+                                                className="w-full h-56 sm:h-60 object-cover transition-transform duration-500 group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                                        </div>
+                                    </Link>
+                                    {/* <div className="flex justify-end items-end absolute inset-0 p-6">
                                         <Link
                                             href={`/portfolio/${item.slug}`}
                                             className="inline-flex items-center gap-1 text-sm font-medium text-white bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 rounded-full hover:bg-white/30 hover:border-white/50 transition-all duration-200 group/btn"
@@ -131,7 +132,7 @@ export default function RecentWorks() {
                                                 className="transition-transform duration-200 group-hover/btn:translate-x-0.5"
                                             />
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </SwiperSlide>
                         ))}
