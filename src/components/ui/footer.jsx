@@ -33,7 +33,7 @@ export default function Footer() {
 
             {/* Column 1 */}
             <div>
-              <a href="#" className="inline-block mb-6">
+              <a href="/" className="inline-block mb-6">
                 <img src="/img/logocontact.png" alt="Quangitech" className="w-40" />
               </a>
               <ul className="text-sm text-white/80 leading-[1.8] space-y-2">
