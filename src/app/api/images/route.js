@@ -1,30 +1,11 @@
 import { NextResponse } from "next/server";
-import { writeFile, readdir } from "fs/promises";
-import path from "path";
-import fs from "fs";
-
-const uploadDir = path.join(process.cwd(), "public", "uploads");
-
-async function ensureUploadDir() {
-  try {
-    await readdir(uploadDir); 
-  } catch {
-    await fs.promises.mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, ".keep"), "");
-  }
-}
-
-function getFullUrl(req, filePath) {
-  const protocol = req.headers.get("x-forwarded-proto") || "http";
-  const host = req.headers.get("host") || "localhost:3000";
-  return `${protocol}://${host}${filePath}`;
-}
+import { put, del, list } from "@vercel/blob";
 
 export async function GET(req) {
   try {
-    const files = await readdir(uploadDir);
-    const images = files.map((file) => ({
-      url: getFullUrl(req, `/uploads/${file}`)
+    const { blobs } = await list();
+    const images = blobs.map((blob) => ({
+      url: blob.url,
     }));
     return NextResponse.json(images);
   } catch (err) {
@@ -35,7 +16,6 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await ensureUploadDir();
     const formData = await req.formData();
     // Support both "file" (from Froala) and "image" (from TinyMCE)
     const file = formData.get("file") || formData.get("image");
@@ -45,13 +25,13 @@ export async function POST(req) {
     }
 
     const filename = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-    const filePath = path.join(uploadDir, filename);
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
+    
+    const blob = await put(filename, file, {
+      access: "public",
+    });
 
     // Return format for compatibility (Froala expects "link", TinyMCE expects various formats)
-    const imageUrl = getFullUrl(req, `/uploads/${filename}`);
-    return NextResponse.json({ link: imageUrl });
+    return NextResponse.json({ link: blob.url });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
@@ -61,14 +41,13 @@ export async function POST(req) {
 export async function DELETE(req) {
   try {
     const formData = await req.formData();
-    const src = formData.get("src")?.toString();
+    const url = formData.get("url")?.toString();
 
-    if (!src) {
-      return NextResponse.json({ error: "No src provided" }, { status: 400 });
+    if (!url) {
+      return NextResponse.json({ error: "No URL provided" }, { status: 400 });
     }
 
-    const filePath = path.join(process.cwd(), "public", src.replace(/^\/+/, ""));
-    await fs.promises.unlink(filePath);
+    await del(url);
 
     return NextResponse.json({ success: true });
   } catch (err) {
