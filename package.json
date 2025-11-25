@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm install --legacy-peer-deps && npm exec prisma generate && next build",
+    "build": "npm install --legacy-peer-deps && npm exec prisma@4.16.1 -- generate && next build",
     "start": "next start",
     "postinstall": "node ./scripts/copy-tinymce.js"
   },
