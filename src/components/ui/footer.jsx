@@ -48,7 +48,7 @@ export default function Footer() {
                   </span>
                   <a
                     href="tel:9999999999"
-                    className="text-[#ffb87a] hover:underline transition"
+                    className="text-white/80 hover:underline transition"
                   >
                     999-999-9999
                   </a>
@@ -60,7 +60,7 @@ export default function Footer() {
                   </p>
                   <a
                     href="mailto:quangitech@gmail.com?subject=ติดต่อจากเว็บไซต์&body=สวัสดีครับ"
-                    className="text-[#ffb87a] hover:underline transition"
+                    className="text-white/80 hover:underline transition"
                   >
                     quangitech@gmail.com
                   </a>
@@ -73,7 +73,7 @@ export default function Footer() {
                     href="https://www.facebook.com/p/Quangitech-100063857449990/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#ffb87a] hover:underline transition"
+                    className="text-white/80 hover:underline transition"
                   >
                     Quangitech
                   </a>
