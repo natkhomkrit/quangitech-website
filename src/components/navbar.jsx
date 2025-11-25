@@ -155,7 +155,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <Image
-              src="/logo.png"
+              src="/logo1.png"
               alt="Logo"
               width={scrolled ? 80 : 100}
               height={scrolled ? 40 : 50}
