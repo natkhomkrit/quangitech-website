@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma generate && next build",
+    "build": "npm install --legacy-peer-deps && npm exec prisma@4.16.1 -- generate && next build",
     "start": "next start",
     "postinstall": "node ./scripts/copy-tinymce.js"
   },
@@ -48,12 +48,12 @@
     "sonner": "^2.0.7",
     "swiper": "^12.0.1",
     "tailwind-merge": "^3.3.1",
-    "tinymce": "^8.2.2"
+    "tinymce": "^8.2.2",
+    "@prisma/client": "4.16.1"
   },
   "devDependencies": {
-    "@prisma/client": "^4.16.1",
     "@tailwindcss/postcss": "^4",
-    "prisma": "^4.16.1",
+    "prisma": "4.16.1",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.7"
   },
