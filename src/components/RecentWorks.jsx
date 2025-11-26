@@ -74,9 +74,9 @@ export default function RecentWorks() {
             <div className="max-w-[1400px] mx-auto px-4">
 
                 <div className="text-center mb-8">
-                    <h3 className="text-2xl md:text-3xl font-medium text-gray-800 tracking-[0.1em] uppercase relative inline-block">
-                        ผลงานที่แนะนำ
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-22 h-1 bg-orange-400 rounded-full"></span>
+                    <h3 className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em] relative inline-block">
+                        Featured Works
+                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-30 h-1 bg-orange-400 rounded-full"></span>
                     </h3>
                     <p className="mt-4 text-sm md:text-base text-gray-600 leading-[1.8] font-light max-w-2xl mx-auto mb-4">
                         ตัวอย่างผลงานที่ช่วยสร้างความน่าเชื่อถือให้กับธุรกิจ พร้อมออกแบบมาเพื่อเพิ่มการเข้าถึงกลุ่มลูกค้าบนโลกออนไลน์ได้มากยิ่งขึ้น
@@ -112,18 +112,18 @@ export default function RecentWorks() {
                             <SwiperSlide key={item.id}>
                                 <div className="relative group rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-white">
                                     <Link
-                                            href={`/portfolio/${item.slug}`}
+                                        href={`/portfolio/${item.slug}`}
                                     >
-                                    <div className="relative overflow-hidden">
-                                        <img
-                                            src={item.thumbnail || item.img}
-                                            alt={item.title}
-                                            className="w-full h-56 sm:h-60 object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-                                    </div>
+                                        <div className="relative overflow-hidden">
+                                            <img
+                                                src={item.thumbnail || item.img}
+                                                alt={item.title}
+                                                className="w-full h-56 sm:h-60 object-cover transition-transform duration-500 group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                                        </div>
 
-                                    {/* <div className="flex justify-end items-end absolute inset-0 p-6">
+                                        {/* <div className="flex justify-end items-end absolute inset-0 p-6">
                                         <Link
                                             href={`/portfolio/${item.slug}`}
                                             className="inline-flex items-center gap-1 text-sm font-medium text-white bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 rounded-full hover:bg-white/30 hover:border-white/50 transition-all duration-200 group/btn"

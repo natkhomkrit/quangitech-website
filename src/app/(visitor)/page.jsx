@@ -9,6 +9,7 @@ import Footer from "@/components/ui/footer";
 import { useCounter } from "@/hooks/useCounter";
 import {
   FaRocket,
+  FaAws,
   FaUsers,
   FaShieldAlt,
   FaHeadset,
@@ -17,6 +18,25 @@ import {
   FaHandshake,
 
 } from "react-icons/fa";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiNodedotjs,
+  SiPhp,
+  SiLaravel,
+  SiMysql,
+  SiPostgresql,
+  SiMongodb,
+  SiDocker,
+  SiGit,
+  SiPython,
+  SiFirebase,
+  SiNginx,
+  SiVercel,
+  SiTypescript,
+  SiJavascript
+} from "react-icons/si";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
@@ -123,6 +143,28 @@ export default function Page() {
     "/img/client8.png",
   ];
 
+  // Technologies data
+  const technologies = [
+    { icon: SiReact, name: "React", color: "#61DAFB" },
+    { icon: SiNextdotjs, name: "Next.js", color: "#000000" },
+    { icon: SiTailwindcss, name: "Tailwind", color: "#06B6D4" },
+    { icon: SiTypescript, name: "TypeScript", color: "#3178C6" },
+    { icon: SiJavascript, name: "JavaScript", color: "#F7DF1E" },
+    { icon: SiNodedotjs, name: "Node.js", color: "#339933" },
+    { icon: SiPhp, name: "PHP", color: "#777BB4" },
+    { icon: SiLaravel, name: "Laravel", color: "#FF2D20" },
+    { icon: SiMysql, name: "MySQL", color: "#4479A1" },
+    { icon: SiPostgresql, name: "PostgreSQL", color: "#4169E1" },
+    { icon: SiMongodb, name: "MongoDB", color: "#47A248" },
+    { icon: SiDocker, name: "Docker", color: "#2496ED" },
+    { icon: FaAws, name: "AWS", color: "#232F3E" },
+    { icon: SiFirebase, name: "Firebase", color: "#FFCA28" },
+    { icon: SiGit, name: "Git", color: "#F05032" },
+    { icon: SiVercel, name: "Vercel", color: "#000000" },
+    { icon: SiNginx, name: "Nginx", color: "#009639" },
+    { icon: SiPython, name: "Python", color: "#3776AB" },
+  ];
+
   // Features section data
   const features = [
     {
@@ -152,54 +194,93 @@ export default function Page() {
 
   return (
     <div>
-      <section className="relative w-full min-h-[700px] flex items-center">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/welcome_bg.jpg')" }}
-        ></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a5c48]/95 via-[#216452]/90 to-[#1a5c48]/95"></div>
-        <div className="relative z-10 max-w-[1200px] mx-auto flex flex-col items-center justify-center px-6 md:px-12 text-center">
+      <section className="relative w-full min-h-[500px] md:min-h-[650px] flex items-center overflow-hidden bg-white py-24 md:py-28">
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-orange-50/40 via-white to-white"></div>
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-orange-100/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-gray-50 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 pointer-events-none"></div>
+
+        <div className="relative z-10 w-full max-w-[1200px] mx-auto flex flex-col items-center justify-center px-4 sm:px-6 md:px-12 text-center">
           <div
-            className="flex-1 space-y-6 text-center"
+            className="flex-1 w-full space-y-8 text-center"
             data-aos="fade-up"
             data-aos-duration="1000"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-[50px] font-extrabold text-white tracking-[0.2em] uppercase leading-tight">
-              Digital & IT <span className="bg-gradient-to-r from-[#ffb87a] to-[#e89f5d] bg-clip-text text-transparent animate-gradient">
+            {/* Main Heading */}
+            <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-[64px] font-extrabold text-gray-900 tracking-normal uppercase leading-[1.2] md:leading-[1.1] break-words">
+              Digital & IT{" "}
+              <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent block sm:inline">
                 Solutions
               </span>
-              <br /> Partner for Your Growth
+              <br className="hidden sm:block" />
+              <span className="text-gray-600 font-light text-lg sm:text-2xl md:text-3xl lg:text-4xl mt-2 block">
+                Partner for Your Growth
+              </span>
             </h1>
-            <p className="text-sm md:text-base text-white leading-[1.8] font-light max-w-2xl mx-auto">
-              เราเป็นพันธมิตรด้านดิจิทัลและไอที ที่พร้อมวางแผน พัฒนา และดูแล
-              ระบบครบวงจร เพื่อช่วยขับเคลื่อนธุรกิจของคุณในยุคดิจิทัล
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mt-6 justify-center">
-              <Link href="/company">
-                <Button
-                  className="bg-[#ffb87a] text-black hover:bg-[#e89f5d] font-medium rounded-full px-8 py-4 shadow-lg hover:shadow-xl transition-all"
-                  data-aos="fade-up"
-                  data-aos-delay="200"
+
+            {/* Description */}
+            <div className="max-w-3xl mx-auto space-y-6 w-full">
+              <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed font-light px-2 md:px-0">
+                เราเป็นพันธมิตรด้านดิจิทัลและไอที ที่พร้อมวางแผน พัฒนา และดูแล
+                ระบบครบวงจร เพื่อช่วยขับเคลื่อนธุรกิจของคุณในยุคดิจิทัล
+              </p>
+
+              <div className="flex justify-center md:pt-8">
+                <Link href="/contact">
+                  <Button
+                    className="bg-gray-900 text-white hover:bg-black font-medium rounded-full px-8 py-4 md:px-10 md:py-6 text-base md:text-lg shadow-lg shadow-gray-400/50 hover:shadow-xl transition-all transform hover:-translate-y-1"
+                  >
+                    Free Consult
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Technologies Slider Section */}
+              <div className="pt-2 md:pt-10 w-full max-w-[100vw] overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+                <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-8 uppercase tracking-[0.15em] font-medium">
+                  Powered by Modern Technologies
+                </p>
+
+                <Swiper
+                  modules={[Autoplay]}
+                  spaceBetween={20}
+                  slidesPerView={3}
+                  loop={true}
+                  speed={2000}
+                  autoplay={{
+                    delay: 0,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: false,
+                  }}
+                  breakpoints={{
+                    320: { slidesPerView: 4, spaceBetween: 15 },
+                    480: { slidesPerView: 5, spaceBetween: 20 },
+                    640: { slidesPerView: 6, spaceBetween: 30 },
+                    768: { slidesPerView: 7, spaceBetween: 40 },
+                    1024: { slidesPerView: 8, spaceBetween: 40 },
+                  }}
+                  className="w-full max-w-6xl mx-auto px-2 md:px-6 py-4"
                 >
-                  ข้อมูลองค์กร
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button
-                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-medium rounded-full px-8 py-4"
-                  data-aos="fade-up"
-                  data-aos-delay="400"
-                >
-                  ปรึกษาฟรี
-                </Button>
-              </Link>
+                  {technologies.map((tech, idx) => (
+                    <SwiperSlide key={idx} className="!flex items-center justify-center">
+                      <div className="flex flex-col items-center justify-center gap-2 group cursor-pointer p-2">
+                        <tech.icon
+                          className="text-3xl sm:text-4xl md:text-5xl transition-all duration-500 transform group-hover:scale-110"
+                          style={{ color: tech.color }}
+                          title={tech.name}
+                        />
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-start gap-12 py-20 px-6">
+      <section className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-start gap-12 py-2 md:py-12 px-6">
         <div className="flex-1 space-y-6" data-aos="fade-right">
           <div className="inline-flex items-center space-x-3 mb-4">
             <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
@@ -259,7 +340,7 @@ export default function Page() {
             <img
               src="img/default3.png"
               alt="ทีมงานมืออาชีพ"
-              className="w-[500px] h-[450px] object-contain"
+              className="w-full max-w-[500px] h-auto object-contain mx-auto"
               onError={(e) => {
                 e.target.src =
                   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDYwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZjNmNGY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMjE2NDUyIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiPlRlYW0gSWxsdXN0cmF0aW9uPC90ZXh0Pgo8L3N2Zz4=";
@@ -272,13 +353,14 @@ export default function Page() {
       {/* Services Section */}
       <section className="bg-[#f9fafb] py-20">
         <div className="max-w-[1140px] mx-auto text-center px-6">
-          <h2
-            className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4"
+          <h1
+            className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4"
             data-aos="fade-up"
             data-aos-duration="1000"
           >
-            บริการของ <span className="text-[#ffb87a]">quangitech</span>
-          </h2>
+            บริการของ <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">quangitech</span>
+          </h1>
+          <span className="my-2 w-30 h-1 bg-orange-400 rounded-full"></span>
           <p
             className="text-[#555] max-w-2xl mx-auto mb-12 leading-relaxed"
             data-aos="fade-up"
@@ -327,13 +409,13 @@ export default function Page() {
 
                 <Link href={`/services/${service.slug}`}>
                   <Button
-                    className="relative bg-gradient-to-r from-[#ffb87a] to-[#ff9a56] hover:from-[#ff9a56] hover:to-[#e6935a] 
-                   text-white font-medium rounded-md px-8 py-3 
-                   transform group-hover:scale-105 transition-all duration-300 
-                   shadow-lg shadow-orange-200/40 hover:shadow-ml hover:shadow-orange-200/50
-                   before:absolute before:inset-0 before:rounded-ml before:bg-white/20 before:opacity-0 
-                   hover:before:opacity-100 before:transition-all before:duration-300
-                   overflow-hidden"
+                    className="relative inline-block \
+        bg-gray-900 text-white hover:bg-black \
+        font-medium text-sm \
+        rounded-full px-6 py-2 \
+        shadow-lg shadow-gray-400/50 hover:shadow-xl \
+        transition-all duration-300 transform hover:-translate-y-1 \
+        overflow-hidden group"
                   >
                     <span className="relative z-10 flex items-center gap-2">
                       Learn more
@@ -372,10 +454,10 @@ export default function Page() {
       <section className="bg-white py-20">
         <div className="max-w-[1140px] mx-auto px-6">
           <div className="text-center mb-10 flex flex-col items-center" data-aos="fade-up">
-            <h2 className="text-2xl md:text-3xl font-medium text-gray-800 tracking-[0.1em] uppercase">
-              ข่าวสารและกิจกรรม
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em]">
+              News & Events
             </h2>
-            <span className="my-2 w-24 h-1 bg-orange-400 rounded-full"></span>
+            <span className="my-2 w-30 h-1 bg-orange-400 rounded-full"></span>
             <p className="text-gray-600 max-w-2xl mx-auto">
               ติดตามข่าวสารและกิจกรรมล่าสุดของเรา เพื่อไม่พลาดทุกความเคลื่อนไหว
             </p>
@@ -475,7 +557,7 @@ export default function Page() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-3 gap-6 pt-6" data-aos="fade-up">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6" data-aos="fade-up">
               <div className="text-center" ref={projectRef}>
                 <div className="text-4xl font-bold text-gray-800">{projectCount}+</div>
                 <div className="text-sm text-gray-600">โปรเจกต์สำเร็จ</div>
@@ -495,7 +577,7 @@ export default function Page() {
               <img
                 src="/img/default2.png"
                 alt="ทีมงานมืออาชีพ"
-                className="w-[600px] h-[500px] object-contain"
+                className="w-full max-w-[600px] h-auto object-contain mx-auto"
                 onError={(e) => {
                   e.target.src =
                     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDYwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZjNmNGY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMjE2NDUyIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiPlRlYW0gSWxsdXN0cmF0aW9uPC90ZXh0Pgo8L3N2Zz4=";

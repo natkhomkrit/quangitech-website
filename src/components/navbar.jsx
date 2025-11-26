@@ -21,7 +21,7 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
       {hasChildren ? (
         <>
           <NavigationMenuTrigger
-            className={`${scrolled ? "text-gray-900" : "text-white"}`}
+            className={`text-gray-700 hover:text-orange-500 font-medium transition-colors`}
           >
             {item.name}
           </NavigationMenuTrigger>
@@ -45,8 +45,7 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
         <NavigationMenuLink asChild>
           <Link
             href={item.url || item.href || "#"}
-            className={`transition-colors duration-200 px-4 py-2 rounded-md ${scrolled ? "text-gray-900" : "text-white"
-              }`}
+            className={`transition-colors duration-200 px-4 py-2 rounded-md text-gray-700 hover:text-orange-500 font-medium`}
             onClick={isMobile ? onMenuClick : undefined}
           >
             {item.name}
@@ -94,16 +93,6 @@ export default function Navbar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 10);
-
-      if (currentScrollY > 100) {
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
-          setShowNavbar(false);
-        } else if (currentScrollY < lastScrollY) {
-          setShowNavbar(true);
-        }
-      } else {
-        setShowNavbar(true);
-      }
       setLastScrollY(currentScrollY);
     };
 
@@ -144,8 +133,8 @@ export default function Navbar() {
     <>
       <header
         className={`fixed w-full transition-all duration-300 ease-in-out ${scrolled
-            ? "bg-white/95 backdrop-blur-sm shadow-lg"
-            : "bg-transparent"
+          ? "bg-white/95 backdrop-blur-sm shadow-lg"
+          : "bg-transparent"
           } ${showNavbar ? "translate-y-0" : "-translate-y-full"} z-50`}
       >
         <div
@@ -178,10 +167,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className={`md:hidden p-2 rounded-md transition-colors ${scrolled
-                ? "text-gray-700 hover:bg-gray-100"
-                : "text-white hover:bg-white/20"
-              }`}
+            className={`md:hidden p-2 rounded-md transition-colors text-gray-700 hover:bg-gray-100`}
             aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -191,8 +177,8 @@ export default function Navbar() {
         {/* Mobile Navigation */}
         <div
           className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen
-              ? "max-h-screen opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden"
+            ? "max-h-screen opacity-100"
+            : "max-h-0 opacity-0 overflow-hidden"
             } bg-white shadow-lg border-t border-gray-200`}
         >
           <div className="px-4 py-4 space-y-2">
