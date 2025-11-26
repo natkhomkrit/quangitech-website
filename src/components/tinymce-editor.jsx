@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 
 // load tinymce skins (important for Next.js)
 import "tinymce/skins/ui/oxide/skin.min.css";
-import "tinymce/skins/content/default/content.min.css";
+
 
 export default function TinyMCEEditor({ content, onChange }) {
   const editorId = "tinymce-editor";
@@ -22,15 +22,15 @@ export default function TinyMCEEditor({ content, onChange }) {
         const tinymceModule = await import("tinymce");
         const tinymce = tinymceModule.default || tinymceModule;
 
-              // Ensure tinymce knows where to fetch static assets (skins, models, plugins that load resources)
-              try {
-                if (tinymce && typeof tinymce.baseURL === 'string') {
-                  tinymce.baseURL = '/tinymce';
-                } else if (tinymce) {
-                  // some builds expose setBaseURL
-                  try { tinymce.baseURL = '/tinymce'; } catch (e) { /* ignore */ }
-                }
-              } catch (e) {}
+        // Ensure tinymce knows where to fetch static assets (skins, models, plugins that load resources)
+        try {
+          if (tinymce && typeof tinymce.baseURL === 'string') {
+            tinymce.baseURL = '/tinymce';
+          } else if (tinymce) {
+            // some builds expose setBaseURL
+            try { tinymce.baseURL = '/tinymce'; } catch (e) { /* ignore */ }
+          }
+        } catch (e) { }
 
         await import("tinymce/icons/default");
         await import("tinymce/themes/silver");
@@ -74,27 +74,27 @@ export default function TinyMCEEditor({ content, onChange }) {
           images_upload_credentials: false,
 
           setup: (editor) => {
-                  editor.on("init", () => {
-                    try {
-                      if (content) editor.setContent(content);
-                    } catch (e) {
-                      console.error("TinyMCE setContent error:", e);
-                    }
-                  });
+            editor.on("init", () => {
+              try {
+                if (content) editor.setContent(content);
+              } catch (e) {
+                console.error("TinyMCE setContent error:", e);
+              }
+            });
 
-                  const reportChange = () => {
-                    try {
-                      if (!editor || typeof editor.getContent !== "function") return;
-                      const html = editor.getContent();
-                      if (typeof onChange === "function") onChange(html);
-                    } catch (e) {
-                      console.error("TinyMCE getContent error:", e);
-                    }
-                  };
+            const reportChange = () => {
+              try {
+                if (!editor || typeof editor.getContent !== "function") return;
+                const html = editor.getContent();
+                if (typeof onChange === "function") onChange(html);
+              } catch (e) {
+                console.error("TinyMCE getContent error:", e);
+              }
+            };
 
-                  editor.on("change", reportChange);
-                  editor.on("input", reportChange);
-                  editor.on("keyup", reportChange);
+            editor.on("change", reportChange);
+            editor.on("input", reportChange);
+            editor.on("keyup", reportChange);
           },
         });
       } catch (err) {
