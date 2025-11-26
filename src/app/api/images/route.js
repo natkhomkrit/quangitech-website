@@ -3,9 +3,9 @@ import { put, del, list } from "@vercel/blob";
 
 export async function GET(req) {
   try {
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    if (!process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN) {
       return NextResponse.json(
-        { error: "Blob storage not configured. Add BLOB_READ_WRITE_TOKEN to Vercel environment variables." },
+        { error: "Blob storage not configured. Add BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN to Vercel environment variables." },
         { status: 500 }
       );
     }
@@ -26,9 +26,9 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    if (!process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN) {
       return NextResponse.json(
-        { error: "Blob storage not configured. Add BLOB_READ_WRITE_TOKEN to Vercel environment variables." },
+        { error: "Blob storage not configured. Add BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN to Vercel environment variables." },
         { status: 500 }
       );
     }
@@ -42,13 +42,15 @@ export async function POST(req) {
     }
 
     const filename = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-    
+
     const blob = await put(filename, file, {
       access: "public",
     });
 
     // Return format for compatibility (Froala expects "link", TinyMCE expects various formats)
-    return NextResponse.json({ link: blob.url });
+    return NextResponse.json({
+      location: blob.url
+    });
   } catch (err) {
     console.error("POST /api/images error:", err);
     return NextResponse.json(
@@ -60,7 +62,7 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   try {
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    if (!process.env.BLOB_READ_WRITE_TOKEN_READ_WRITE_TOKEN) {
       return NextResponse.json(
         { error: "Blob storage not configured" },
         { status: 500 }
