@@ -1,5 +1,4 @@
-import path from "path";
-import { mkdir, writeFile } from "fs/promises";
+import { put } from "@vercel/blob";
 import { verifyToken } from "@/lib/jwt";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -111,13 +110,11 @@ export async function PUT(req, { params }) {
   const thumbnailFile = formData.get("thumbnail");
 
   if (thumbnailFile instanceof File) {
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-    const buffer = Buffer.from(await thumbnailFile.arrayBuffer());
     const filename = `${Date.now()}-${thumbnailFile.name.replace(/\s+/g, "-")}`;
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-    thumbnailPath = `/uploads/${filename}`;
+    const blob = await put(filename, thumbnailFile, {
+      access: "public",
+    });
+    thumbnailPath = blob.url;
   } else if (typeof thumbnailFile === "string") {
     thumbnailPath = thumbnailFile;
   }
