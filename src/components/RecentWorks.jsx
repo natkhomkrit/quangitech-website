@@ -70,7 +70,7 @@ export default function RecentWorks() {
     const displayData = portfolios;
 
     return (
-        <div className="bg-gray-100 py-16">
+        <div className="bg-gray-100 py-8">
             <div className="max-w-[1400px] mx-auto px-4">
 
                 <div className="text-center mb-8">

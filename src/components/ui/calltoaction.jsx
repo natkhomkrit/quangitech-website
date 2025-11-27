@@ -2,7 +2,7 @@ import React from "react";
 import GradientButton from "./GradientButton";
 export default function CallToAction() {
     return (
-        <section className="relative py-24 bg-gradient-to-b from-white to-orange-50/30 overflow-hidden">
+        <section className="relative py-24 pb-8 bg-gradient-to-b from-white to-orange-50/30 overflow-hidden">
             <div className="relative max-w-4xl mx-auto text-center px-6">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] relative inline-block mb-6">
                     Ready to get startde with us?

@@ -583,7 +583,7 @@ export default function Page() {
         </div>
       </section>
       <CallToAction />
-      <section className="bg-white py-16 relative overflow-hidden">
+      <section className="bg-white py-16 pt-8 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <span className="text-sm font-semibold text-gray-400 tracking-[0.25em] uppercase">
