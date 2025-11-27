@@ -2,8 +2,8 @@ import React from "react";
 import GradientButton from "./GradientButton";
 export default function CallToAction() {
     return (
-        <section className="relative py-24 pb-8 bg-gradient-to-b from-white to-orange-50/30 overflow-hidden">
-            <div className="relative max-w-4xl mx-auto text-center px-6">
+        <section className="relative py-24 pb-8 bg-white overflow-hidden">
+            <div className="max-w-[1400px] mx-auto text-center px-4">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] relative inline-block mb-6">
                     Ready to get startde with us?
                 </h2>
@@ -16,7 +16,7 @@ export default function CallToAction() {
                 <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
                     <GradientButton
                         href="/contact"
-                        className="bg-gray-900 text-white hover:bg-black font-medium rounded-full px-8 py-4 text-lg shadow-lg shadow-gray-400/20 hover:shadow-xl transition-all transform hover:-translate-y-1"
+                        className="bg-gray-900 text-white hover:bg-black font-medium rounded-full px-6 py-4 text-lg shadow-lg shadow-gray-400/20 hover:shadow-xl transition-all transform hover:-translate-y-1"
                     >
                         เริ่มโครงการกับเรา
                     </GradientButton>
