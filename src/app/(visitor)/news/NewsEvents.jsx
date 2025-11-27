@@ -29,6 +29,9 @@ export default function NewsEvents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [homeTitle, setHomeTitle] = useState("");
+  const [pageTitle, setPageTitle] = useState("");
+
   const categoryMap = {
     ข่าว: "News",
     กิจกรรม: "Events",
@@ -71,7 +74,45 @@ export default function NewsEvents() {
       }
     };
 
+    const fetchMenuName = async () => {
+      try {
+        const res = await fetch("/api/menus?name=Navigation Bar");
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data && data.length > 0) {
+          const menuItems = data[0].items || [];
+
+          const findItem = (items, url) => {
+            for (const item of items) {
+              if (item.url === url || item.href === url || item.link === url || item.path === url) {
+                return item;
+              }
+              if (item.children && item.children.length > 0) {
+                const found = findItem(item.children, url);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+
+          const homeItem = findItem(menuItems, "/");
+          if (homeItem) {
+            setHomeTitle(homeItem.title || homeItem.name || "");
+          }
+
+          const newsItem = findItem(menuItems, "/news");
+          if (newsItem) {
+            setPageTitle(newsItem.title || newsItem.name || "");
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching menu name:", err);
+      }
+    };
+
     fetchItems();
+    fetchMenuName();
 
     return () => {
       mounted = false;
@@ -96,10 +137,10 @@ export default function NewsEvents() {
         </div>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:text-gray-800">
-            หน้าหลัก
+            {homeTitle}
           </Link>
           <span className="text-gray-400">/</span>
-          <span className="text-gray-800">ข่าวสารและกิจกรรม</span>
+          <span className="text-gray-800">{pageTitle}</span>
         </nav>
       </div>
 

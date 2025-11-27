@@ -7,11 +7,54 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 export default function Company() {
+    const [pageTitle, setPageTitle] = React.useState(" ");
+    const [homeTitle, setHomeTitle] = React.useState(" ");
+
     useEffect(() => {
         AOS.init({
             duration: 1000,
             once: true,
         });
+
+        const fetchMenuName = async () => {
+            try {
+                const res = await fetch("/api/menus?name=Navigation Bar");
+                if (!res.ok) return;
+                const data = await res.json();
+
+                if (data && data.length > 0) {
+                    const menuItems = data[0].items || [];
+
+                    // Helper to find item by url recursively
+                    const findItem = (items, url) => {
+                        for (const item of items) {
+                            if (item.url === url || item.href === url || item.link === url || item.path === url) {
+                                return item;
+                            }
+                            if (item.children && item.children.length > 0) {
+                                const found = findItem(item.children, url);
+                                if (found) return found;
+                            }
+                        }
+                        return null;
+                    };
+
+                    const currentItem = findItem(menuItems, "/company");
+                    if (currentItem) {
+                        setPageTitle(currentItem.title || currentItem.name || " ");
+                    }
+
+                    const homeItem = findItem(menuItems, "/");
+                    if (homeItem) {
+                        setHomeTitle(homeItem.title || homeItem.name || " ");
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching menu name:", err);
+            }
+        };
+
+        fetchMenuName();
     }, []);
 
     return (
@@ -25,9 +68,9 @@ export default function Company() {
                     </h1>
                 </div>
                 <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
-                    <Link href="/" className="hover:text-gray-800">หน้าหลัก</Link>
+                    <Link href="/" className="hover:text-gray-800">{homeTitle}</Link>
                     <span className="text-gray-400">/</span>
-                    <span className="text-gray-800">ข้อมูลองค์กร</span>
+                    <span className="text-gray-800">{pageTitle}</span>
                 </nav>
             </div>
 

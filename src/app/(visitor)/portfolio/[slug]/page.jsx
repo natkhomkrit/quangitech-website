@@ -20,6 +20,9 @@ export default function PortfolioDetail() {
   const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef(null);
 
+  const [homeTitle, setHomeTitle] = useState("");
+  const [portfolioTitle, setPortfolioTitle] = useState("");
+
   useEffect(() => {
     if (!slug) return;
 
@@ -49,7 +52,45 @@ export default function PortfolioDetail() {
       }
     };
 
+    const fetchMenuName = async () => {
+      try {
+        const res = await fetch("/api/menus?name=Navigation Bar");
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data && data.length > 0) {
+          const menuItems = data[0].items || [];
+
+          const findItem = (items, url) => {
+            for (const item of items) {
+              if (item.url === url || item.href === url || item.link === url || item.path === url) {
+                return item;
+              }
+              if (item.children && item.children.length > 0) {
+                const found = findItem(item.children, url);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+
+          const homeItem = findItem(menuItems, "/");
+          if (homeItem) {
+            setHomeTitle(homeItem.title || homeItem.name || "");
+          }
+
+          const portfolioItem = findItem(menuItems, "/portfolio");
+          if (portfolioItem) {
+            setPortfolioTitle(portfolioItem.title || portfolioItem.name || "");
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching menu name:", err);
+      }
+    };
+
     fetchPortfolio();
+    fetchMenuName();
   }, [slug]);
 
   if (loading) {
@@ -82,11 +123,11 @@ export default function PortfolioDetail() {
         </h1>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:text-gray-800">
-            หน้าหลัก
+            {homeTitle}
           </Link>
           <span className="text-gray-400">/</span>
           <Link href="/portfolio" className="hover:text-gray-800">
-            ผลงานของเรา
+            {portfolioTitle}
           </Link>
           <span className="text-gray-400">/</span>
           <span className="text-gray-800">{portfolio.title}</span>

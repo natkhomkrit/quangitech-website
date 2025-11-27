@@ -6,14 +6,7 @@ import Footer from "@/components/ui/footer";
 import { ExternalLink, ChevronDown } from "lucide-react";
 
 export default function Portfolio() {
-  const categories = [
-    "System Development",
-    "Office Supplies",
-    "Data Analysis & Cleaning",
-    "Printing Services",
-    "Computer Training",
-    "Package Programs",
-  ];
+  const [categories, setCategories] = useState([]);
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,6 +17,9 @@ export default function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [homeTitle, setHomeTitle] = useState("");
+  const [pageTitle, setPageTitle] = useState("");
+
   useEffect(() => {
     let mounted = true;
 
@@ -32,17 +28,22 @@ export default function Portfolio() {
       setError(null);
 
       try {
-        const categories = [
-          "System Development",
-          "Office Supplies",
-          "Data Analysis & Cleaning",
-          "Printing Services",
-          "Computer Training",
-          "Package Programs"
-        ];
+        // 1. Fetch Categories
+        const catRes = await fetch("/api/categories");
+        if (!catRes.ok) throw new Error("Failed to fetch categories");
+        const allCategories = await catRes.json();
 
-        // เรียก API พร้อมกันทุก category (เฉพาะ published)
-        const requests = categories.map(cat =>
+        // 2. Filter out unwanted categories
+        const excluded = ["News", "Service", "Events"];
+        const filteredCats = allCategories.filter(
+          (c) => !excluded.includes(c.name)
+        );
+
+        const catNames = filteredCats.map(c => c.name);
+        setCategories(catNames);
+
+        // 3. Fetch posts for each category
+        const requests = catNames.map(cat =>
           fetch(`/api/posts?category=${encodeURIComponent(cat)}&status=published`).then(res => {
             if (!res.ok) throw new Error(`Error fetching ${cat}`);
             return res.json();
@@ -67,7 +68,45 @@ export default function Portfolio() {
       }
     };
 
+    const fetchMenuName = async () => {
+      try {
+        const res = await fetch("/api/menus?name=Navigation Bar");
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data && data.length > 0) {
+          const menuItems = data[0].items || [];
+
+          const findItem = (items, url) => {
+            for (const item of items) {
+              if (item.url === url || item.href === url || item.link === url || item.path === url) {
+                return item;
+              }
+              if (item.children && item.children.length > 0) {
+                const found = findItem(item.children, url);
+                if (found) return found;
+              }
+            }
+            return null;
+          };
+
+          const homeItem = findItem(menuItems, "/");
+          if (homeItem) {
+            setHomeTitle(homeItem.title || homeItem.name || "");
+          }
+
+          const portfolioItem = findItem(menuItems, "/portfolio");
+          if (portfolioItem) {
+            setPageTitle(portfolioItem.title || portfolioItem.name || "");
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching menu name:", err);
+      }
+    };
+
     fetchWorks();
+    fetchMenuName();
 
     return () => {
       mounted = false;
@@ -100,10 +139,10 @@ export default function Portfolio() {
         </div>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:text-gray-800">
-            หน้าหลัก
+            {homeTitle}
           </Link>
           <span className="text-gray-400">/</span>
-          <span className="text-gray-800">ผลงานของเรา</span>
+          <span className="text-gray-800">{pageTitle}</span>
         </nav>
       </div>
 

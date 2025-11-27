@@ -106,6 +106,8 @@ export default function page() {
         },
         body: JSON.stringify({
           fullName: `${firstname} ${lastname}`,
+          firstName: firstname,
+          lastName: lastname,
           username,
           email,
           password,
@@ -392,9 +394,9 @@ export default function page() {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -522,9 +524,8 @@ export default function page() {
                   onChange={(e) => {
                     if (!selectedUser) return;
                     const names = selectedUser.fullName.split(" ");
-                    selectedUser.fullName = `${e.target.value} ${
-                      names[1] || ""
-                    }`; // update first name
+                    selectedUser.fullName = `${e.target.value} ${names[1] || ""
+                      }`; // update first name
                     setSelectedUser({ ...selectedUser }); // trigger state update
                   }}
                   required
@@ -539,9 +540,8 @@ export default function page() {
                   onChange={(e) => {
                     if (!selectedUser) return;
                     const names = selectedUser.fullName.split(" ");
-                    selectedUser.fullName = `${names[0] || ""} ${
-                      e.target.value
-                    }`; // update last name
+                    selectedUser.fullName = `${names[0] || ""} ${e.target.value
+                      }`; // update last name
                     setSelectedUser({ ...selectedUser }); // trigger state update
                   }}
                   required

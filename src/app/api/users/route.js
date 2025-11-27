@@ -60,7 +60,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { fullName, username, email, password, role } = await req.json();
+    const { fullName, username, email, password, role, firstName, lastName } = await req.json();
 
     if (!fullName || !username || !email || !password) {
       return NextResponse.json(
@@ -82,6 +82,8 @@ export async function POST(req) {
     const newUser = await prisma.user.create({
       data: {
         fullName,
+        firstName,
+        lastName,
         username,
         email,
         password: hashedPassword,

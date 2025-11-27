@@ -31,6 +31,9 @@ export default function Contact() {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
+    const [homeTitle, setHomeTitle] = useState("");
+    const [pageTitle, setPageTitle] = useState("");
+
     // ✔ sanitizeInput เวอร์ชันเดียว
     function sanitizeInput(value) {
         return value
@@ -39,6 +42,44 @@ export default function Contact() {
             .replace(/\//g, "")
             .trim();
     }
+
+    const fetchMenuName = async () => {
+        try {
+            const res = await fetch("/api/menus?name=Navigation Bar");
+            if (!res.ok) return;
+            const data = await res.json();
+
+            if (data && data.length > 0) {
+                const menuItems = data[0].items || [];
+
+                const findItem = (items, url) => {
+                    for (const item of items) {
+                        if (item.url === url || item.href === url || item.link === url || item.path === url) {
+                            return item;
+                        }
+                        if (item.children && item.children.length > 0) {
+                            const found = findItem(item.children, url);
+                            if (found) return found;
+                        }
+                    }
+                    return null;
+                };
+
+                const homeItem = findItem(menuItems, "/");
+                if (homeItem) {
+                    setHomeTitle(homeItem.title || homeItem.name || "");
+                }
+
+                const contactItem = findItem(menuItems, "/contact");
+                if (contactItem) {
+                    setPageTitle(contactItem.title || contactItem.name || "");
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching menu name:", err);
+        }
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -102,6 +143,8 @@ export default function Contact() {
         }
     };
 
+    fetchMenuName();
+
     return (
         <div className="bg-gray-50">
 
@@ -115,9 +158,9 @@ export default function Contact() {
                     </h1>
                 </div>
                 <nav className="text-sm font-light text-gray-600 mb-4 flex items-center gap-2">
-                    <Link href="/" className="hover:text-gray-900">หน้าหลัก</Link>
+                    <Link href="/" className="hover:text-gray-900">{homeTitle}</Link>
                     <span className="text-gray-400">/</span>
-                    <span className="text-gray-800">ติดต่อเรา</span>
+                    <span className="text-gray-800">{pageTitle}</span>
                 </nav>
             </div>
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Plus, Menu, UserPlus } from "lucide-react";
+import { FilePlus, Menu, UserPlus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function QuickActions() {
@@ -10,17 +10,23 @@ export default function QuickActions() {
         {
             id: 1,
             label: "App Post",
-            icon: Plus,
+            icon: FilePlus,
             href: "/backoffice/posts/create",
         },
         {
             id: 2,
+            label: "Add Category",
+            icon: Tag,
+            href: "/backoffice/categories",
+        },
+        {
+            id: 3,
             label: "Add Menu",
             icon: Menu,
             href: "/backoffice/menus",
         },
         {
-            id: 3,
+            id: 4,
             label: "Add User",
             icon: UserPlus,
             href: "/backoffice/users",

@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth"; 
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 
@@ -70,6 +70,16 @@ export async function PUT(req, { params }) {
       fullName: body.fullName,
       username: body.username,
       email: body.email,
+      firstName: body.firstName,
+      lastName: body.lastName,
+      phone: body.phone,
+      address: body.address,
+      country: body.country,
+      province: body.province,
+      district: body.district,
+      subDistrict: body.subDistrict,
+      postalCode: body.postalCode,
+      avatarUrl: body.avatarUrl,
     };
 
     if (body.password) {

@@ -58,8 +58,8 @@ export default function AppSidebar() {
   // Posts collapsible open state
   const [isPostsOpen, setIsPostsOpen] = useState(
     pathname?.startsWith("/backoffice/posts") ||
-      pathname?.startsWith("/backoffice/categories") ||
-      pathname?.startsWith("/backoffice/tags")
+    pathname?.startsWith("/backoffice/categories") ||
+    pathname?.startsWith("/backoffice/tags")
   );
 
   useEffect(() => {
@@ -90,11 +90,10 @@ export default function AppSidebar() {
         <div className="flex items-center">
           <img src="/logo.svg" alt="logo" className="size-12" />
           <span
-            className={`text-xl font-bold transition-all duration-300 ${
-              open
+            className={`text-xl font-bold transition-all duration-300 ${open
                 ? "opacity-100 translate-x-0 w-auto block"
                 : "opacity-0 -translate-x-4 w-0 overflow-hidden hidden"
-            }`}
+              }`}
           >
             Dashboard
           </span>
@@ -123,7 +122,7 @@ export default function AppSidebar() {
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       className="flex-1 justify-between"
-                      
+
                     >
                       <Link
                         href={"/backoffice/posts"}
@@ -133,9 +132,8 @@ export default function AppSidebar() {
                         <span>Posts</span>
                       </Link>
                       <ChevronDown
-                        className={`transition-transform duration-200 ${
-                          isPostsOpen ? "rotate-180" : ""
-                        }`}
+                        className={`transition-transform duration-200 ${isPostsOpen ? "rotate-180" : ""
+                          }`}
                       />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -244,7 +242,7 @@ export default function AppSidebar() {
               >
                 {/* Account */}
                 <DropdownMenuItem asChild>
-                  <Link href="/backoffice/account" className="cursor-pointer">
+                  <Link href="/backoffice/settings" className="cursor-pointer">
                     <User2 />
                     <span>Account</span>
                   </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FileText, Trash, User, Menu as MenuIcon, Link as LinkIcon } from "lucide-react";
+import { FileText, Trash, User, Menu as MenuIcon, Link as LinkIcon, Tag } from "lucide-react";
 
 function formatTimeAgo(date) {
   if (!date) return "unknown time";
@@ -70,6 +70,7 @@ export default function RecentActivity() {
               if (t === "user") Icon = User;
               else if (t === "menu") Icon = MenuIcon;
               else if (t === "menuitem" || t === "menu-item" || t === "menu_item") Icon = LinkIcon;
+              else if (t === "category") Icon = Tag;
               else Icon = FileText; // default for posts/others
             }
 
@@ -203,13 +204,14 @@ export default function RecentActivity() {
                         if (t === "user") return "[User]";
                         if (t === "post") return "[Post]";
                         if (t === "menu") return "[Menu]";
+                        if (t === "category") return "[Category]";
                         if (t === "menuitem" || t === "menu-item" || t === "menu_item") return "[Menu Item]";
                         // fallback: infer from metadata
                         if (activity.metadata) {
                           try {
                             if (activity.metadata.menuId && activity.metadata.id) return "[Menu Item]";
                             if (activity.metadata.id && !activity.metadata.menuId) return "[Menu]";
-                          } catch (e) {}
+                          } catch (e) { }
                         }
                         // default
                         return `[${(activity.type || "Post").charAt(0).toUpperCase() + (activity.type || "Post").slice(1)}]`;

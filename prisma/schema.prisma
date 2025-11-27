@@ -16,6 +16,15 @@ model User {
   email     String    @unique
   password  String?
   fullName  String
+  firstName String?
+  lastName  String?
+  phone     String?
+  address   String?
+  country   String?
+  province  String?
+  district  String?
+  subDistrict String?
+  postalCode String?
   avatarUrl String?
 
   isActive  Boolean   @default(true)
@@ -123,5 +132,18 @@ model Activity {
   createdAt DateTime @default(now())
 
   @@map("activities") 
+}
+
+model SiteSettings {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  siteName    String?
+  siteUrl     String?
+  logoUrl     String?
+  description String?
+  seoKeywords String?
+  themeColor  String?  @default("#000000")
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_settings")
 }
 

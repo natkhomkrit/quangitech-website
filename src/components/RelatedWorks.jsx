@@ -23,9 +23,14 @@ export default function RelatedWorks({ categoryId, currentSlug }) {
 
                 const data = await res.json();
 
-                // Filter out the current item
-                const filtered = data.filter(item => item.slug !== currentSlug);
-                setRelatedPortfolios(filtered);
+                if (Array.isArray(data)) {
+                    // Filter out the current item
+                    // Use decodeURIComponent to ensure we match correctly even if URL is encoded
+                    const normalizedCurrentSlug = decodeURIComponent(currentSlug);
+                    const filtered = data.filter(item => item.slug !== normalizedCurrentSlug);
+
+                    setRelatedPortfolios(filtered);
+                }
             } catch (err) {
                 console.error("Error fetching related works:", err);
             } finally {

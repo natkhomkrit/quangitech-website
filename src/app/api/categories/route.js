@@ -37,6 +37,20 @@ export async function POST(req) {
       data: { name, slug, description },
     });
 
+    try {
+      await prisma.activity.create({
+        data: {
+          type: "category",
+          action: "created",
+          title: newCategory.name,
+          userId: session.user.id,
+          metadata: { id: newCategory.id, slug: newCategory.slug },
+        },
+      });
+    } catch (actErr) {
+      console.error("Failed to record category creation activity:", actErr);
+    }
+
     return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {
     console.error("Error in POST /api/categories:", error);
