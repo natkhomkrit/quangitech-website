@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma";
+
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/jwt";
 import { cookies } from "next/headers";
