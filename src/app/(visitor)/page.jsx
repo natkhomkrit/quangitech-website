@@ -16,6 +16,7 @@ import {
   FaMicrochip,
   FaUserTie,
   FaHandshake,
+  FaArrowRight,
 
 } from "react-icons/fa";
 import {
@@ -195,11 +196,6 @@ export default function Page() {
   return (
     <div>
       <section className="relative w-full min-h-[500px] md:min-h-[650px] flex items-center overflow-hidden bg-white py-24 md:py-28">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-orange-50/40 via-white to-white"></div>
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-orange-100/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-gray-50 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 pointer-events-none"></div>
-
         <div className="relative z-10 w-full max-w-[1200px] mx-auto flex flex-col items-center justify-center px-4 sm:px-6 md:px-12 text-center">
           <div
             className="flex-1 w-full space-y-8 text-center"
@@ -226,13 +222,12 @@ export default function Page() {
               </p>
 
               <div className="flex justify-center md:pt-8">
-                <Link href="/contact">
-                  <Button
-                    className="bg-gray-900 text-white hover:bg-black font-medium rounded-full px-8 py-4 md:px-10 md:py-6 text-base md:text-lg shadow-lg shadow-gray-400/50 hover:shadow-xl transition-all transform hover:-translate-y-1"
-                  >
-                    Free Consult
-                  </Button>
-                </Link>
+                <GradientButton
+                  href="/contact"
+                  className="bg-gray-900 text-white hover:bg-black font-medium rounded-full px-6 py-2 md:px-16 md:py-4 text-base md:text-lg shadow-lg shadow-gray-400/50 hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center gap-2"
+                >
+                  Free Consult
+                </GradientButton>
               </div>
 
               {/* Technologies Slider Section */}
@@ -592,7 +587,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <span className="text-sm font-semibold text-gray-400 tracking-[0.25em] uppercase">
-              Clients
+              Trusted by Leading Clients
             </span>
           </div>
           <div className="relative">

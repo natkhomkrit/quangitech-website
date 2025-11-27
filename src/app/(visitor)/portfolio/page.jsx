@@ -144,7 +144,7 @@ export default function Portfolio() {
             className="flex items-center justify-between w-full px-4 py-3 bg-white rounded-lg shadow border border-gray-200"
           >
             <span className="font-medium text-gray-700">
-              {selectedCategory === "All" ? "ทั้งหมด" : selectedCategory}
+              {selectedCategory === "All" ? "All" : selectedCategory}
             </span>
             <ChevronDown
               size={18}
@@ -232,12 +232,12 @@ export default function Portfolio() {
 
                       <div className="flex justify-between items-center mt-2">
                         <span className="text-xs text-gray-500">{dateStr}</span>
-                        {/* <Link
+                        <Link
                           href={`/portfolio/${work.slug}`}
                           className="inline-flex items-center gap-1 text-sm text-gray-700 font-semibold hover:underline"
                         >
                           รายละเอียด <ExternalLink size={14} />
-                        </Link> */}
+                        </Link>
                       </div>
                     </div>
                   </div>

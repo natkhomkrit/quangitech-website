@@ -141,7 +141,7 @@ export default function NewsEvents() {
             className="flex items-center justify-between w-full px-4 py-3 bg-white rounded-lg shadow border border-gray-200"
           >
             <span className="font-medium text-gray-700">
-              {selectedCategory === "All" ? "ทั้งหมด" : selectedCategory}
+              {selectedCategory === "All" ? "All" : selectedCategory}
             </span>
             <ChevronDown
               size={18}
