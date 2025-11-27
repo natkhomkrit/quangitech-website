@@ -109,7 +109,7 @@ export default function NewsEvents() {
           <ul className="space-y-2">
             <li
               className={`px-4 py-2 rounded-lg transition cursor-pointer ${selectedCategory === "All"
-                ? "bg-gray-300 text-gray-700 shadow-md"
+                ? "bg-gray-900 text-white shadow-md"
                 : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
                 }`}
               onClick={() => {
@@ -123,7 +123,7 @@ export default function NewsEvents() {
               <li
                 key={cat}
                 className={`px-4 py-2 rounded-lg transition cursor-pointer ${selectedCategory === cat
-                  ? "bg-gray-300 text-gray-700 shadow-md"
+                  ? "bg-gray-900 text-white shadow-md"
                   : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
                   }`}
                 onClick={() => {
