@@ -16,12 +16,15 @@ export default function Executives() {
   }, []);
 
   return (
-    <div>
-      <div className="relative w-full h-[80px] bg-gradient-to-b from-[#1a5c48]/95 via-[#216452]/90 to-[#1a5c48]/95"></div>
+    <div className="bg-white/50">
+      <div className="relative w-full h-[80px] bg-white shadow-md"></div>
       <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
-        <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4">
-          EXECUTIVE COMMITTEE
-        </h1>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
+          <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
+            EXECUTIVE COMMITTEE
+          </h1>
+        </div>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:text-gray-800">
             หน้าหลัก
@@ -30,7 +33,7 @@ export default function Executives() {
           <span className="text-gray-800">คณะผู้บริหาร</span>
         </nav>
       </div>
-      <div className="relative py-20 bg-gray-50/50">
+      <div className="relative py-20 bg-white/50">
         <div className="max-w-5xl mx-auto px-6 space-y-16">
           <article className="group" data-aos="fade-up">
             <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100/50 hover:shadow-lg transition-all duration-700 overflow-hidden">
@@ -90,14 +93,13 @@ export default function Executives() {
             <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100/50 hover:shadow-lg transition-all duration-700">
               <header className="mb-10">
                 <div className="inline-flex items-center space-x-3 mb-4">
-                  <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-blue-500 rounded-full"></div>
+                  <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
                   <span className="text-xs font-medium text-gray-400 tracking-[0.2em] uppercase">
                     Organization
                   </span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-light text-gray-900 leading-relaxed">
-                  โครงสร้าง
-                  <span className="font-normal text-blue-500">องค์กร</span>
+                  โครงสร้างองค์กร
                 </h2>
               </header>
 
