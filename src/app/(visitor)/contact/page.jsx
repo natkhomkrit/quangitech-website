@@ -143,7 +143,9 @@ export default function Contact() {
         }
     };
 
-    fetchMenuName();
+    useEffect(() => {
+        fetchMenuName();
+    }, []);
 
     return (
         <div className="bg-gray-50">

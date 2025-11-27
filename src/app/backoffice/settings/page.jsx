@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function SiteSettingsPage() {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -93,6 +95,7 @@ export default function SiteSettingsPage() {
       if (!res.ok) throw new Error("Failed to update settings");
 
       toast.success("Settings updated successfully");
+      router.refresh(); // Refresh to apply theme color
     } catch (error) {
       console.error(error);
       toast.error("Failed to update settings");

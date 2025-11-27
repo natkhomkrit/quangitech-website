@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
 import Loading from "../components/loading";
 import BackToTop from "@/components/ui/BackToTop";
+import prisma from "@/lib/prisma";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,10 +25,23 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  let themeStyle = {};
+  try {
+    const settings = await prisma.siteSettings.findFirst();
+    if (settings?.themeColor) {
+      themeStyle = {
+        "--primary": settings.themeColor,
+        "--sidebar-primary": settings.themeColor,
+      };
+    }
+  } catch (error) {
+    console.error("Failed to load theme settings:", error);
+  }
+
   return (
     <html lang="en">
-      <body className={`${kanit.variable} antialiased`}>
+      <body className={`${kanit.variable} antialiased`} style={themeStyle}>
         <Toaster position="top-right" richColors />
         {children}
         <BackToTop />
