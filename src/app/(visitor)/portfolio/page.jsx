@@ -134,7 +134,7 @@ export default function Portfolio() {
         <div className="flex items-center gap-4 mb-4">
           <div className="w-1 h-8 bg-gray-800 rounded-full"></div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
-            Our Completed Projects
+            Completed Projects
           </h1>
         </div>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
