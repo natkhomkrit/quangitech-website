@@ -463,9 +463,106 @@ export default function SiteSettingsPage() {
             </div>
           </TabsContent>
 
-          {/* SEO Settings */}
+          {/* Site Settings */}
           <TabsContent value="site" className="pt-6 px-6">
-            <div className="text-muted-foreground">SEO Settings (Coming Soon)</div>
+            <div className="space-y-6 max-w-2xl">
+              <div className="flex items-center gap-6 p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
+                <div className="relative group">
+                  <div className="w-24 h-24 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center overflow-hidden bg-muted/50">
+                    {formData.logoUrl ? (
+                      <img src={formData.logoUrl} alt="Site Logo" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-xs text-muted-foreground">No Logo</span>
+                    )}
+                  </div>
+                  <label
+                    htmlFor="logo-upload"
+                    className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg cursor-pointer text-white"
+                  >
+                    <Camera size={20} />
+                  </label>
+                  <input
+                    type="file"
+                    id="logo-upload"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      const uploadData = new FormData();
+                      uploadData.append("file", file);
+                      try {
+                        const toastId = toast.loading("Uploading logo...");
+                        const res = await fetch("/api/images", { method: "POST", body: uploadData });
+                        if (!res.ok) throw new Error("Upload failed");
+                        const data = await res.json();
+                        setFormData((prev) => ({ ...prev, logoUrl: data.location }));
+                        toast.dismiss(toastId);
+                        toast.success("Logo uploaded");
+                      } catch (err) {
+                        console.error(err);
+                        toast.error("Failed to upload logo");
+                      }
+                    }}
+                  />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium">Site Logo</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Recommended size: 512x512px. Max file size: 2MB.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSettingsSubmit} className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="siteName">Site Name</Label>
+                    <Input
+                      id="siteName"
+                      name="siteName"
+                      value={formData.siteName || ""}
+                      onChange={handleChange}
+                      placeholder="e.g. Quangitech"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="siteUrl">Site URL</Label>
+                    <Input
+                      id="siteUrl"
+                      name="siteUrl"
+                      value={formData.siteUrl || ""}
+                      onChange={handleChange}
+                      placeholder="e.g. https://www.quangitech.com"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="description">Meta Description</Label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description || ""}
+                      onChange={handleChange}
+                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Brief description of your website for SEO"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="seoKeywords">SEO Keywords</Label>
+                    <Input
+                      id="seoKeywords"
+                      name="seoKeywords"
+                      value={formData.seoKeywords || ""}
+                      onChange={handleChange}
+                      placeholder="e.g. technology, software, innovation (comma separated)"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit">Save Changes</Button>
+                </div>
+              </form>
+            </div>
           </TabsContent>
 
           {/* Appearance Settings */}
@@ -473,18 +570,24 @@ export default function SiteSettingsPage() {
             <form className="max-w-md space-y-4" onSubmit={handleSettingsSubmit}>
               <div className="space-y-2">
                 <Label htmlFor="themeColor">Theme Color</Label>
-                <Input
-                  id="themeColor"
-                  name="themeColor"
-                  type="color"
-                  value={formData.themeColor}
-                  onChange={handleChange}
-                  className="h-10 w-20 p-1"
-                />
-              </div>
-
-              <div className="flex justify-end">
-                <Button type="submit">Save</Button>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="themeColor"
+                    name="themeColor"
+                    type="color"
+                    value={formData.themeColor}
+                    onChange={handleChange}
+                    className="h-10 w-20 p-1"
+                  />
+                  <Button type="submit">Save</Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setFormData({ ...formData, themeColor: "#03172C" })}
+                  >
+                    Reset to Default
+                  </Button>
+                </div>
               </div>
             </form>
           </TabsContent>

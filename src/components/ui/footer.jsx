@@ -26,7 +26,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="bg-gray-900 text-white rounded-[50px] mx-6 mb-6">
+    <footer className="bg-gray-900 w-full h-auto text-white">
       {/* Footer Top */}
       <div className="py-16">
         <div className="max-w-[1140px] mx-auto px-6">

@@ -20,7 +20,16 @@ export async function PUT(req) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const body = await req.json();
+        const { siteName, siteUrl, logoUrl, description, seoKeywords, themeColor } = await req.json();
+
+        const updateData = {
+            siteName,
+            siteUrl,
+            logoUrl,
+            description,
+            seoKeywords,
+            themeColor,
+        };
 
         // Check if settings exist
         const existingSettings = await prisma.siteSettings.findFirst();
@@ -29,11 +38,11 @@ export async function PUT(req) {
         if (existingSettings) {
             settings = await prisma.siteSettings.update({
                 where: { id: existingSettings.id },
-                data: body,
+                data: updateData,
             });
         } else {
             settings = await prisma.siteSettings.create({
-                data: body,
+                data: updateData,
             });
         }
 

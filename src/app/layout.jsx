@@ -33,6 +33,7 @@ export default async function RootLayout({ children }) {
       themeStyle = {
         "--primary": settings.themeColor,
         "--sidebar-primary": settings.themeColor,
+        "--sidebar": settings.themeColor,
       };
     }
   } catch (error) {
