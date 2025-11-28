@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Edit, Loader2, Camera } from "lucide-react";
+import { Edit, Loader2, Camera, ZoomIn, ZoomOut } from "lucide-react";
 import { toast } from "sonner";
+import Cropper from "react-easy-crop";
+import { getCroppedImg } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
 
 export default function SiteSettingsPage() {
   const router = useRouter();
@@ -29,7 +32,6 @@ export default function SiteSettingsPage() {
     logoUrl: "",
     description: "",
     seoKeywords: "",
-    themeColor: "#000000",
   });
 
   // Edit states
@@ -37,6 +39,17 @@ export default function SiteSettingsPage() {
   const [isAddressOpen, setIsAddressOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [editForm, setEditForm] = useState({});
+
+  // Cropping states
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [isCropping, setIsCropping] = useState(false);
+  const [tempImage, setTempImage] = useState(null);
+
+  const onCropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
 
   useEffect(() => {
     fetchUser();
@@ -141,6 +154,31 @@ export default function SiteSettingsPage() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to update profile");
+    }
+  };
+
+  const handleCropSave = async () => {
+    try {
+      const croppedImageBlob = await getCroppedImg(tempImage, croppedAreaPixels);
+      const file = new File([croppedImageBlob], "logo.png", { type: "image/png" });
+
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+
+      const toastId = toast.loading("Uploading logo...");
+      const res = await fetch("/api/images", { method: "POST", body: uploadData });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+
+      setFormData((prev) => ({ ...prev, logoUrl: data.location }));
+      toast.dismiss(toastId);
+      toast.success("Logo uploaded");
+      setIsCropping(false);
+      setTempImage(null);
+      setZoom(1);
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to crop/upload image");
     }
   };
 
@@ -494,25 +532,63 @@ export default function SiteSettingsPage() {
                     id="logo-upload"
                     className="hidden"
                     accept="image/*"
-                    onChange={async (e) => {
+                    onChange={(e) => {
                       const file = e.target.files[0];
                       if (!file) return;
-                      const uploadData = new FormData();
-                      uploadData.append("file", file);
-                      try {
-                        const toastId = toast.loading("Uploading logo...");
-                        const res = await fetch("/api/images", { method: "POST", body: uploadData });
-                        if (!res.ok) throw new Error("Upload failed");
-                        const data = await res.json();
-                        setFormData((prev) => ({ ...prev, logoUrl: data.location }));
-                        toast.dismiss(toastId);
-                        toast.success("Logo uploaded");
-                      } catch (err) {
-                        console.error(err);
-                        toast.error("Failed to upload logo");
-                      }
+                      const reader = new FileReader();
+                      reader.addEventListener("load", () => {
+                        setTempImage(reader.result);
+                        setIsCropping(true);
+                        setZoom(1);
+                      });
+                      reader.readAsDataURL(file);
+                      e.target.value = null;
                     }}
                   />
+
+                  <Dialog open={isCropping} onOpenChange={setIsCropping}>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>Crop Logo</DialogTitle>
+                        <DialogDescription>
+                          Adjust the image to fit the circle.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="relative w-full h-[400px] bg-black/5 rounded-md overflow-hidden">
+                        <Cropper
+                          image={tempImage}
+                          crop={crop}
+                          zoom={zoom}
+                          aspect={1}
+                          onCropChange={setCrop}
+                          onCropComplete={onCropComplete}
+                          onZoomChange={setZoom}
+                          cropShape="round"
+                          showGrid={false}
+                        />
+                      </div>
+                      <div className="flex items-center gap-4 py-2">
+                        <ZoomOut size={16} />
+                        <input
+                          type="range"
+                          value={zoom}
+                          min={1}
+                          max={3}
+                          step={0.1}
+                          aria-labelledby="Zoom"
+                          onChange={(e) => setZoom(Number(e.target.value))}
+                          className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        />
+                        <ZoomIn size={16} />
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsCropping(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={handleCropSave}>Save Logo</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Site Logo</h3>
