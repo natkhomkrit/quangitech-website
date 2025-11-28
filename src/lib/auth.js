@@ -2,7 +2,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "./prisma";
-
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
@@ -10,7 +9,7 @@ export const authOptions = {
   providers: [
     // Google OAuth (only add if env vars are set)
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? [
+      ? (console.log("Initializing Google Provider"), [
         GoogleProvider({
           clientId: process.env.GOOGLE_CLIENT_ID,
           clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -21,9 +20,8 @@ export const authOptions = {
             },
           },
         }),
-      ]
+      ])
       : []),
-
 
     // Credentials (email + password)
     Credentials({
