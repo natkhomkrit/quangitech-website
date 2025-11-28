@@ -247,10 +247,12 @@ export default function Page() {
 
               <div className="flex justify-center md:pt-8">
                 <Button
-                  href="/contact"
+                  asChild
                   className="bg-white text-black hover:bg-white font-medium rounded-full px-6 py-2 md:px-16 md:py-8 text-base md:text-lg shadow-gray-400/50 hover:shadow-md transition-all transform hover:-translate-y-1 flex items-center gap-2"
                 >
-                  Free Consult
+                  <Link href="/contact">
+                    Free Consult
+                  </Link>
                 </Button>
               </div>
 
