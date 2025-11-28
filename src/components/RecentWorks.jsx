@@ -5,7 +5,7 @@ import { ExternalLink } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import Link from "next/link";
-import GradientButton from "@/components/ui/GradientButton";
+import ActionButton from "@/components/ui/ActionButton";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -143,7 +143,7 @@ export default function RecentWorks() {
                 )}
 
                 <div className="flex justify-center mt-10">
-                    <GradientButton href="/portfolio">ดูผลงานทั้งหมด</GradientButton>
+                    <ActionButton href="/portfolio">ดูผลงานทั้งหมด</ActionButton>
                 </div>
             </div>
         </div>

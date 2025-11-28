@@ -283,9 +283,9 @@ export default function categories() {
         </p>
       </div>
       <hr />
-      <div className="flex items-start py-4 gap-6">
+      <div className="flex flex-col md:flex-row items-start py-4 gap-6">
         {/* Form */}
-        <div className="w-96 flex flex-col gap-4">
+        <div className="w-full md:w-96 flex flex-col gap-4">
           <div>
             <Label htmlFor="name" className="text-sm font-medium mb-2 block">
               Name <span className="text-red-500">*</span>
@@ -350,7 +350,7 @@ export default function categories() {
         </div>
 
         {/* Table */}
-        <div className="flex-1 rounded-md border">
+        <div className="flex-1 rounded-md border w-full overflow-x-auto">
           <Table>
             <TableHeader className="bg-gray-50">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -360,9 +360,9 @@ export default function categories() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>

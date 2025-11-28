@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
 import RecentWorks from "@/components/RecentWorks";
 import CallToAction from "@/components/ui/calltoaction";
 import Footer from "@/components/ui/footer";
@@ -46,7 +47,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import GradientButton from "@/components/ui/GradientButton";
+import ActionButton from "@/components/ui/ActionButton";
 
 export default function Page() {
   const [services, setServices] = useState([]);
@@ -58,6 +59,7 @@ export default function Page() {
   const [eventsItems, setEventsItems] = useState([]);
   const [eventsLoading, setEventsLoading] = useState(true);
   const [eventsError, setEventsError] = useState("");
+  const [themeColor, setThemeColor] = useState("");
   const { count: projectCount, ref: projectRef } = useCounter(50, 2000);
   const { count: experienceCount, ref: experienceRef } = useCounter(5, 2000);
   const { count: satisfactionCount, ref: satisfactionRef } = useCounter(98, 2000);
@@ -67,6 +69,20 @@ export default function Page() {
       duration: 1000,
       once: true,
     });
+
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        if (data && data.themeColor) {
+          setThemeColor(data.themeColor);
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
+
     const fetchServices = async () => {
       try {
         setServicesLoading(true);
@@ -195,7 +211,15 @@ export default function Page() {
 
   return (
     <div>
-      <section className="relative w-full min-h-[500px] md:min-h-[650px] flex items-center overflow-hidden bg-white py-24 md:py-28">
+      {/* section hero */}
+      <section
+        className="relative w-full min-h-[500px] md:min-h-[650px] flex items-center overflow-hidden bg-gray-900 py-24 md:py-32 pb-14 md:pb-32"
+        style={{ backgroundColor: themeColor || "#111827" }}
+      >
+        <div
+          className="absolute inset-0 bg-gray-900"
+          style={{ backgroundColor: themeColor || "#111827" }}
+        ></div>
         <div className="relative z-10 w-full max-w-[1200px] mx-auto flex flex-col items-center justify-center px-4 sm:px-6 md:px-12 text-center">
           <div
             className="flex-1 w-full space-y-8 text-center"
@@ -203,36 +227,36 @@ export default function Page() {
             data-aos-duration="1000"
           >
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-[64px] font-extrabold text-gray-900 tracking-normal uppercase leading-[1.2] md:leading-[1.1] break-words">
+            <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-[64px] font-extrabold text-white tracking-normal uppercase leading-[1.2] md:leading-[1.1] break-words">
               Digital & IT{" "}
               <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent block sm:inline">
                 Solutions
               </span>
               <br className="hidden sm:block" />
-              <span className="text-gray-600 font-light text-lg sm:text-2xl md:text-3xl lg:text-4xl mt-2 block">
+              <span className="text-white font-light text-lg sm:text-2xl md:text-3xl lg:text-4xl mt-2 block">
                 Partner for Your Growth
               </span>
             </h1>
 
             {/* Description */}
             <div className="max-w-3xl mx-auto space-y-6 w-full">
-              <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed font-light px-2 md:px-0">
+              <p className="text-sm sm:text-base md:text-lg text-white leading-relaxed font-light px-2 md:px-0">
                 เราเป็นพันธมิตรด้านดิจิทัลและไอที ที่พร้อมวางแผน พัฒนา และดูแล
                 ระบบครบวงจร เพื่อช่วยขับเคลื่อนธุรกิจของคุณในยุคดิจิทัล
               </p>
 
               <div className="flex justify-center md:pt-8">
-                <GradientButton
+                <Button
                   href="/contact"
-                  className="bg-gray-900 text-white hover:bg-black font-medium rounded-full px-6 py-2 md:px-16 md:py-4 text-base md:text-lg shadow-lg shadow-gray-400/50 hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center gap-2"
+                  className="bg-white text-black hover:bg-white font-medium rounded-full px-6 py-2 md:px-16 md:py-8 text-base md:text-lg shadow-gray-400/50 hover:shadow-md transition-all transform hover:-translate-y-1 flex items-center gap-2"
                 >
                   Free Consult
-                </GradientButton>
+                </Button>
               </div>
 
               {/* Technologies Slider Section */}
               <div className="pt-2 md:pt-10 w-full max-w-[100vw] overflow-hidden" data-aos="fade-up" data-aos-delay="200">
-                <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-8 uppercase tracking-[0.15em] font-medium">
+                <p className="text-xs sm:text-sm md:text-base text-white mb-8 uppercase tracking-[0.15em] font-medium">
                   Powered by Modern Technologies
                 </p>
 
@@ -275,7 +299,7 @@ export default function Page() {
       </section>
 
       {/* About Section */}
-      <section className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-start gap-12 py-2 md:py-12 px-6">
+      <section className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-start gap-12 py-12 md:py-16 px-6">
         <div className="flex-1 space-y-6" data-aos="fade-right">
           <div className="inline-flex items-center space-x-3 mb-4">
             <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
@@ -401,35 +425,20 @@ export default function Page() {
                 >
                   {service.excerpt}
                 </p>
-
-                <Link href={`/services/${service.slug}`}>
-                  <Button
-                    className="relative inline-block \
+                <ActionButton
+                  href={`/services/${service.slug}`}
+                  className="relative inline-block \
         bg-gray-900 text-white hover:bg-black \
         font-medium text-sm \
         rounded-full px-6 py-2 \
         shadow-lg shadow-gray-400/50 hover:shadow-xl \
         transition-all duration-300 transform hover:-translate-y-1 \
         overflow-hidden group"
-                  >
-                    <span className="relative z-10 flex items-center gap-2">
-                      Learn more
-                      <svg
-                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </span>
-                  </Button>
-                </Link>
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Learn more
+                  </span>
+                </ActionButton>
                 <div
                   className="absolute -top-2 -right-2 w-20 h-20 bg-gradient-to-br from-orange-100/40 to-transparent 
                       rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"
@@ -507,7 +516,7 @@ export default function Page() {
             </div>
           </section>
           <div className="text-center">
-            <GradientButton href="/news">ดูข่าวสารทั้งหมด</GradientButton>
+            <ActionButton href="/news">ดูข่าวสารทั้งหมด</ActionButton>
           </div>
         </div>
       </section>

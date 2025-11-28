@@ -4,14 +4,16 @@ export default function Footer() {
   const [services, setServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [logoUrl, setLogoUrl] = useState("/img/logocontact.png");
+  const [themeColor, setThemeColor] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await fetch("/api/settings");
         const data = await res.json();
-        if (data && data.logoUrl) {
-          setLogoUrl(data.logoUrl);
+        if (data) {
+          if (data.logoUrl) setLogoUrl(data.logoUrl);
+          if (data.themeColor) setThemeColor(data.themeColor);
         }
       } catch (err) {
         console.error("Failed to fetch settings", err);
@@ -40,7 +42,10 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="bg-gray-900 w-full h-auto text-white">
+    <footer
+      className="w-full h-auto text-white"
+      style={{ backgroundColor: themeColor || "#111827" }}
+    >
       {/* Footer Top */}
       <div className="py-16">
         <div className="max-w-[1140px] mx-auto px-6">

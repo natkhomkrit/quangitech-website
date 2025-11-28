@@ -111,11 +111,10 @@ export default function NewsEventDetail() {
 
   return (
     <>
-      <div className="relative w-full h-[80px] bg-white shadow-md"></div>
-      <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
+      <div className="max-w-[1200px] mx-auto px-6 md:px-6 pt-26 md:pt-36 md:pb-4 relative border-b border-gray-300">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
-          <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
+          <div className="w-1 h-8 bg-gray-800 rounded-full"></div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
             {item.title}
           </h1>
         </div>
@@ -137,7 +136,7 @@ export default function NewsEventDetail() {
           <span className="text-sm text-gray-500 mb-3 block">
             {new Date(item.createdAt).toLocaleDateString("th-TH")} | {item.category?.name}
           </span>
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">{item.title}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">{item.title}</h2>
           <p className="text-gray-700 mb-6 text-lg leading-relaxed">{item.excerpt}</p>
 
           {/* Display HTML content */}

@@ -384,7 +384,7 @@ export default function page() {
 
       <hr />
 
-      <div className="overflow-hidden rounded-md border mt-4">
+      <div className="overflow-x-auto rounded-md border mt-4">
         <Table>
           <TableHeader className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (

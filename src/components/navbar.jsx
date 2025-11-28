@@ -21,17 +21,17 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
       {hasChildren ? (
         <>
           <NavigationMenuTrigger
-            className={`text-gray-700 hover:text-gray-900 font-medium transition-colors`}
+            className={`text-gray-200 hover:text-white font-medium transition-colors`}
           >
             {item.name}
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="bg-white shadow-lg rounded-md p-2 border min-w-[200px]">
+          <NavigationMenuContent className="bg-gray-900 shadow-lg rounded-md p-2 border min-w-[200px]">
             <ul className="grid gap-1">
               {item.children.map((child) => (
                 <li key={child.id}>
                   <Link
                     href={child.url || child.href || "#"}
-                    className="block px-4 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="block px-4 py-2 rounded-md text-sm text-gray-900 hover:bg-gray-700 hover:text-white transition-colors"
                     onClick={isMobile ? onMenuClick : undefined}
                   >
                     {child.name}
@@ -45,7 +45,7 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
         <NavigationMenuLink asChild>
           <Link
             href={item.url || item.href || "#"}
-            className={`transition-colors duration-200 px-4 py-2 rounded-md text-gray-700 hover:text-gray-900 font-medium`}
+            className={`transition-colors duration-200 px-4 py-2 rounded-md text-white hover:text-gray-400 font-medium`}
             onClick={isMobile ? onMenuClick : undefined}
           >
             {item.name}
@@ -63,14 +63,16 @@ export default function Navbar() {
   const [lastScrollY, setLastScrollY] = React.useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [logoUrl, setLogoUrl] = React.useState("/logo1.png");
+  const [themeColor, setThemeColor] = React.useState("");
 
   React.useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await fetch("/api/settings");
         const data = await res.json();
-        if (data && data.logoUrl) {
-          setLogoUrl(data.logoUrl);
+        if (data) {
+          if (data.logoUrl) setLogoUrl(data.logoUrl);
+          if (data.themeColor) setThemeColor(data.themeColor);
         }
       } catch (err) {
         console.error("Failed to fetch settings", err);
@@ -108,6 +110,13 @@ export default function Navbar() {
   React.useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setShowNavbar(false);
+      } else {
+        setShowNavbar(true);
+      }
+
       setScrolled(currentScrollY > 10);
       setLastScrollY(currentScrollY);
     };
@@ -148,13 +157,14 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed w-full transition-all duration-300 ease-in-out ${scrolled
-          ? "bg-white/95 backdrop-blur-sm shadow-lg"
-          : "bg-transparent"
-          } ${showNavbar ? "translate-y-0" : "-translate-y-full"} z-50`}
+        className={`fixed top-2 md:top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl transition-all duration-300 ease-in-out 
+    bg-gray-900 backdrop-blur-md shadow-2xl border border-gray-700
+    ${showNavbar ? "translate-y-0 opacity-100" : "-translate-y-[200%] opacity-0"} 
+    z-50 rounded-full`}
+        style={{ backgroundColor: themeColor || "#111827" }}
       >
         <div
-          className={`max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 transition-all duration-300 ${scrolled ? "h-16" : "h-20"
+          className={`max-w-6xl mx-auto flex justify-between items-center px-4 sm:px-6 transition-all duration-300 ${scrolled ? "h-14 md:h-16" : "h-14 md:h-16"
             }`}
         >
           {/* Logo */}
@@ -165,7 +175,7 @@ export default function Navbar() {
               width={scrolled ? 80 : 100}
               height={scrolled ? 40 : 50}
               priority
-              className="transition-all duration-300 w-auto h-auto max-h-14"
+              className="transition-all duration-300 w-auto h-auto max-h-8 md:max-h-14"
             />
           </Link>
 
@@ -183,7 +193,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className={`md:hidden p-2 rounded-md transition-colors text-gray-700 hover:bg-gray-100`}
+            className={`md:hidden p-2 rounded-md transition-colors text-white hover:bg-gray-100`}
             aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

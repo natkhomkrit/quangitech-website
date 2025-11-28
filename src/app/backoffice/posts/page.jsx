@@ -171,9 +171,8 @@ export default function PostsTable() {
 
           return (
             <Badge
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                statusColors[status] || "bg-gray-100 text-gray-800"
-              }`}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status] || "bg-gray-100 text-gray-800"
+                }`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
@@ -237,9 +236,8 @@ export default function PostsTable() {
           return (
             <div className="flex justify-center">
               <Badge
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  badgeColors[isFeatured] || "bg-gray-100 text-gray-800"
-                }`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeColors[isFeatured] || "bg-gray-100 text-gray-800"
+                  }`}
               >
                 {isFeatured}
               </Badge>
@@ -404,7 +402,7 @@ export default function PostsTable() {
         </DropdownMenu>
       </div>
 
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-x-auto rounded-md border">
         <Table>
           <TableHeader className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -414,9 +412,9 @@ export default function PostsTable() {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

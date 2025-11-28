@@ -1,15 +1,34 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 
-export default function GradientButton({
+export default function ActionButton({
     href,
     children,
     className,
     showArrow = true,
+    style,
     ...props
 }) {
+    const [themeColor, setThemeColor] = useState("");
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch("/api/settings");
+                const data = await res.json();
+                if (data && data.themeColor) {
+                    setThemeColor(data.themeColor);
+                }
+            } catch (err) {
+                console.error("Failed to fetch settings", err);
+            }
+        };
+        fetchSettings();
+    }, []);
+
     return (
         <Link href={href} {...props}>
             <div
@@ -23,6 +42,7 @@ export default function GradientButton({
         overflow-hidden group",
                     className
                 )}
+                style={{ backgroundColor: themeColor || "#111827", ...style }}
             >
                 <span className="relative z-10 flex items-center gap-2">
                     {children}

@@ -115,10 +115,10 @@ export default function EditPost() {
 
   return (
     <div className="flex flex-col p-6">
-      <div className="flex items-center mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center mb-6 gap-4">
         <h1 className="text-2xl font-semibold flex-1">Edit Post</h1>
-        <div className="w-80">
-          <div className="flex gap-2 mt-4">
+        <div className="w-full md:w-80">
+          <div className="flex gap-2 mt-0 md:mt-4">
             <Button
               variant="secondary"
               disabled={isLoading}
@@ -141,7 +141,7 @@ export default function EditPost() {
       </div>
 
       {/* ฟอร์มเหมือน create เลย */}
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           {/* Title */}
           <div className="mb-4">
@@ -205,7 +205,7 @@ export default function EditPost() {
         </div>
 
         {/* Sidebar */}
-        <div className="w-80">
+        <div className="w-full md:w-80">
           <div className="mb-4">
             <ThumbnailPicker
               thumbnail={thumbnail}

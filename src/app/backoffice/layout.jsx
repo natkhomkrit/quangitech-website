@@ -22,7 +22,7 @@ export default async function Layout({ children }) {
             </div>
           </header>
 
-          <div className="flex-1 p-4 overflow-y-auto max-w-[calc(100vw-256px)] box-border">
+          <div className="flex-1 p-4 overflow-y-auto w-full">
             {children}
           </div>
         </main>
