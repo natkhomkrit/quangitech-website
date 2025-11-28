@@ -468,19 +468,27 @@ export default function SiteSettingsPage() {
             <div className="space-y-6 max-w-2xl">
               <div className="flex items-center gap-6 p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
                 <div className="relative group">
-                  <div className="w-24 h-24 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center overflow-hidden bg-muted/50">
+                  <div className="min-w-[150px] min-h-[150px] max-w-[300px] rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center overflow-hidden bg-muted/50 p-2 relative">
                     {formData.logoUrl ? (
-                      <img src={formData.logoUrl} alt="Site Logo" className="w-full h-full object-contain" />
+                      <img
+                        src={formData.logoUrl}
+                        alt="Site Logo"
+                        className="max-w-full max-h-[200px] object-contain"
+                      />
                     ) : (
-                      <span className="text-xs text-muted-foreground">No Logo</span>
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <Camera size={32} />
+                        <span className="text-xs">Upload Logo</span>
+                      </div>
                     )}
+
+                    <label
+                      htmlFor="logo-upload"
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white font-medium"
+                    >
+                      Change Logo
+                    </label>
                   </div>
-                  <label
-                    htmlFor="logo-upload"
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg cursor-pointer text-white"
-                  >
-                    <Camera size={20} />
-                  </label>
                   <input
                     type="file"
                     id="logo-upload"
