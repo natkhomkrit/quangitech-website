@@ -74,7 +74,7 @@ export default function RecentWorks() {
             <div className="max-w-[1400px] mx-auto px-4">
 
                 <div className="text-center mb-8">
-                    <h3 className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em] relative inline-block">
+                    <h3 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] relative inline-block uppercase">
                         Featured Works
                         <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-30 h-1 bg-orange-400 rounded-full"></span>
                     </h3>

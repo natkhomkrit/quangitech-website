@@ -62,8 +62,8 @@ export default function Company() {
             <div className="relative w-full h-[80px] bg-white shadow-md"></div>
             <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
                 <div className="flex items-center gap-4 mb-4">
-                    <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
-                    <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
+                    <div className="w-1 h-8 bg-gray-800 rounded-full"></div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
                         Company Information
                     </h1>
                 </div>
@@ -88,8 +88,7 @@ export default function Company() {
                                     </span>
                                 </div>
                                 <h2 className="text-2xl md:text-3xl font-light text-gray-900 leading-relaxed">
-                                    จุดเริ่มต้นของควอนจิเทค
-                                    <span className="font-normal text-orange-500"> ควอนจิเทค</span>
+                                    จุดเริ่มต้นของควอนจิเทค ควอนจิเทค
                                 </h2>
                             </header>
 

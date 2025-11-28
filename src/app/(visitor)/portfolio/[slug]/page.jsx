@@ -118,7 +118,7 @@ export default function PortfolioDetail() {
     <>
       <div className="relative w-full h-[80px] bg-white shadow-md"></div>
       <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
-        <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4">
           {portfolio.title}
         </h1>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">

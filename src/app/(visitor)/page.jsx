@@ -389,7 +389,7 @@ export default function Page() {
                 data-aos-delay={i * 150}
               >
                 <h4
-                  className="text-gray-800 text-xl font-semibold mb-4 group-hover:text-[#ff9a56] 
+                  className="text-gray-800 text-xl font-semibold mb-4 group-hover:text-black
                      transition-colors duration-300 leading-tight"
                 >
                   {service.title}
@@ -449,7 +449,7 @@ export default function Page() {
       <section className="bg-white py-20">
         <div className="max-w-[1140px] mx-auto px-6">
           <div className="text-center mb-10 flex flex-col items-center" data-aos="fade-up">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em]">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] uppercase">
               News & Events
             </h2>
             <span className="my-2 w-30 h-1 bg-orange-400 rounded-full"></span>

@@ -21,7 +21,7 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
       {hasChildren ? (
         <>
           <NavigationMenuTrigger
-            className={`text-gray-700 hover:text-orange-500 font-medium transition-colors`}
+            className={`text-gray-700 hover:text-gray-900 font-medium transition-colors`}
           >
             {item.name}
           </NavigationMenuTrigger>
@@ -45,7 +45,7 @@ function MenuItem({ item, scrolled, isMobile, onMenuClick }) {
         <NavigationMenuLink asChild>
           <Link
             href={item.url || item.href || "#"}
-            className={`transition-colors duration-200 px-4 py-2 rounded-md text-gray-700 hover:text-orange-500 font-medium`}
+            className={`transition-colors duration-200 px-4 py-2 rounded-md text-gray-700 hover:text-gray-900 font-medium`}
             onClick={isMobile ? onMenuClick : undefined}
           >
             {item.name}

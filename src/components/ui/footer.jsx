@@ -69,7 +69,7 @@ export default function Footer() {
                   </span>
                   <a
                     href="tel:9999999999"
-                    className="text-white/50 hover:text-[#ffb87a] transition"
+                    className="text-white/50 hover:text-white transition"
                   >
                     999-999-9999
                   </a>
@@ -85,7 +85,7 @@ export default function Footer() {
                   </p>
                   <a
                     href="mailto:quangitech@gmail.com?subject=ติดต่อจากเว็บไซต์&body=สวัสดีครับ"
-                    className="text-white/50 hover:text-[#ffb87a] transition"
+                    className="text-white/50 hover:text-white transition"
                   >
                     quangitech@gmail.com
                   </a>
@@ -101,7 +101,7 @@ export default function Footer() {
                     href="https://www.facebook.com/p/Quangitech-100063857449990/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-white/50 hover:text-[#ffb87a] transition"
+                    className="text-white/50 hover:text-white transition"
                   >
                     Quangitech
                   </a>
@@ -137,10 +137,10 @@ export default function Footer() {
                               <li key={cidx}>
                                 <a
                                   href={child.url || child.href || child.link || child.path || (child.slug ? `/${child.slug}` : "#")}
-                                  className="flex items-center gap-3 text-white/70 hover:text-[#ffb87a] transition-colors group text-sm"
+                                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group text-sm"
                                 >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-white/50 group-hover:bg-[#ffb87a] transition-colors"></span>
-                                  <span className="uppercase tracking-wide">{child.title || child.name || child.label}</span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-white/50 group-hover:bg-white transition-colors"></span>
+                                  <span className="tracking-wide">{child.title || child.name || child.label}</span>
                                 </a>
                               </li>
                             ))}
@@ -149,10 +149,10 @@ export default function Footer() {
                       ) : (
                         <a
                           href={item.url || item.href || item.link || item.path || (item.slug ? `/${item.slug}` : "#")}
-                          className="flex items-center gap-3 text-white/70 hover:text-[#ffb87a] transition-colors group text-sm"
+                          className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group text-sm"
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-white group-hover:bg-[#ffb87a] transition-colors"></span>
-                          <span className="uppercase tracking-wide">{item.title || item.name}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white group-hover:bg-white transition-colors"></span>
+                          <span className="tracking-wide">{item.title || item.name}</span>
                         </a>
                       )}
                     </li>

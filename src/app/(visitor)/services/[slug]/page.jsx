@@ -109,8 +109,8 @@ export default function ServiceDetail() {
 
       <div className="max-w-[1200px] mx-auto px-2 pt-12 md:pt-12 md:pb-4 relative border-b border-gray-300">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
-          <h1 className="text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
+          <div className="w-1 h-8 bg-gray-800 rounded-full"></div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] uppercase">
             {service.title}
           </h1>
         </div>
