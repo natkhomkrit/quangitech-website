@@ -2,6 +2,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "./prisma";
+
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
@@ -10,32 +11,38 @@ export const authOptions = {
     // Google OAuth (only add if env vars are set)
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
-          GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            authorization: {
-              params: {
-                prompt: "select_account",
-              },
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          authorization: {
+            params: {
+              prompt: "select_account",
             },
-          }),
-        ]
+          },
+        }),
+      ]
       : []),
+
 
     // Credentials (email + password)
     Credentials({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        identifier: { label: "Username or Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.identifier || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: credentials.identifier },
+              { username: credentials.identifier },
+            ],
+          },
         });
 
         if (!user) throw new Error("User not found");

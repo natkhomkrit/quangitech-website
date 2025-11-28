@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { FcGoogle } from "react-icons/fc";
 
 export default function LoginForm() {
@@ -21,13 +22,11 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ identifier: "", password: "" });
+  const [fieldErrors, setFieldErrors] = useState({ identifier: "", password: "" });
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    if (!email) return "Email is required";
-    if (!emailRegex.test(email)) return "Invalid email address";
+  const validateIdentifier = (identifier) => {
+    if (!identifier) return "Username or Email is required";
     return "";
   };
 
@@ -46,18 +45,18 @@ export default function LoginForm() {
   const handleCredentialsSignIn = async (e) => {
     e.preventDefault();
 
-    const emailError = validateEmail(formData.email);
+    const identifierError = validateIdentifier(formData.identifier);
     const passwordError = validatePassword(formData.password);
 
-    setFieldErrors({ email: emailError, password: passwordError });
-    if (emailError || passwordError) return;
+    setFieldErrors({ identifier: identifierError, password: passwordError });
+    if (identifierError || passwordError) return;
 
     setIsLoading(true);
     setError("");
 
     const res = await signIn("credentials", {
       redirect: false,
-      email: formData.email,
+      identifier: formData.identifier,
       password: formData.password,
     });
 
@@ -97,15 +96,15 @@ export default function LoginForm() {
           {/* Credentials Form */}
           <form onSubmit={handleCredentialsSignIn} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="identifier">Username or Email</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                id="identifier"
+                type="text"
+                value={formData.identifier}
+                onChange={(e) => handleInputChange("identifier", e.target.value)}
               />
-              {fieldErrors.email && (
-                <p className="text-sm text-red-500">{fieldErrors.email}</p>
+              {fieldErrors.identifier && (
+                <p className="text-sm text-red-500">{fieldErrors.identifier}</p>
               )}
             </div>
 

@@ -31,6 +31,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -93,7 +100,7 @@ export default function page() {
     setLoading(true);
 
     try {
-      if (!firstname || !lastname || !username || !email || !password) {
+      if (!firstname || !lastname || !username || !email || !password || !role) {
         toast.error("Please fill in all required fields");
         setLoading(false);
         return;
@@ -495,6 +502,18 @@ export default function page() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+            </div>
+            <div>
+              <Label htmlFor="role">Role *</Label>
+              <Select value={role} onValueChange={setRole} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <DialogFooter>
               <Button type="submit" disabled={loading}>

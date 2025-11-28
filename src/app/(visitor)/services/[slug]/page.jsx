@@ -126,7 +126,7 @@ export default function ServiceDetail() {
           <span className="text-sm text-gray-500 mb-3 block">
             {new Date(service.createdAt).toLocaleDateString("th-TH")} | {service.category?.name}
           </span>
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">{service.title}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">{service.title}</h2>
           <p className="text-gray-700 mb-6 text-lg leading-relaxed">{service.excerpt}</p>
 
           {/* Display HTML content */}

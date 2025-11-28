@@ -91,8 +91,8 @@ export default function AppSidebar() {
           <img src="/logo.svg" alt="logo" className="size-12" />
           <span
             className={`text-xl font-bold transition-all duration-300 ${open
-                ? "opacity-100 translate-x-0 w-auto block"
-                : "opacity-0 -translate-x-4 w-0 overflow-hidden hidden"
+              ? "opacity-100 translate-x-0 w-auto block"
+              : "opacity-0 -translate-x-4 w-0 overflow-hidden hidden"
               }`}
           >
             Dashboard
@@ -171,18 +171,20 @@ export default function AppSidebar() {
                 </SidebarMenuItem>
               </Collapsible>
 
-              {/* Users */}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/backoffice/users")}
-                >
-                  <Link href="/backoffice/users">
-                    <User2 />
-                    <span>Users</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {/* Users - Only visible to admin */}
+              {currentUser?.role === "admin" && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive("/backoffice/users")}
+                  >
+                    <Link href="/backoffice/users">
+                      <User2 />
+                      <span>Users</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
 
               <SidebarMenuItem>
                 <SidebarMenuButton
