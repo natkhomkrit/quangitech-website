@@ -18,11 +18,16 @@ export async function PUT(req, { params }) {
     }
 
     const { id: itemId } = params;
-    const { sortOrder } = await req.json();
+    const { sortOrder, name, url } = await req.json();
+
+    const dataToUpdate = {};
+    if (sortOrder !== undefined) dataToUpdate.sortOrder = sortOrder;
+    if (name !== undefined) dataToUpdate.name = name;
+    if (url !== undefined) dataToUpdate.url = url;
 
     const updatedItem = await prisma.menuItem.update({
       where: { id: itemId },
-      data: { sortOrder },
+      data: dataToUpdate,
     });
 
     try {

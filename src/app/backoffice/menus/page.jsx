@@ -10,6 +10,7 @@ import {
   GripVertical,
   Copy,
   Plus,
+  Pencil,
 } from "lucide-react";
 import {
   DndContext,
@@ -26,6 +27,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import AddMenuItemSheet from "@/components/add-menu-item-sheet";
+import EditMenuItemSheet from "@/components/edit-menu-item-sheet";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -75,6 +77,7 @@ function MenuItemCard({
   isChild,
   onDelete,
   onAddSubmenu,
+  onEdit,
   menuId,
 }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -82,6 +85,11 @@ function MenuItemCard({
   const handleDeleteClick = (e) => {
     e.stopPropagation();
     setShowDeleteDialog(true);
+  };
+
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    onEdit(item);
   };
 
   const handleConfirmDelete = () => {
@@ -153,6 +161,15 @@ function MenuItemCard({
             {/* Action buttons */}
             {!isDragging && (
               <div className="flex gap-2 ml-2">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={handleEditClick}
+                  className="h-8 w-8"
+                  title="Edit item"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
                 {/* Add submenu button - only for parent items */}
                 {!isChild && (
                   <Button
@@ -212,6 +229,7 @@ function RenderMenuItem({
   isChild = false,
   onDelete,
   onAddSubmenu,
+  onEdit,
   menuId,
   parentIsDragging = false,
 }) {
@@ -227,6 +245,7 @@ function RenderMenuItem({
         isChild={isChild}
         onDelete={onDelete}
         onAddSubmenu={onAddSubmenu}
+        onEdit={onEdit}
         menuId={menuId}
       />
       {item.children && item.children.length > 0 && (
@@ -246,6 +265,7 @@ function RenderMenuItem({
                 isChild={true}
                 onDelete={onDelete}
                 onAddSubmenu={onAddSubmenu}
+                onEdit={onEdit}
                 menuId={menuId}
                 parentIsDragging={isDragging}
               />
@@ -255,6 +275,10 @@ function RenderMenuItem({
     </div>
   );
 }
+
+
+
+
 
 export default function Menus() {
   const [menus, setMenus] = useState([]);
@@ -267,6 +291,7 @@ export default function Menus() {
     parentItem: null,
     menu: null,
   });
+  const [editSheet, setEditSheet] = useState({ open: false, item: null });
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -362,6 +387,30 @@ export default function Menus() {
     toast.success("Submenu item added!");
   };
 
+  const handleEditItem = (item) => {
+    setEditSheet({ open: true, item });
+  };
+
+  const handleItemUpdated = (updatedItem) => {
+    setMenus((prevMenus) =>
+      prevMenus.map((menu) => {
+        // Helper to recursively update item
+        const updateItems = (items) =>
+          items.map((item) => {
+            if (item.id === updatedItem.id) {
+              return { ...item, ...updatedItem, children: item.children }; // Preserve children
+            }
+            if (item.children) {
+              return { ...item, children: updateItems(item.children) };
+            }
+            return item;
+          });
+
+        return { ...menu, items: updateItems(menu.items) };
+      })
+    );
+  };
+
   const handleToggleMenu = (id) => setOpenMenuId(openMenuId === id ? null : id);
 
   const handleDragStart = (event) => {
@@ -435,11 +484,10 @@ export default function Menus() {
       {menus.map((menu) => (
         <div key={menu.id}>
           <div
-            className={`py-3 px-2 flex items-center border-l-4 border-y cursor-pointer transition-all duration-200 ${
-              openMenuId === menu.id
-                ? "border-l-primary bg-muted/20"
-                : "border-l-white hover:border-l-primary hover:bg-muted/30"
-            }`}
+            className={`py-3 px-2 flex items-center border-l-4 border-y cursor-pointer transition-all duration-200 ${openMenuId === menu.id
+              ? "border-l-primary bg-muted/20"
+              : "border-l-white hover:border-l-primary hover:bg-muted/30"
+              }`}
             onClick={() => handleToggleMenu(menu.id)}
           >
             <div className="flex-1 font-medium">{menu.name}</div>
@@ -451,9 +499,8 @@ export default function Menus() {
               )}
             </div>
             <ChevronDown
-              className={`h-4 w-4 ml-2 transition-transform duration-200 ${
-                openMenuId === menu.id ? "rotate-180" : ""
-              }`}
+              className={`h-4 w-4 ml-2 transition-transform duration-200 ${openMenuId === menu.id ? "rotate-180" : ""
+                }`}
             />
           </div>
 
@@ -496,6 +543,7 @@ export default function Menus() {
                             draggingItemId={draggingItemId}
                             onDelete={handleDeleteMenuItem}
                             onAddSubmenu={handleAddSubmenu}
+                            onEdit={handleEditItem}
                             menuId={menu.id}
                           />
                         </SortableItem>
@@ -510,8 +558,9 @@ export default function Menus() {
                         item={draggingItem}
                         isDragging={false}
                         isChild={false}
-                        onDelete={() => {}}
-                        onAddSubmenu={() => {}}
+                        onDelete={() => { }}
+                        onAddSubmenu={() => { }}
+                        onEdit={() => { }}
                         menuId={menu.id}
                       />
                     </div>
@@ -530,6 +579,14 @@ export default function Menus() {
         onAdd={handleSubmenuAdded}
         open={submenuSheet.open}
         onOpenChange={(open) => setSubmenuSheet({ ...submenuSheet, open })}
+      />
+
+      {/* Edit Item Sheet */}
+      <EditMenuItemSheet
+        item={editSheet.item}
+        open={editSheet.open}
+        onOpenChange={(open) => setEditSheet({ ...editSheet, open })}
+        onUpdate={handleItemUpdated}
       />
     </div>
   );
