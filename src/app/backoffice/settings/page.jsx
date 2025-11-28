@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -7,10 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Edit, Loader2, Camera, ZoomIn, ZoomOut } from "lucide-react";
+import { Edit, Loader2, Camera } from "lucide-react";
 import { toast } from "sonner";
-import Cropper from "react-easy-crop";
-import { getCroppedImg } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -40,22 +37,11 @@ export default function SiteSettingsPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [editForm, setEditForm] = useState({});
 
-  // Cropping states
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [isCropping, setIsCropping] = useState(false);
-  const [tempImage, setTempImage] = useState(null);
-  const [cropType, setCropType] = useState("logo"); // "logo" or "avatar"
-
-  const onCropComplete = (croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  };
-
   useEffect(() => {
     fetchUser();
     fetchSettings();
   }, []);
+
 
   const fetchUser = async () => {
     try {
@@ -158,59 +144,43 @@ export default function SiteSettingsPage() {
     }
   };
 
-  const handleCropSave = async () => {
-    try {
-      const croppedImageBlob = await getCroppedImg(tempImage, croppedAreaPixels);
-      const file = new File([croppedImageBlob], "image.png", { type: "image/png" });
-
-      const uploadData = new FormData();
-      uploadData.append("file", file);
-
-      const toastId = toast.loading("Uploading image...");
-      const res = await fetch("/api/images", { method: "POST", body: uploadData });
-      if (!res.ok) throw new Error("Upload failed");
-      const data = await res.json();
-      const imageUrl = data.location;
-
-      if (cropType === "logo") {
-        setFormData((prev) => ({ ...prev, logoUrl: imageUrl }));
-        toast.success("Logo uploaded");
-      } else if (cropType === "avatar") {
-        // Update user avatar
-        const updateRes = await fetch(`/api/users/${user.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ avatarUrl: imageUrl }),
-        });
-
-        if (!updateRes.ok) throw new Error("Failed to update user profile");
-
-        setUser((prev) => ({ ...prev, avatarUrl: imageUrl }));
-        toast.success("Profile picture updated");
-      }
-
-      toast.dismiss(toastId);
-      setIsCropping(false);
-      setTempImage(null);
-      setZoom(1);
-    } catch (e) {
-      console.error(e);
-      toast.error("Failed to crop/upload image");
-    }
-  };
-
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      setTempImage(reader.result);
-      setCropType("avatar");
-      setIsCropping(true);
-      setZoom(1);
-    });
-    reader.readAsDataURL(file);
-    e.target.value = null;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const uploadToast = toast.loading("Uploading image...");
+
+      const res = await fetch("/api/images", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+      const newAvatarUrl = data.location;
+
+      // Update user avatar
+      const updateRes = await fetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatarUrl: newAvatarUrl }),
+      });
+
+      if (!updateRes.ok) throw new Error("Failed to update user profile");
+
+      setUser((prev) => ({ ...prev, avatarUrl: newAvatarUrl }));
+      toast.dismiss(uploadToast);
+      toast.success("Profile picture updated");
+    } catch (error) {
+      console.error(error);
+      toast.dismiss();
+      toast.error("Failed to upload image");
+    }
   };
 
   if (loading) {
@@ -522,64 +492,25 @@ export default function SiteSettingsPage() {
                     id="logo-upload"
                     className="hidden"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files[0];
                       if (!file) return;
-                      const reader = new FileReader();
-                      reader.addEventListener("load", () => {
-                        setTempImage(reader.result);
-                        setCropType("logo");
-                        setIsCropping(true);
-                        setZoom(1);
-                      });
-                      reader.readAsDataURL(file);
-                      e.target.value = null;
+                      const uploadData = new FormData();
+                      uploadData.append("file", file);
+                      try {
+                        const toastId = toast.loading("Uploading logo...");
+                        const res = await fetch("/api/images", { method: "POST", body: uploadData });
+                        if (!res.ok) throw new Error("Upload failed");
+                        const data = await res.json();
+                        setFormData((prev) => ({ ...prev, logoUrl: data.location }));
+                        toast.dismiss(toastId);
+                        toast.success("Logo uploaded");
+                      } catch (err) {
+                        console.error(err);
+                        toast.error("Failed to upload logo");
+                      }
                     }}
                   />
-
-                  <Dialog open={isCropping} onOpenChange={setIsCropping}>
-                    <DialogContent className="sm:max-w-[600px]">
-                      <DialogHeader>
-                        <DialogTitle>Crop Image</DialogTitle>
-                        <DialogDescription>
-                          Adjust the image to fit the circle.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="relative w-full h-[400px] bg-black/5 rounded-md overflow-hidden">
-                        <Cropper
-                          image={tempImage}
-                          crop={crop}
-                          zoom={zoom}
-                          aspect={1}
-                          onCropChange={setCrop}
-                          onCropComplete={onCropComplete}
-                          onZoomChange={setZoom}
-                          cropShape="round"
-                          showGrid={false}
-                        />
-                      </div>
-                      <div className="flex items-center gap-4 py-2">
-                        <ZoomOut size={16} />
-                        <input
-                          type="range"
-                          value={zoom}
-                          min={1}
-                          max={3}
-                          step={0.1}
-                          aria-labelledby="Zoom"
-                          onChange={(e) => setZoom(Number(e.target.value))}
-                          className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                        />
-                        <ZoomIn size={16} />
-                      </div>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsCropping(false)}>
-                          Cancel
-                        </Button>
-                        <Button onClick={handleCropSave}>Save Image</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Site Logo</h3>
