@@ -49,7 +49,7 @@ export default function Footer() {
             {/* Column 1 */}
             <div>
               <a href="/" className="inline-block mb-6">
-                <img src={logoUrl} alt="Quangitech" className="w-40" />
+                <img src="/img/logocontact.png" alt="Quangitech" className="w-35" />
               </a>
               <ul className="text-sm text-white/50 leading-[1.8] space-y-2">
                 <li className="flex items-start gap-2">

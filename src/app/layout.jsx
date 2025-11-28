@@ -28,12 +28,16 @@ export async function generateMetadata() {
       },
     };
 
+    const iconUrl = settings.logoUrl || "/logo.svg";
+
     return {
       title: settings.siteName || "Quangitech",
       description: settings.description || "Quangitech Website",
       keywords: settings.seoKeywords ? settings.seoKeywords.split(",").map(k => k.trim()) : [],
       icons: {
-        icon: settings.logoUrl || "/logo.svg",
+        icon: iconUrl,
+        shortcut: iconUrl,
+        apple: iconUrl,
       },
     };
   } catch (error) {
@@ -43,6 +47,8 @@ export async function generateMetadata() {
       description: "Quangitech Website",
       icons: {
         icon: "/logo.svg",
+        shortcut: "/logo.svg",
+        apple: "/logo.svg",
       },
     };
   }
