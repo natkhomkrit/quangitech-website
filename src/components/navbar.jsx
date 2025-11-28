@@ -62,6 +62,22 @@ export default function Navbar() {
   const [showNavbar, setShowNavbar] = React.useState(true);
   const [lastScrollY, setLastScrollY] = React.useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [logoUrl, setLogoUrl] = React.useState("/logo1.png");
+
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        if (data && data.logoUrl) {
+          setLogoUrl(data.logoUrl);
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   React.useEffect(() => {
     const fetchMenu = async () => {
@@ -144,7 +160,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <Image
-              src="/logo1.png"
+              src={logoUrl}
               alt="Logo"
               width={scrolled ? 80 : 100}
               height={scrolled ? 40 : 50}

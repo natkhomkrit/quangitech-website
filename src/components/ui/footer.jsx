@@ -3,8 +3,22 @@ import React, { useState, useEffect } from "react";
 export default function Footer() {
   const [services, setServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
+  const [logoUrl, setLogoUrl] = useState("/img/logocontact.png");
 
   useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        if (data && data.logoUrl) {
+          setLogoUrl(data.logoUrl);
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
+
     const fetchFooterMenu = async () => {
       try {
         setServicesLoading(true);
@@ -35,7 +49,7 @@ export default function Footer() {
             {/* Column 1 */}
             <div>
               <a href="/" className="inline-block mb-6">
-                <img src="/img/logocontact.png" alt="Quangitech" className="w-40" />
+                <img src={logoUrl} alt="Quangitech" className="w-40" />
               </a>
               <ul className="text-sm text-white/50 leading-[1.8] space-y-2">
                 <li className="flex items-start gap-2">

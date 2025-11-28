@@ -17,13 +17,36 @@ const kanit = Kanit({
   variable: "--font-kanit",
 });
 
-export const metadata = {
-  title: "Quangitech",
-  description: "Quangitech Website",
-  icons: {
-    icon: "/logo.svg",
-  },
-};
+export async function generateMetadata() {
+  try {
+    const settings = await prisma.siteSettings.findFirst();
+    if (!settings) return {
+      title: "Quangitech",
+      description: "Quangitech Website",
+      icons: {
+        icon: "/logo.svg",
+      },
+    };
+
+    return {
+      title: settings.siteName || "Quangitech",
+      description: settings.description || "Quangitech Website",
+      keywords: settings.seoKeywords ? settings.seoKeywords.split(",").map(k => k.trim()) : [],
+      icons: {
+        icon: settings.logoUrl || "/logo.svg",
+      },
+    };
+  } catch (error) {
+    console.error("Failed to load settings for metadata:", error);
+    return {
+      title: "Quangitech",
+      description: "Quangitech Website",
+      icons: {
+        icon: "/logo.svg",
+      },
+    };
+  }
+}
 
 export default async function RootLayout({ children }) {
   let themeStyle = {};
