@@ -21,7 +21,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-
 export default function SiteSettingsPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -32,6 +31,7 @@ export default function SiteSettingsPage() {
     logoUrl: "",
     description: "",
     seoKeywords: "",
+    themeColor: "#000000",
   });
 
   // Edit states
@@ -52,7 +52,111 @@ export default function SiteSettingsPage() {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  // ... (useEffect and fetch functions remain same) ...
+  useEffect(() => {
+    fetchUser();
+    fetchSettings();
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("/api/users/me");
+      if (!res.ok) throw new Error("Failed to fetch user");
+      const data = await res.json();
+      setUser(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load user profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch("/api/settings");
+      if (!res.ok) throw new Error("Failed to fetch settings");
+      const data = await res.json();
+      if (data) {
+        setFormData((prev) => ({
+          ...prev,
+          ...data,
+          themeColor: data.themeColor || "#000000",
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load settings");
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleSettingsSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error("Failed to update settings");
+
+      toast.success("Settings updated successfully");
+      router.refresh(); // Refresh to apply theme color
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update settings");
+    }
+  };
+
+  const openEdit = (type) => {
+    if (!user) return;
+    setEditForm({
+      fullName: user.fullName || "",
+      firstName: user.firstName || (user.fullName ? user.fullName.split(" ")[0] : ""),
+      lastName: user.lastName || (user.fullName && user.fullName.split(" ").length > 1 ? user.fullName.split(" ").slice(1).join(" ") : ""),
+      email: user.email || "",
+      phone: user.phone || "",
+      address: user.address || "",
+      country: user.country || "",
+      province: user.province || "",
+      district: user.district || "",
+      subDistrict: user.subDistrict || "",
+      postalCode: user.postalCode || "",
+    });
+    if (type === "personal") setIsPersonalOpen(true);
+    if (type === "address") setIsAddressOpen(true);
+    if (type === "profile") setIsProfileOpen(true);
+  };
+
+  const handleUpdateUser = async () => {
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editForm),
+      });
+
+      if (!res.ok) throw new Error("Failed to update user");
+
+      const updatedUser = await res.json();
+      setUser(updatedUser);
+      toast.success("Profile updated successfully");
+      setIsPersonalOpen(false);
+      setIsAddressOpen(false);
+      setIsProfileOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update profile");
+    }
+  };
 
   const handleCropSave = async () => {
     try {
@@ -436,7 +540,7 @@ export default function SiteSettingsPage() {
                   <Dialog open={isCropping} onOpenChange={setIsCropping}>
                     <DialogContent className="sm:max-w-[600px]">
                       <DialogHeader>
-                        <DialogTitle>Crop Logo</DialogTitle>
+                        <DialogTitle>Crop Image</DialogTitle>
                         <DialogDescription>
                           Adjust the image to fit the circle.
                         </DialogDescription>
@@ -472,7 +576,7 @@ export default function SiteSettingsPage() {
                         <Button variant="outline" onClick={() => setIsCropping(false)}>
                           Cancel
                         </Button>
-                        <Button onClick={handleCropSave}>Save Logo</Button>
+                        <Button onClick={handleCropSave}>Save Image</Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
