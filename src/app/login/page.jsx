@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,11 +19,21 @@ import { FcGoogle } from "react-icons/fc";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({ identifier: "", password: "" });
   const [fieldErrors, setFieldErrors] = useState({ identifier: "", password: "" });
+
+  React.useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam === "User not found") {
+      setError("User not found");
+    } else if (errorParam) {
+      setError(errorParam);
+    }
+  }, [searchParams]);
 
   const validateIdentifier = (identifier) => {
     if (!identifier) return "Username or Email is required";

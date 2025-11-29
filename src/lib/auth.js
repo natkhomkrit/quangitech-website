@@ -70,7 +70,7 @@ export const authOptions = {
 
       if (!existingUser) {
         // If user does not exist, deny access
-        throw new Error("No account found with this email");
+        throw new Error("User not found");
       }
 
       // upsert account
@@ -124,6 +124,7 @@ export const authOptions = {
 
   pages: {
     signIn: "/login",
+    error: "/login",
   },
 
   secret: process.env.NEXTAUTH_SECRET,
