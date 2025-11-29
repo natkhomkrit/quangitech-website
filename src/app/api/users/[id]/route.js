@@ -59,11 +59,11 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "admin") {
+    const { id: userId } = await params;
+
+    if (session.user.role !== "admin" && session.user.id !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    const { id: userId } = await params;
     const body = await req.json();
 
     const updateData = {
