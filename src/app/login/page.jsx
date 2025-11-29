@@ -28,12 +28,16 @@ function LoginFormContent() {
 
   React.useEffect(() => {
     const errorParam = searchParams.get("error");
-    if (errorParam === "User not found") {
-      setError("User not found");
-    } else if (errorParam) {
-      setError(errorParam);
+    if (errorParam) {
+      if (errorParam === "User not found" || errorParam === "OAuthCallback") {
+        setError("User not found");
+      } else {
+        setError(errorParam);
+      }
+      // Clear the URL query parameters
+      router.replace("/login");
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const validateIdentifier = (identifier) => {
     if (!identifier) return "Username or Email is required";

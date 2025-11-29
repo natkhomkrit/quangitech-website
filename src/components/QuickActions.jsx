@@ -4,8 +4,12 @@ import React from "react";
 import Link from "next/link";
 import { FilePlus, Menu, UserPlus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 export default function QuickActions() {
+    const { data: session } = useSession();
+    const isAdmin = session?.user?.role === "admin";
+
     const actions = [
         {
             id: 1,
@@ -30,14 +34,17 @@ export default function QuickActions() {
             label: "Add User",
             icon: UserPlus,
             href: "/backoffice/users",
+            adminOnly: true,
         },
     ];
+
+    const filteredActions = actions.filter(action => !action.adminOnly || isAdmin);
 
     return (
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700 tracking-wide mb-4">Urgent action</h3>
             <div className="space-y-2">
-                {actions.map((action) => {
+                {filteredActions.map((action) => {
                     const Icon = action.icon;
                     return (
                         <Button key={action.id} asChild className="w-full justify-start">
