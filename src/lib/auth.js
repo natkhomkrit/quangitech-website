@@ -46,6 +46,9 @@ export const authOptions = {
 
         if (!user) throw new Error("User not found");
 
+        if (user.status === "banned") throw new Error("Your account has been banned");
+        if (user.status === "inactive") throw new Error("Your account is inactive");
+
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
@@ -72,6 +75,9 @@ export const authOptions = {
         // If user does not exist, deny access
         throw new Error("User not found");
       }
+
+      if (existingUser.status === "banned") throw new Error("Your account has been banned");
+      if (existingUser.status === "inactive") throw new Error("Your account is inactive");
 
       // upsert account
       await prisma.account.upsert({

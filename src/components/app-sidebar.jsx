@@ -38,6 +38,7 @@ import {
   Menu,
   Settings,
   Settings2,
+  LayoutTemplate,
 } from "lucide-react";
 
 import {
@@ -194,6 +195,18 @@ export default function AppSidebar() {
                   <Link href="/backoffice/menus">
                     <Menu />
                     <span>Menus</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive("/backoffice/pages")}
+                >
+                  <Link href="/backoffice/pages">
+                    <LayoutTemplate />
+                    <span>Pages</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

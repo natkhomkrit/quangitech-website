@@ -1,10 +1,12 @@
 import { Geist, Geist_Mono, Inter, Kanit } from "next/font/google";
+
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
 import Loading from "../components/loading";
 import BackToTop from "@/components/ui/BackToTop";
 import prisma from "@/lib/prisma";
+import Providers from "@/components/providers";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -72,9 +74,11 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${kanit.variable} antialiased`} style={themeStyle}>
-        <Toaster position="top-right" richColors />
-        {children}
-        <BackToTop />
+        <Providers>
+          <Toaster position="top-right" richColors />
+          {children}
+          <BackToTop />
+        </Providers>
       </body>
     </html>
   );

@@ -26,7 +26,7 @@ model User {
   postalCode String?
   avatarUrl String?
 
-  isActive  Boolean   @default(true)
+  status    String    @default("active")
   role      String    @default("user")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -144,5 +144,28 @@ model SiteSettings {
   updatedAt   DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+model Page {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String    @unique
+  title     String
+  sections  Section[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("pages")
+}
+
+model Section {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  pageId    String   @db.ObjectId
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      String
+  order     Int      @default(0)
+  content   Json
+  isActive  Boolean  @default(true)
+
+  @@map("sections")
 }
 

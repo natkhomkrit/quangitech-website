@@ -162,9 +162,10 @@ export default function page() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fullName: `${firstname} ${lastname}`,
-          username,
-          email,
+          fullName: selectedUser.fullName,
+          username: selectedUser.username,
+          email: selectedUser.email,
+          status: selectedUser.status,
           password: password || undefined,
         }),
       });
@@ -279,19 +280,30 @@ export default function page() {
         cell: ({ row }) => <span>{row.original.email}</span>,
       },
       {
-        accessorKey: "isActive",
-        header: () => <div className="select-none">Status</div>,
+        accessorKey: "role",
+        header: "Role",
         cell: ({ row }) => (
-          <Badge
-            className={
-              row.original.isActive
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }
-          >
-            {row.original.isActive ? "Active" : "Inactive"}
+          <Badge variant="outline" className="capitalize">
+            {row.getValue("role")}
           </Badge>
         ),
+      },
+      {
+        accessorKey: "status",
+        header: () => <div className="select-none">Status</div>,
+        cell: ({ row }) => {
+          const status = row.getValue("status") || "active";
+          const colors = {
+            active: "bg-green-100 text-green-800",
+            inactive: "bg-gray-100 text-gray-800",
+            banned: "bg-red-100 text-red-800",
+          };
+          return (
+            <Badge className={colors[status] || "bg-gray-100"}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </Badge>
+          );
+        },
       },
       {
         accessorKey: "createdAt",
@@ -605,6 +617,24 @@ export default function page() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </div>
+            <div>
+              <Label htmlFor="edit-status">Status</Label>
+              <Select
+                value={selectedUser?.status || "active"}
+                onValueChange={(val) => {
+                  if (selectedUser) setSelectedUser({ ...selectedUser, status: val });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="banned">Banned</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <DialogFooter>
               <Button type="submit" disabled={loading}>

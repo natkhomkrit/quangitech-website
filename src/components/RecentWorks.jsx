@@ -9,7 +9,7 @@ import ActionButton from "@/components/ui/ActionButton";
 import "swiper/css";
 import "swiper/css/pagination";
 
-export default function RecentWorks() {
+export default function RecentWorks({ title, description }) {
     const [portfolios, setPortfolios] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
@@ -75,11 +75,11 @@ export default function RecentWorks() {
 
                 <div className="text-center mb-8">
                     <h3 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] relative inline-block uppercase">
-                        Featured Works
+                        {title || "Featured Works"}
                         <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-30 h-1 bg-orange-400 rounded-full"></span>
                     </h3>
                     <p className="mt-4 text-sm md:text-base text-gray-600 leading-[1.8] font-light max-w-2xl mx-auto mb-4">
-                        ตัวอย่างผลงานที่ช่วยสร้างความน่าเชื่อถือให้กับธุรกิจ พร้อมออกแบบมาเพื่อเพิ่มการเข้าถึงกลุ่มลูกค้าบนโลกออนไลน์ได้มากยิ่งขึ้น
+                        {description || "ตัวอย่างผลงานที่ช่วยสร้างความน่าเชื่อถือให้กับธุรกิจ พร้อมออกแบบมาเพื่อเพิ่มการเข้าถึงกลุ่มลูกค้าบนโลกออนไลน์ได้มากยิ่งขึ้น"}
                     </p>
                 </div>
 

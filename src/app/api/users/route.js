@@ -28,7 +28,7 @@ export async function GET(req) {
         username: true,
         email: true,
         avatarUrl: true,
-        isActive: true,
+        status: true,
         createdAt: true,
         role: true,
       },

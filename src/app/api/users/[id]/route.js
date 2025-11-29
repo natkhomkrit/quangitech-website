@@ -82,6 +82,11 @@ export async function PUT(req, { params }) {
       avatarUrl: body.avatarUrl,
     };
 
+    if (session.user.role === "admin") {
+      if (body.role) updateData.role = body.role;
+      if (body.status) updateData.status = body.status;
+    }
+
     if (body.password) {
       const salt = await bcrypt.genSalt(10);
       updateData.password = await bcrypt.hash(body.password, salt);
