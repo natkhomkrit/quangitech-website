@@ -69,17 +69,8 @@ export const authOptions = {
       });
 
       if (!existingUser) {
-        // สร้าง user ใหม่เลย (role = "user")
-        const usernameFromEmail = user.email.split("@")[0]; // เอาส่วนก่อน @ เป็น username
-        existingUser = await prisma.user.create({
-          data: {
-            username: usernameFromEmail,
-            email: user.email,
-            fullName: user.name || usernameFromEmail,
-            avatarUrl: user.image,
-            role: "user",
-          },
-        });
+        // If user does not exist, deny access
+        throw new Error("No account found with this email");
       }
 
       // upsert account

@@ -9,7 +9,7 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -64,6 +64,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [logoUrl, setLogoUrl] = React.useState("/logo1.png");
   const [themeColor, setThemeColor] = React.useState("");
+  const [expandedItems, setExpandedItems] = React.useState([]);
 
   React.useEffect(() => {
     const fetchSettings = async () => {
@@ -154,6 +155,12 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
+  const toggleExpanded = (id) => {
+    setExpandedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
   return (
     <>
       <header
@@ -193,45 +200,78 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className={`md:hidden p-2 rounded-md transition-colors text-white hover:bg-gray-100`}
+            className={`md:hidden p-2 rounded-md transition-colors text-white hover:bg-gray-100 hover:text-gray-900`}
             aria-label="Toggle mobile menu"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <Menu size={24} />
           </button>
         </div>
+      </header>
 
-        {/* Mobile Navigation */}
-        <div
-          className={`md:hidden transition-all duration-300 ease-in-out ${mobileMenuOpen
-            ? "max-h-screen opacity-100"
-            : "max-h-0 opacity-0 overflow-hidden"
-            } bg-white shadow-lg border-t border-gray-200`}
-        >
-          <div className="px-4 py-4 space-y-2">
+      {/* Mobile Navigation Overlay */}
+      <div
+        className={`fixed inset-0 z-[60] bg-white transition-transform duration-300 ease-in-out md:hidden ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Mobile Header */}
+          <div className="flex justify-between items-center px-6 py-4 border-b">
+            <Link href="/" onClick={closeMobileMenu}>
+              <Image
+                src={logoUrl}
+                alt="Logo"
+                width={100}
+                height={50}
+                className="w-auto h-8"
+              />
+            </Link>
+            <button
+              onClick={closeMobileMenu}
+              className="p-2 rounded-md text-gray-500 hover:bg-gray-100"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Mobile Menu Items */}
+          <div className="flex-1 overflow-y-auto py-4 px-6 space-y-2">
             {menuData.map((item) => (
-              <div key={item.id}>
+              <div key={item.id} className="border-b border-gray-100 last:border-0">
                 {item.children && item.children.length > 0 ? (
                   <div>
-                    <div className="font-medium text-gray-900 py-2 px-4 bg-gray-50 rounded-md">
+                    <button
+                      onClick={() => toggleExpanded(item.id)}
+                      className="flex items-center justify-between w-full py-3 text-lg font-medium text-gray-900"
+                    >
                       {item.name}
-                    </div>
-                    <div className="ml-4 mt-2 space-y-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.id}
-                          href={child.url || child.href || "#"}
-                          className="block py-2 px-4 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                          onClick={closeMobileMenu}
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
+                      {expandedItems.includes(item.id) ? (
+                        <ChevronUp size={20} className="text-gray-500" />
+                      ) : (
+                        <ChevronDown size={20} className="text-gray-500" />
+                      )}
+                    </button>
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ${expandedItems.includes(item.id) ? "max-h-96 opacity-100 mb-2" : "max-h-0 opacity-0"
+                        }`}
+                    >
+                      <div className="pl-4 space-y-2 bg-gray-50 rounded-md py-2">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.id}
+                            href={child.url || child.href || "#"}
+                            className="block py-2 px-4 text-gray-600 hover:text-blue-600 rounded-md transition-colors"
+                            onClick={closeMobileMenu}
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 ) : (
                   <Link
                     href={item.url || item.href || "#"}
-                    className="block py-3 px-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                    className="block py-3 text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors"
                     onClick={closeMobileMenu}
                   >
                     {item.name}
@@ -241,15 +281,10 @@ export default function Navbar() {
             ))}
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={closeMobileMenu}
-        />
-      )}
+      {/* Backdrop (optional, if we want to dim the background when menu slides in partially, but here it is full screen) */}
+      {/* We don't need a backdrop if it's full screen opaque */}
     </>
   );
 }

@@ -40,14 +40,14 @@ export async function DELETE(req, { params }) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (session.user.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
   try {
     const post = await prisma.post.findUnique({ where: { slug } });
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    if (session.user.role !== "admin" && session.user.id !== post.authorId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     await prisma.post.delete({ where: { slug } });
@@ -82,17 +82,33 @@ export async function DELETE(req, { params }) {
 
 export async function PUT(req, { params }) {
   const { slug: postSlug } = await params;
+  console.log(`[PUT Post] Received request for slug: ${postSlug}`);
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (session.user.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const formData = await req.formData();
+
+  // Fetch the post to check ownership
+  const existingPost = await prisma.post.findUnique({
+    where: { slug: postSlug },
+    select: { authorId: true },
+  });
+
+  if (!existingPost) {
+    console.log(`[PUT Post] Post not found for slug: ${postSlug}`);
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  const formData = await req.formData();
+  console.log(`[PUT Post] User ID: ${session.user.id}, Role: ${session.user.role}, Author ID: ${existingPost.authorId}`);
+
+  // Allow both admin and user to edit any post
+  if (session.user.role !== "admin" && session.user.role !== "user") {
+    console.log(`[PUT Post] Access denied.`);
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const title = formData.get("title")?.toString();
   const slug = formData.get("slug")?.toString();

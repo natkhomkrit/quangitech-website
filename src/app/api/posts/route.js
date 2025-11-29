@@ -13,9 +13,10 @@ export async function POST(req) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (session.user.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  // Allow both admin and user to create posts
+  // if (session.user.role !== "admin") {
+  //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  // }
 
   const formData = await req.formData();
 

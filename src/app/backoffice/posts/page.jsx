@@ -139,16 +139,20 @@ export default function PostsTable() {
         ),
       },
       {
-        accessorKey: "slug",
+        accessorFn: (row) => row.category?.name,
+        id: "category",
         header: ({ column }) => (
           <div
             className="flex items-center gap-2 cursor-pointer group"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Slug{" "}
+            Category{" "}
             <ArrowUpDown size={14} className="invisible group-hover:visible" />
           </div>
         ),
+        cell: ({ row }) => {
+          return <span>{row.original.category?.name || "-"}</span>;
+        },
       },
       {
         accessorKey: "status",
