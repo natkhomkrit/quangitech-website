@@ -2,10 +2,11 @@
 
 import React from "react";
 import * as FaIcons from "react-icons/fa";
+import { ImageIcon } from "lucide-react";
 import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function AboutSection({ content }) {
-    const { title, description, features, image } = content || {};
+    const { title, description, features, image, imageMaxWidth, imageWidth, imageHeight } = content || {};
 
     const getIcon = (iconName) => {
         return FaIcons[iconName] || FaIcons.FaCheck;
@@ -53,16 +54,33 @@ export default function AboutSection({ content }) {
                 </div>
             </div>
             <div data-aos="fade-left" className="relative">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100">
-                    <img
-                        src={image || "img/default3.png"}
-                        alt="About Us"
-                        className="w-full max-w-[500px] h-auto object-contain mx-auto"
-                        onError={(e) => {
-                            e.target.src =
-                                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDYwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZjNmNGY2Ii8+Cjx0ZXh0IHg9IjMwMCIgeT0iMjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMjE2NDUyIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iQXJpYWwiPlRlYW0gSWxsdXN0cmF0aW9uPC90ZXh0Pgo8L3N2Zz4=";
-                        }}
-                    />
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[300px]">
+                    {image ? (
+                        <img
+                            src={image}
+                            alt="About Us"
+                            className="w-full h-auto object-contain mx-auto"
+                            style={{
+                                maxWidth: imageMaxWidth || "500px",
+                                width: imageWidth || "100%",
+                                height: imageHeight || "auto"
+                            }}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                            }}
+                        />
+                    ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-400 p-10">
+                            <ImageIcon size={64} className="mb-4 opacity-50" />
+                            <span className="text-sm font-medium">No Image Available</span>
+                        </div>
+                    )}
+                    {/* Fallback for broken image link */}
+                    <div className="hidden flex-col items-center justify-center text-gray-400 p-10 absolute inset-0 bg-gray-50">
+                        <ImageIcon size={64} className="mb-4 opacity-50" />
+                        <span className="text-sm font-medium">Image Not Found</span>
+                    </div>
                 </div>
             </div>
         </section>

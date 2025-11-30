@@ -45,7 +45,7 @@ function FieldEditor({ fieldKey, value, onChange }) {
         .replace(/^./, (str) => str.toUpperCase());
 
     // Detect field type
-    const isImage = /image|img|photo|bg|background|src|url/i.test(fieldKey) && typeof value === "string";
+    const isImage = /image|img|photo|bg|background|src|url/i.test(fieldKey) && !/width|height|size|max|min/i.test(fieldKey) && typeof value === "string";
     const isIcon = /icon/i.test(fieldKey) && typeof value === "string";
     const isLongText = typeof value === "string" && value.length > 50;
     const isBoolean = typeof value === "boolean";

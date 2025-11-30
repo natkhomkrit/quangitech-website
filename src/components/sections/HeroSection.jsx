@@ -50,7 +50,16 @@ export default function HeroSection({ content, themeColor }) {
                     {/* Description */}
                     <div className="max-w-3xl mx-auto space-y-6 w-full">
                         <p className="text-sm sm:text-base md:text-lg text-white leading-relaxed font-light px-2 md:px-0">
-                            {description || ""}
+                            {Array.isArray(description) ? (
+                                description.map((line, index) => (
+                                    <React.Fragment key={index}>
+                                        {line}
+                                        {index < description.length - 1 && <br className="hidden md:block" />}
+                                    </React.Fragment>
+                                ))
+                            ) : (
+                                description || ""
+                            )}
                         </p>
 
                         <div className="flex justify-center md:pt-8">
