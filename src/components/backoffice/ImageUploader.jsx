@@ -52,11 +52,11 @@ export function ImageUploader({ value, onChange, label = "Image" }) {
             <Label>{label}</Label>
             <div className="flex flex-col gap-4">
                 {value ? (
-                    <div className="relative w-full max-w-md aspect-video bg-gray-100 rounded-lg overflow-hidden border">
+                    <div className="relative w-full max-w-xs aspect-video bg-gray-100 rounded-lg overflow-hidden border">
                         <img
                             src={value}
                             alt="Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                         />
                         <Button
                             variant="destructive"
@@ -71,6 +71,7 @@ export function ImageUploader({ value, onChange, label = "Image" }) {
                     <div className="w-full max-w-md aspect-video bg-gray-50 rounded-lg border-2 border-dashed flex flex-col items-center justify-center text-gray-400 gap-2">
                         <ImageIcon className="h-10 w-10 opacity-50" />
                         <span className="text-sm">No image selected</span>
+                        <span className="text-xs opacity-70">Recommended Size: 500 x 450 px</span>
                     </div>
                 )}
 

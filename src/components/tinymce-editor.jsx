@@ -6,8 +6,8 @@ import React, { useEffect, useRef } from "react";
 import "tinymce/skins/ui/oxide/skin.min.css";
 
 
-export default function TinyMCEEditor({ content, onChange }) {
-  const editorId = "tinymce-editor";
+export default function TinyMCEEditor({ content, onChange, id }) {
+  const editorId = id || "tinymce-editor";
 
   useEffect(() => {
     let mounted = true;
@@ -64,7 +64,7 @@ export default function TinyMCEEditor({ content, onChange }) {
           toolbar:
             "undo redo | styles | bold italic underline strikethrough | " +
             "alignleft aligncenter alignright | bullist numlist | " +
-            "link image media table | code",
+            "link image media table | forecolor backcolor | code",
 
           content_style:
             "body { font-family: sans-serif; font-size: 14px; }",

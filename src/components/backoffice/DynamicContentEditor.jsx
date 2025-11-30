@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash, ChevronDown, ChevronUp } from "lucide-react";
 import { ImageUploader } from "./ImageUploader";
 import { IconPicker } from "./IconPicker";
+import TinyMCEEditor from "@/components/tinymce-editor";
 import {
     Collapsible,
     CollapsibleContent,
@@ -87,6 +88,7 @@ function FieldEditor({ fieldKey, value, onChange }) {
                 label={label}
                 value={value}
                 onChange={onChange}
+                fieldKey={fieldKey}
             />
         );
     }
@@ -100,28 +102,59 @@ function FieldEditor({ fieldKey, value, onChange }) {
         );
     }
 
+    const isRichText = /content|body|html/i.test(fieldKey) && typeof value === "string";
+
+    if (isRichText) {
+        return (
+            <div className="space-y-2">
+                <Label htmlFor={fieldKey}>{label}</Label>
+                <div className="border rounded-md overflow-hidden">
+                    <TinyMCEEditor
+                        id={`editor-${fieldKey}-${Math.random().toString(36).substr(2, 9)}`}
+                        content={value || ""}
+                        onChange={onChange}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-1.5">
             <Label htmlFor={fieldKey}>{label}</Label>
-            {isLongText || fieldKey === "description" ? (
-                <Textarea
-                    id={fieldKey}
-                    value={value || ""}
-                    onChange={(e) => onChange(e.target.value)}
-                    className="min-h-[100px]"
-                />
+            {isLongText || fieldKey === "description" || fieldKey === "text" ? (
+                <div className="space-y-2">
+                    <Textarea
+                        id={fieldKey}
+                        value={value || ""}
+                        onChange={(e) => onChange(e.target.value)}
+                        className="min-h-[100px]"
+                    />
+                    {(fieldKey === "description" || fieldKey === "text") && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onChange([value || ""])}
+                            className="text-xs w-full sm:w-auto"
+                        >
+                            Convert to List (Multi-paragraph)
+                        </Button>
+                    )}
+                </div>
             ) : (
                 <Input
                     id={fieldKey}
-                    value={value || ""}
+                    value={value || (fieldKey === "imageWidth" || fieldKey === "imageHeight" ? "0px" : fieldKey === "imageMaxWidth" ? "100%" : "")}
                     onChange={(e) => onChange(e.target.value)}
+                    placeholder={fieldKey === "imageWidth" || fieldKey === "imageHeight" ? "0px" : fieldKey === "imageMaxWidth" ? "100%" : ""}
                 />
             )}
         </div>
     );
 }
 
-function ArrayEditor({ label, value, onChange }) {
+function ArrayEditor({ label, value, onChange, fieldKey }) {
     const [isOpen, setIsOpen] = useState(true);
 
     const addItem = () => {
@@ -179,14 +212,16 @@ function ArrayEditor({ label, value, onChange }) {
                 {value.map((item, index) => (
                     <div key={index} className="relative border p-3 rounded-md bg-white group">
                         <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                            <Button
-                                variant="destructive"
-                                size="icon"
-                                className="h-6 w-6"
-                                onClick={() => removeItem(index)}
-                            >
-                                <Trash className="h-3 w-3" />
-                            </Button>
+                            {!(["description", "features", "images"].includes(fieldKey) && index === 0) && (
+                                <Button
+                                    variant="destructive"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    onClick={() => removeItem(index)}
+                                >
+                                    <Trash className="h-3 w-3" />
+                                </Button>
+                            )}
                         </div>
 
                         {typeof item === "object" && item !== null ? (
@@ -196,7 +231,7 @@ function ArrayEditor({ label, value, onChange }) {
                             />
                         ) : (
                             <FieldEditor
-                                fieldKey={`Item ${index + 1}`}
+                                fieldKey={`${fieldKey}Item${index + 1}`}
                                 value={item}
                                 onChange={(newItem) => updateItem(index, newItem)}
                             />

@@ -36,7 +36,7 @@ export default function CallToActionSection({ content }) {
                         description.map((line, index) => (
                             <React.Fragment key={index}>
                                 {line}
-                                {index < description.length - 1 && <br className="hidden md:block" />}
+                                {index < description.length - 1 && <br />}
                             </React.Fragment>
                         ))
                     ) : (

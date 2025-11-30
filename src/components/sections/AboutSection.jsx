@@ -6,7 +6,7 @@ import { ImageIcon } from "lucide-react";
 import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function AboutSection({ content }) {
-    const { title, description, features, image, imageMaxWidth, imageWidth, imageHeight } = content || {};
+    const { title, description, features, image, imageMaxWidth, imageWidth, imageHeight, subtitle, subTitle } = content || {};
 
     const getIcon = (iconName) => {
         return FaIcons[iconName] || FaIcons.FaCheck;
@@ -17,15 +17,24 @@ export default function AboutSection({ content }) {
             <div className="flex-1 space-y-6" data-aos="fade-right">
                 <div className="inline-flex items-center space-x-3 mb-4">
                     <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
-                    <span className="text-xs font-medium text-gray-400 tracking-[0.2em] uppercase">
-                        About Our Company
+                    <span className="text-xs font-medium text-gray-400 tracking-[0.2em]">
+                        {subtitle || subTitle || ""}
                     </span>
                 </div>
                 <h2 className="text-2xl font-medium text-gray-800 tracking-[0.2em]">
                     <TitleWithHighlight title={title} />
                 </h2>
                 <p className="text-sm md:text-base text-gray-600 leading-[1.8] font-light leading-relaxed">
-                    {description}
+                    {Array.isArray(description) ? (
+                        description.map((line, index) => (
+                            <React.Fragment key={index}>
+                                {line}
+                                {index < description.length - 1 && <br />}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        description
+                    )}
                 </p>
                 <div className="space-y-6">
                     {features?.map((item, i) => {
@@ -45,7 +54,16 @@ export default function AboutSection({ content }) {
                                         {item.title}
                                     </h4>
                                     <p className="text-sm md:text-base font-light text-gray-600 leading-relaxed">
-                                        {item.text}
+                                        {Array.isArray(item.text) ? (
+                                            item.text.map((line, index) => (
+                                                <React.Fragment key={index}>
+                                                    {line}
+                                                    {index < item.text.length - 1 && <br />}
+                                                </React.Fragment>
+                                            ))
+                                        ) : (
+                                            item.text
+                                        )}
                                     </p>
                                 </div>
                             </div>
@@ -54,7 +72,7 @@ export default function AboutSection({ content }) {
                 </div>
             </div>
             <div data-aos="fade-left" className="relative">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[300px]">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[450px] w-full md:w-[500px]">
                     {image ? (
                         <img
                             src={image}
@@ -72,13 +90,14 @@ export default function AboutSection({ content }) {
                         />
                     ) : (
                         <div className="flex flex-col items-center justify-center text-gray-400 p-10">
-                            <ImageIcon size={64} className="mb-4 opacity-50" />
+                            <ImageIcon size={48} className="mb-4 opacity-50" />
                             <span className="text-sm font-medium">No Image Available</span>
+                            <span className="text-xs mt-2 opacity-70">Recommended Size: 500 x 450 px</span>
                         </div>
                     )}
                     {/* Fallback for broken image link */}
                     <div className="hidden flex-col items-center justify-center text-gray-400 p-10 absolute inset-0 bg-gray-50">
-                        <ImageIcon size={64} className="mb-4 opacity-50" />
+                        <ImageIcon size={48} className="mb-4 opacity-50" />
                         <span className="text-sm font-medium">Image Not Found</span>
                     </div>
                 </div>

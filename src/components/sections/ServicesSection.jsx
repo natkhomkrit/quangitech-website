@@ -6,7 +6,7 @@ import ActionButton from "@/components/ui/ActionButton";
 import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function ServicesSection({ content }) {
-    const { title, description } = content || {};
+    const { title, description, subtitle, subTitle } = content || {};
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -32,6 +32,9 @@ export default function ServicesSection({ content }) {
     return (
         <section className="bg-[#f9fafb] py-20">
             <div className="max-w-[1140px] mx-auto text-center px-6">
+                <span className="text-sm font-semibold text-gray-400 tracking-[0.25em] uppercase block mb-2">
+                    {subtitle || subTitle || ""}
+                </span>
                 <h1
                     className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em] mb-4"
                     data-aos="fade-up"
@@ -46,7 +49,16 @@ export default function ServicesSection({ content }) {
                     data-aos-duration="1000"
                     data-aos-delay="200"
                 >
-                    {description}
+                    {Array.isArray(description) ? (
+                        description.map((line, index) => (
+                            <React.Fragment key={index}>
+                                {line}
+                                {index < description.length - 1 && <br />}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        description
+                    )}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {loading && (

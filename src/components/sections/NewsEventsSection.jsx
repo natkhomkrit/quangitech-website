@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ActionButton from "@/components/ui/ActionButton";
 import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
+import { ImageIcon } from "lucide-react";
 
 export default function NewsEventsSection({ content }) {
-    const { title, description, buttonText, buttonLink } = content || {};
+    const { title, description, buttonText, buttonLink, subtitle, subTitle } = content || {};
     const [newsItems, setNewsItems] = useState([]);
     const [eventsItems, setEventsItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,12 +47,24 @@ export default function NewsEventsSection({ content }) {
         <section className="bg-white py-20">
             <div className="max-w-[1140px] mx-auto px-6">
                 <div className="text-center mb-10 flex flex-col items-center" data-aos="fade-up">
+                    <span className="text-sm font-semibold text-gray-400 tracking-[0.25em] uppercase mb-2">
+                        {subtitle || subTitle || ""}
+                    </span>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em]">
                         <TitleWithHighlight title={title} />
                     </h2>
                     <span className="my-2 w-30 h-1 bg-orange-400 rounded-full"></span>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        {description || ""}
+                        {Array.isArray(description) ? (
+                            description.map((line, index) => (
+                                <React.Fragment key={index}>
+                                    {line}
+                                    {index < description.length - 1 && <br />}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            description || ""
+                        )}
                     </p>
                 </div>
                 <section className="max-w-6xl mx-auto px-2">
@@ -73,12 +86,19 @@ export default function NewsEventsSection({ content }) {
             hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-gray-200
             transform hover:-translate-y-1 transition-all duration-300"
                             >
-                                <div className="relative overflow-hidden">
+                                <div className="relative overflow-hidden bg-gray-100 h-52">
                                     <img
-                                        src={item.thumbnail || "/img/default.png"}
+                                        src={item.thumbnail || ""}
                                         alt={item.title}
-                                        className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105"
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
                                     />
+                                    <div className="hidden absolute inset-0 flex items-center justify-center text-gray-400">
+                                        <ImageIcon size={48} className="opacity-50" />
+                                    </div>
                                 </div>
                                 <div className="p-6">
                                     <h3 className="text-xl font-semibold text-gray-800 mb-2 leading-tight">

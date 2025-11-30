@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ImageIcon } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import "swiper/css/pagination";
 import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function RecentWorksSection({ content }) {
-    const { title, description } = content || {};
+    const { title, description, subtitle, subTitle } = content || {};
     const [portfolios, setPortfolios] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
@@ -75,12 +75,24 @@ export default function RecentWorksSection({ content }) {
             <div className="max-w-[1400px] mx-auto px-4">
 
                 <div className="text-center mb-8">
+                    <span className="text-sm font-semibold text-gray-400 tracking-[0.25em] uppercase block mb-2">
+                        {subtitle || subTitle || ""}
+                    </span>
                     <h3 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] relative inline-block">
                         <TitleWithHighlight title={title} />
                         <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-30 h-1 bg-orange-400 rounded-full"></span>
                     </h3>
                     <p className="mt-4 text-sm md:text-base text-gray-600 leading-[1.8] font-light max-w-2xl mx-auto mb-4">
-                        {description || ""}
+                        {Array.isArray(description) ? (
+                            description.map((line, index) => (
+                                <React.Fragment key={index}>
+                                    {line}
+                                    {index < description.length - 1 && <br />}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            description || ""
+                        )}
                     </p>
                 </div>
 
@@ -115,13 +127,20 @@ export default function RecentWorksSection({ content }) {
                                     <Link
                                         href={`/portfolio/${item.slug}`}
                                     >
-                                        <div className="relative overflow-hidden">
+                                        <div className="relative overflow-hidden bg-gray-100 h-56 sm:h-60">
                                             <img
                                                 src={item.thumbnail || item.img}
                                                 alt={item.title}
-                                                className="w-full h-56 sm:h-60 object-cover transition-transform duration-500 group-hover:scale-105"
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                    e.target.nextSibling.style.display = 'flex';
+                                                }}
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                                            <div className="hidden absolute inset-0 flex items-center justify-center text-gray-400">
+                                                <ImageIcon size={48} className="opacity-50" />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 pointer-events-none"></div>
                                         </div>
                                     </Link>
                                 </div>

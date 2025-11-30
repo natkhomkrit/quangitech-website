@@ -39,8 +39,6 @@ export default function PageEditor() {
     const [page, setPage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sections, setSections] = useState([]);
-    const [addDialogOpen, setAddDialogOpen] = useState(false);
-    const [newSectionType, setNewSectionType] = useState("hero");
 
     const fetchPage = async (isBackgroundUpdate = false) => {
         if (!isBackgroundUpdate) setLoading(true);
@@ -113,30 +111,37 @@ export default function PageEditor() {
         }
     };
 
+
+
     const handleAddSection = async () => {
         if (!page) return;
         try {
+            const defaultContent = {
+                subtitle: "Subtitle",
+                title: `Section ${sections.length + 1}`,
+                content: "<p>Content goes here...</p>"
+            };
+
             const res = await fetch("/api/sections", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     pageId: page.id,
-                    type: newSectionType,
-                    content: {}, // Empty content initially
-                    order: sections.length + 1,
+                    type: "company",
+                    content: defaultContent,
+                    order: sections.length + 1
                 }),
             });
 
             if (res.ok) {
-                toast.success("Section added successfully");
-                setAddDialogOpen(false);
+                toast.success("Section created successfully");
                 fetchPage(true);
             } else {
-                toast.error("Failed to add section");
+                toast.error("Failed to create section");
             }
         } catch (error) {
-            console.error("Error adding section:", error);
-            toast.error("Error adding section");
+            console.error("Error creating section:", error);
+            toast.error("Error creating section");
         }
     };
 
@@ -150,38 +155,9 @@ export default function PageEditor() {
                     <h1 className="text-2xl font-bold">Edit Page: {page.title}</h1>
                     <p className="text-gray-500">Slug: {page.slug}</p>
                 </div>
-                <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Add Section
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Add New Section</DialogTitle>
-                        </DialogHeader>
-                        <div className="py-4">
-                            <Label>Section Type</Label>
-                            <Select value={newSectionType} onValueChange={setNewSectionType}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="hero">Hero</SelectItem>
-                                    <SelectItem value="about">About</SelectItem>
-                                    <SelectItem value="services">Services</SelectItem>
-                                    <SelectItem value="why-choose-us">Why Choose Us</SelectItem>
-                                    <SelectItem value="clients">Clients</SelectItem>
-                                    <SelectItem value="technologies">Technologies</SelectItem>
-                                    <SelectItem value="custom">Custom</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <DialogFooter>
-                            <Button onClick={handleAddSection}>Add Section</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <Button onClick={handleAddSection}>
+                    <Plus className="mr-2 h-4 w-4" /> Add Section
+                </Button>
             </div>
 
             <div className="space-y-6">
@@ -262,28 +238,30 @@ function SectionEditor({ section, onUpdate, onDelete, index }) {
                     <CardDescription>Order: {section.order}</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center space-x-2 mr-4">
-                        <Switch
-                            id={`mode-${section.id}`}
-                            checked={jsonMode}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    // Switching to JSON mode: update string from current content object
-                                    setJsonString(JSON.stringify(content, null, 2));
-                                } else {
-                                    // Switching to UI mode: try to parse current string
-                                    try {
-                                        setContent(JSON.parse(jsonString));
-                                    } catch (e) {
-                                        toast.error("Invalid JSON, cannot switch to UI mode");
-                                        return; // Cancel switch
+                    {!['hero', 'technologies', 'about', 'services', 'recent-works', 'news-events', 'why-choose-us', 'call-to-action', 'clients', 'company'].includes(section.type?.toLowerCase()) && (
+                        <div className="flex items-center space-x-2 mr-4">
+                            <Switch
+                                id={`mode-${section.id}`}
+                                checked={jsonMode}
+                                onCheckedChange={(checked) => {
+                                    if (checked) {
+                                        // Switching to JSON mode: update string from current content object
+                                        setJsonString(JSON.stringify(content, null, 2));
+                                    } else {
+                                        // Switching to UI mode: try to parse current string
+                                        try {
+                                            setContent(JSON.parse(jsonString));
+                                        } catch (e) {
+                                            toast.error("Invalid JSON, cannot switch to UI mode");
+                                            return; // Cancel switch
+                                        }
                                     }
-                                }
-                                setJsonMode(checked);
-                            }}
-                        />
-                        <Label htmlFor={`mode-${section.id}`} className="text-xs">JSON Mode</Label>
-                    </div>
+                                    setJsonMode(checked);
+                                }}
+                            />
+                            <Label htmlFor={`mode-${section.id}`} className="text-xs">JSON Mode</Label>
+                        </div>
+                    )}
                     <Button
                         variant="ghost"
                         size="icon"
