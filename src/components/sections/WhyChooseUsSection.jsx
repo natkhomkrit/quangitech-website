@@ -3,12 +3,22 @@
 import React from "react";
 import * as FaIcons from "react-icons/fa";
 import { useCounter } from "@/hooks/useCounter";
+import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function WhyChooseUsSection({ content }) {
-    const { title, description, features, image } = content || {};
-    const { count: projectCount, ref: projectRef } = useCounter(50, 2000);
-    const { count: experienceCount, ref: experienceRef } = useCounter(5, 2000);
-    const { count: satisfactionCount, ref: satisfactionRef } = useCounter(98, 2000);
+    const {
+        title,
+        description,
+        features,
+        image,
+        projectCount: initialProjectCount = 50,
+        experienceCount: initialExperienceCount = 5,
+        satisfactionCount: initialSatisfactionCount = 98
+    } = content || {};
+
+    const { count: projectCount, ref: projectRef } = useCounter(Number(initialProjectCount), 2000);
+    const { count: experienceCount, ref: experienceRef } = useCounter(Number(initialExperienceCount), 2000);
+    const { count: satisfactionCount, ref: satisfactionRef } = useCounter(Number(initialSatisfactionCount), 2000);
 
     const getIcon = (iconName) => {
         return FaIcons[iconName] || FaIcons.FaCheck;
@@ -25,8 +35,8 @@ export default function WhyChooseUsSection({ content }) {
                                 Why Choose Us
                             </span>
                         </div>
-                        <h2 className="text-2xl font-medium text-gray-800 tracking-[0.2em] uppercase mb-4">
-                            {title || "ทำไมต้องเลือก เรา?"}
+                        <h2 className="text-2xl font-medium text-gray-800 tracking-[0.2em] mb-4">
+                            <TitleWithHighlight title={title} />
                         </h2>
                         <p className="text-sm md:text-base text-gray-600 leading-[1.8] font-light leading-relaxed">
                             {description}
@@ -75,7 +85,7 @@ export default function WhyChooseUsSection({ content }) {
                 <div data-aos="fade-left" className="relative">
                     <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100">
                         <img
-                            src={image || "/img/default2.png"}
+                            src={image || ""}
                             alt="Why Choose Us"
                             className="w-full max-w-[600px] h-auto object-contain mx-auto"
                             onError={(e) => {

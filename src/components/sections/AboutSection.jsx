@@ -2,6 +2,7 @@
 
 import React from "react";
 import * as FaIcons from "react-icons/fa";
+import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function AboutSection({ content }) {
     const { title, description, features, image } = content || {};
@@ -19,8 +20,8 @@ export default function AboutSection({ content }) {
                         About Our Company
                     </span>
                 </div>
-                <h2 className="text-2xl font-medium text-gray-800 tracking-[0.2em] uppercase">
-                    {title || "บริษัท ควอนจิเทค จำกัด"}
+                <h2 className="text-2xl font-medium text-gray-800 tracking-[0.2em]">
+                    <TitleWithHighlight title={title} />
                 </h2>
                 <p className="text-sm md:text-base text-gray-600 leading-[1.8] font-light leading-relaxed">
                     {description}

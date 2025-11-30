@@ -90,7 +90,13 @@ export default function EditPost() {
       const updated = await res.json();
       console.log("Updated:", updated);
       toast.success("Post updated successfully");
-      router.replace("/backoffice/posts");
+      // router.replace("/backoffice/posts"); // Keep user on the same page
+
+      // If slug changed, we might want to update the URL, but for now let's just update the local state if needed.
+      // Ideally we would do: router.replace(`/backoffice/posts/${updated.slug}/edit`) if slug changed.
+      if (updated.slug && updated.slug !== routeSlug) {
+        router.replace(`/backoffice/posts/${updated.slug}/edit`);
+      }
     } catch (error) {
       console.error("Error updating post:", error);
       toast.error("Error updating post", {

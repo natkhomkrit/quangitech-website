@@ -95,7 +95,7 @@ export default function SiteSettingsPage() {
       if (!res.ok) throw new Error("Failed to update settings");
 
       toast.success("Settings updated successfully");
-      router.refresh(); // Refresh to apply theme color
+      // router.refresh(); // Refresh to apply theme color
     } catch (error) {
       console.error(error);
       toast.error("Failed to update settings");

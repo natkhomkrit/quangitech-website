@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ActionButton from "@/components/ui/ActionButton";
+import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
 
 export default function NewsEventsSection({ content }) {
-    const { title, description } = content || {};
+    const { title, description, buttonText, buttonLink } = content || {};
     const [newsItems, setNewsItems] = useState([]);
     const [eventsItems, setEventsItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,12 +46,12 @@ export default function NewsEventsSection({ content }) {
         <section className="bg-white py-20">
             <div className="max-w-[1140px] mx-auto px-6">
                 <div className="text-center mb-10 flex flex-col items-center" data-aos="fade-up">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em] uppercase">
-                        {title || "News & Events"}
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-[0.1em]">
+                        <TitleWithHighlight title={title} />
                     </h2>
                     <span className="my-2 w-30 h-1 bg-orange-400 rounded-full"></span>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        {description || "ติดตามข่าวสารและกิจกรรมล่าสุดของเรา เพื่อไม่พลาดทุกความเคลื่อนไหว"}
+                        {description || ""}
                     </p>
                 </div>
                 <section className="max-w-6xl mx-auto px-2">
@@ -101,7 +102,7 @@ export default function NewsEventsSection({ content }) {
                     </div>
                 </section>
                 <div className="text-center">
-                    <ActionButton href="/news">ดูข่าวสารทั้งหมด</ActionButton>
+                    <ActionButton href={buttonLink || "/news"}>{buttonText || "ดูข่าวสารทั้งหมด"}</ActionButton>
                 </div>
             </div>
         </section>

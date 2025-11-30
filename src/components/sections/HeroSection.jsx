@@ -4,8 +4,12 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
+
 export default function HeroSection({ content, themeColor }) {
     const { title, subtitle, description, buttonText, buttonLink } = content || {};
+
+    const hasQuangitech = title && /quangitech/i.test(title);
 
     return (
         <section
@@ -23,8 +27,10 @@ export default function HeroSection({ content, themeColor }) {
                     data-aos-duration="1000"
                 >
                     {/* Main Heading */}
-                    <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-[64px] font-extrabold text-white tracking-normal uppercase leading-[1.2] md:leading-[1.1] break-words">
-                        {title ? (
+                    <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-[64px] font-extrabold text-white tracking-normal leading-[1.2] md:leading-[1.1] break-words">
+                        {hasQuangitech ? (
+                            <TitleWithHighlight title={title} />
+                        ) : title ? (
                             <>
                                 {title.split(" ").slice(0, -1).join(" ")}{" "}
                                 <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent block inline">

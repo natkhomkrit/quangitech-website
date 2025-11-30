@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import ActionButton from "@/components/ui/ActionButton";
 
+import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
+
 export default function ServicesSection({ content }) {
     const { title, description } = content || {};
     const [services, setServices] = useState([]);
@@ -31,14 +33,11 @@ export default function ServicesSection({ content }) {
         <section className="bg-[#f9fafb] py-20">
             <div className="max-w-[1140px] mx-auto text-center px-6">
                 <h1
-                    className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em] uppercase mb-4"
+                    className="text-3xl md:text-5xl font-bold text-gray-800 tracking-[0.1em] mb-4"
                     data-aos="fade-up"
                     data-aos-duration="1000"
                 >
-                    {title?.split("quangitech")[0] || "บริการของ "}
-                    <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
-                        {title?.includes("quangitech") ? "quangitech" : ""}
-                    </span>
+                    <TitleWithHighlight title={title} />
                 </h1>
                 <span className="my-2 w-30 h-1 bg-orange-400 rounded-full"></span>
                 <p

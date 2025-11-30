@@ -27,6 +27,8 @@ import {
     SiJavascript
 } from "react-icons/si";
 
+import { TitleWithHighlight } from "@/components/ui/TitleWithHighlight";
+
 export default function TechnologiesSection({ content, themeColor }) {
     const { title } = content || {};
 
@@ -54,13 +56,13 @@ export default function TechnologiesSection({ content, themeColor }) {
 
     return (
         <section
-            className="w-full pt-2 md:pt-2 pb-12 md:pb-24 bg-gray-900"
+            className="w-full pt-2 md:pt-2 pb-18 md:pb-24 bg-gray-900"
             style={{ backgroundColor: themeColor || "#111827" }}
         >
             <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 md:px-12 text-center">
                 <div className="w-full max-w-[100vw] overflow-hidden" data-aos="fade-up" data-aos-delay="200">
-                    <p className="text-xs sm:text-sm md:text-base text-white mb-8 uppercase tracking-[0.15em] font-medium">
-                        {title || "Powered by Modern Technologies"}
+                    <p className="text-xs sm:text-sm md:text-base text-white mb-8 tracking-[0.15em] font-medium">
+                        <TitleWithHighlight title={title} defaultTitle="Powered by Modern Technologies" />
                     </p>
 
                     <Swiper
