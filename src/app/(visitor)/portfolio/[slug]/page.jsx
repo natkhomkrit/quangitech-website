@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import RecentWorks from "@/components/RecentWorks";
 import RelatedWorks from "@/components/RelatedWorks";
 import "swiper/css";
 import "swiper/css/navigation";
