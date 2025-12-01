@@ -102,7 +102,7 @@
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.938);
+  --muted-foreground: oklch(0.705 0.016 286.938);
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
@@ -156,4 +156,30 @@ body {
 
 .animate-load {
   animation: load 2s linear infinite;
+}
+
+/* Responsive iframe for embedded videos */
+.prose iframe {
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16/9;
+}
+
+/* Table styles for prose content */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.prose th {
+  background-color: #f9fafb;
+  font-weight: 600;
 }

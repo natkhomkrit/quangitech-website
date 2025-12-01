@@ -1,14 +1,19 @@
 "use client";
 
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Loader2 } from "lucide-react";
 
 export default function Loading({ loading }) {
   return (
-    <Dialog open={loading} onOpenChange={() => {}}>
-      <DialogContent className="flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-700 rounded-full animate-spin"></div>
-          <span>Loading...</span>
+    <Dialog open={loading} onOpenChange={() => { }}>
+      <DialogContent className="flex items-center justify-center w-auto p-6 rounded-lg">
+        <VisuallyHidden>
+          <DialogTitle>Loading</DialogTitle>
+        </VisuallyHidden>
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="text-lg font-medium text-gray-700">Loading...</span>
         </div>
       </DialogContent>
     </Dialog>

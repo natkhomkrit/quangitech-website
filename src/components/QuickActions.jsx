@@ -13,24 +13,30 @@ export default function QuickActions() {
     const actions = [
         {
             id: 1,
+            label: "Manage Pages",
+            icon: FilePlus,
+            href: "/backoffice/pages",
+        },
+        {
+            id: 2,
             label: "App Post",
             icon: FilePlus,
             href: "/backoffice/posts/create",
         },
         {
-            id: 2,
+            id: 3,
             label: "Add Category",
             icon: Tag,
             href: "/backoffice/categories",
         },
         {
-            id: 3,
+            id: 4,
             label: "Add Menu",
             icon: Menu,
             href: "/backoffice/menus",
         },
         {
-            id: 4,
+            id: 5,
             label: "Add User",
             icon: UserPlus,
             href: "/backoffice/users",

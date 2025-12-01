@@ -1,13 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Save, Trash, Plus, ArrowUp, ArrowDown } from "lucide-react";
+import { Save, Trash, Plus, GripVertical, Search, Loader2 } from "lucide-react";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragOverlay,
+} from "@dnd-kit/core";
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Switch } from "@/components/ui/switch";
 import { DynamicContentEditor } from "@/components/backoffice/DynamicContentEditor";
 import {
@@ -33,12 +50,58 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+function SortableItem({ id, children }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 50 : "auto",
+        position: "relative",
+    };
+
+    return (
+        <div ref={setNodeRef} style={style}>
+            {React.cloneElement(children, {
+                dragHandleProps: { ...attributes, ...listeners },
+                isDragging,
+            })}
+        </div>
+    );
+}
+
 export default function PageEditor() {
     const params = useParams();
     const { slug } = params;
     const [page, setPage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sections, setSections] = useState([]);
+    const [shouldScroll, setShouldScroll] = useState(false);
+    const [activeId, setActiveId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const bottomRef = useRef(null);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     const fetchPage = async (isBackgroundUpdate = false) => {
         if (!isBackgroundUpdate) setLoading(true);
@@ -62,6 +125,22 @@ export default function PageEditor() {
     useEffect(() => {
         if (slug) fetchPage();
     }, [slug]);
+
+    useEffect(() => {
+        if (shouldScroll && bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: "smooth" });
+            setShouldScroll(false);
+        }
+    }, [sections, shouldScroll]);
+
+    const filteredSections = sections.filter(section => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+        const type = section.type?.toLowerCase() || "";
+        const title = section.content?.title?.toLowerCase() || "";
+        const subtitle = section.content?.subtitle?.toLowerCase() || "";
+        return type.includes(query) || title.includes(query) || subtitle.includes(query);
+    });
 
     const handleUpdateSection = async (id, content) => {
         try {
@@ -111,23 +190,213 @@ export default function PageEditor() {
         }
     };
 
+    const handleDragStart = (event) => {
+        setActiveId(event.active.id);
+    };
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+        setActiveId(null);
 
+        if (active.id !== over.id) {
+            const oldIndex = sections.findIndex((item) => item.id === active.id);
+            const newIndex = sections.findIndex((item) => item.id === over.id);
 
-    const handleAddSection = async () => {
+            const reorderedSections = arrayMove(sections, oldIndex, newIndex);
+
+            // Update the order property for all sections to match their new index
+            const newSections = reorderedSections.map((section, index) => ({
+                ...section,
+                order: index + 1
+            }));
+
+            // Optimistic update
+            setSections(newSections);
+
+            // Update orders in backend
+            try {
+                const updates = newSections.map((section) =>
+                    fetch(`/api/sections/${section.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ order: section.order }),
+                    })
+                );
+                await Promise.all(updates);
+                toast.success("Section order updated");
+            } catch (error) {
+                console.error("Error updating order:", error);
+                toast.error("Failed to update section order");
+                fetchPage(true); // Revert to server state
+            }
+        }
+    };
+
+    const handleAddSection = async (variant = "default") => {
         if (!page) return;
         try {
-            const defaultContent = {
-                subtitle: "Subtitle",
-                title: `Section ${sections.length + 1}`,
-                content: "<p>Content goes here...</p>"
-            };
+            let type = "generic";
+            let defaultContent = {};
+
+            if (page.slug === "executives") {
+                type = "executive";
+                if (variant === "quote") {
+                    defaultContent = {
+                        subtitle: "Inspiration",
+                        quote: "Quote goes here..."
+                    };
+                } else {
+                    defaultContent = {
+                        subtitle: "Leadership",
+                        image: "",
+                        imageWidth: "320px",
+                        imageHeight: "320px",
+                        name: "Name Surname",
+                        position: "Position",
+                        company: "Company Name",
+                        quote: "Quote goes here..."
+                    };
+                }
+            } else if (page.slug === "contact") {
+                type = "contact";
+                defaultContent = {
+                    logo: "",
+                    logoWidth: "144px",
+                    companyName: "",
+                    address: "",
+                    phone: "",
+                    email: "",
+                    recipientEmail: "",
+                    mapUrl: "",
+                    formTitle: "",
+                    formDescription: ""
+                };
+            } else if (page.slug === "footer") {
+                type = "footer";
+                defaultContent = {
+                    logo: "",
+                    logoWidth: "140px",
+                    description: "",
+                    address: "",
+                    phone: "",
+                    email: "",
+                    facebookUrl: "",
+                    copyright: ""
+                };
+            } else if (page.slug === "company") {
+                type = "company";
+                defaultContent = {
+                    subtitle: "About Us",
+                    title: "Our Company",
+                    content: "<p>Company description...</p>"
+                };
+            } else if (page.slug === "home") {
+                type = variant === "default" ? "generic" : variant;
+
+                if (type === "hero") {
+                    defaultContent = {
+                        title: "Empowering Your Digital Future",
+                        subtitle: "Welcome to Quangitech",
+                        description: "We provide cutting-edge solutions for your business needs.",
+                        buttonText: "Get Started",
+                        buttonLink: "/contact"
+                    };
+                } else if (type === "technologies") {
+                    defaultContent = {
+                        title: "Our Technologies"
+                    };
+                } else if (type === "about") {
+                    defaultContent = {
+                        title: "About Us",
+                        subtitle: "Who We Are",
+                        description: "We are a team of passionate developers.",
+                        image: "",
+                        imageWidth: "500px",
+                        imageHeight: "auto",
+                        imageMaxWidth: "100%",
+                        features: [
+                            { title: "Feature 1", text: "Description 1", icon: "" }
+                        ]
+                    };
+                } else if (type === "services") {
+                    defaultContent = {
+                        title: "Our Services",
+                        subtitle: "What We Offer",
+                        description: "Comprehensive IT solutions for your business.",
+                        buttonText: "View All Services",
+                        buttonLink: "/services"
+                    };
+                } else if (type === "recent-works") {
+                    defaultContent = {
+                        title: "Recent Works",
+                        subtitle: "Portfolio",
+                        description: "Check out our latest projects.",
+                        buttonText: "View All Projects",
+                        buttonLink: "/portfolio"
+                    };
+                } else if (type === "news-events") {
+                    defaultContent = {
+                        title: "News & Events",
+                        subtitle: "Updates",
+                        description: "Stay updated with our latest news.",
+                        buttonText: "View All News",
+                        buttonLink: "/news"
+                    };
+                } else if (type === "why-choose-us") {
+                    defaultContent = {
+                        title: "Why Choose Us",
+                        subtitle: "Our Advantages",
+                        description: "Reasons to partner with us.",
+                        image: "",
+                        imageWidth: "600px",
+                        imageHeight: "450px",
+                        imageMaxWidth: "100%",
+                        features: [
+                            { title: "Expert Team", description: "Highly skilled professionals.", icon: "users" },
+                            { title: "Quality Assurance", description: "We ensure top-notch quality.", icon: "check-circle" },
+                            { title: "24/7 Support", description: "Always here to help you.", icon: "headset" }
+                        ]
+                    };
+                } else if (type === "call-to-action") {
+                    defaultContent = {
+                        title: "Ready to Start?",
+                        description: "Contact us today to discuss your project.",
+                        buttonText: "Contact Us",
+                        buttonLink: "/contact"
+                    };
+                } else if (type === "clients") {
+                    defaultContent = {
+                        title: "Our Clients",
+                        images: [
+                            ""
+                        ],
+                        imageWidth: "120px",
+                        imageHeight: "60px",
+                        imageMaxWidth: "100%"
+                    };
+                } else {
+                    // Default generic
+                    type = "generic";
+                    defaultContent = {
+                        subtitle: "Subtitle",
+                        title: `Section ${sections.length + 1}`,
+                        content: "<p>Content goes here...</p>"
+                    };
+                }
+            } else {
+                type = "generic";
+                defaultContent = {
+                    subtitle: "Subtitle",
+                    title: `Section ${sections.length + 1}`,
+                    content: "<p>Content goes here...</p>"
+                };
+            }
 
             const res = await fetch("/api/sections", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     pageId: page.id,
-                    type: "company",
+                    type: type,
                     content: defaultContent,
                     order: sections.length + 1
                 }),
@@ -135,7 +404,8 @@ export default function PageEditor() {
 
             if (res.ok) {
                 toast.success("Section created successfully");
-                fetchPage(true);
+                await fetchPage(true);
+                setShouldScroll(true);
             } else {
                 toast.error("Failed to create section");
             }
@@ -145,42 +415,144 @@ export default function PageEditor() {
         }
     };
 
-    if (loading) return <div className="p-6">Loading...</div>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-[400px]">
+                <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+            </div>
+        );
+    }
     if (!page) return <div className="p-6">Page not found</div>;
 
     return (
         <div className="p-6 max-w-5xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold">Edit Page: {page.title}</h1>
-                    <p className="text-gray-500">Slug: {page.slug}</p>
+            <div className="flex flex-col gap-6 mb-6">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold">Edit Page: {page.title}</h1>
+                        <p className="text-gray-500">Slug: {page.slug}</p>
+                    </div>
+                    {page.slug === "executives" ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button>
+                                    <Plus className="mr-2 h-4 w-4" /> Add Section
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => handleAddSection("default")}>
+                                    Executive Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("quote")}>
+                                    Executive Quote
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : page.slug === "home" ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button>
+                                    <Plus className="mr-2 h-4 w-4" /> Add Section
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="max-h-[400px] overflow-y-auto">
+                                <DropdownMenuItem onClick={() => handleAddSection("hero")}>Hero Section</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("technologies")}>Technologies</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("about")}>About Us</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("services")}>Services</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("recent-works")}>Recent Works</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("news-events")}>News & Events</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("why-choose-us")}>Why Choose Us</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("call-to-action")}>Call To Action</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleAddSection("clients")}>Clients</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Button onClick={() => handleAddSection("default")}>
+                            <Plus className="mr-2 h-4 w-4" /> Add Section
+                        </Button>
+                    )}
                 </div>
-                <Button onClick={handleAddSection}>
-                    <Plus className="mr-2 h-4 w-4" /> Add Section
-                </Button>
+
+                <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Filter sections by type, title, or subtitle..."
+                        className="pl-9"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
             </div>
 
             <div className="space-y-6">
-                {sections.map((section, index) => (
-                    <SectionEditor
-                        key={section.id}
-                        section={section}
-                        onUpdate={handleUpdateSection}
-                        onDelete={handleDeleteSection}
-                        index={index}
-                    />
-                ))}
-                {sections.length === 0 && (
+                {searchQuery ? (
+                    <div className="space-y-6">
+                        {filteredSections.map((section, index) => (
+                            <SectionEditor
+                                key={section.id}
+                                section={section}
+                                onUpdate={handleUpdateSection}
+                                onDelete={handleDeleteSection}
+                                index={index}
+                                isDragDisabled={true}
+                            />
+                        ))}
+                        {filteredSections.length === 0 && (
+                            <div className="text-center py-12 border-2 border-dashed rounded-lg text-gray-400">
+                                No sections match your search.
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext
+                            items={sections.map(s => s.id)}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            {sections.map((section, index) => (
+                                <SortableItem key={section.id} id={section.id}>
+                                    <SectionEditor
+                                        section={section}
+                                        onUpdate={handleUpdateSection}
+                                        onDelete={handleDeleteSection}
+                                        index={index}
+                                    />
+                                </SortableItem>
+                            ))}
+                        </SortableContext>
+                        <DragOverlay>
+                            {activeId ? (
+                                <SectionEditor
+                                    section={sections.find(s => s.id === activeId)}
+                                    onUpdate={() => { }}
+                                    onDelete={() => { }}
+                                    index={sections.findIndex(s => s.id === activeId)}
+                                    isOverlay
+                                />
+                            ) : null}
+                        </DragOverlay>
+                    </DndContext>
+                )}
+
+                {!searchQuery && sections.length === 0 && (
                     <div className="text-center py-12 border-2 border-dashed rounded-lg text-gray-400">
                         No sections found. Add one to get started.
                     </div>
                 )}
+                <div ref={bottomRef} />
             </div>
         </div>
     );
 }
 
-function SectionEditor({ section, onUpdate, onDelete, index }) {
+function SectionEditor({ section, onUpdate, onDelete, index, dragHandleProps, isOverlay, isDragDisabled }) {
     const [content, setContent] = useState(section.content);
     const [jsonMode, setJsonMode] = useState(false);
     const [jsonString, setJsonString] = useState(JSON.stringify(section.content, null, 2));
@@ -189,9 +561,6 @@ function SectionEditor({ section, onUpdate, onDelete, index }) {
     // Sync state with prop when section updates (e.g. after save)
     useEffect(() => {
         setContent(section.content);
-        // Only update JSON string if we are NOT currently editing it (to avoid cursor jumps or overwrites if we had auto-save)
-        // But since we only fetch on explicit save, it's fine to sync.
-        // Actually, if we are in JSON mode, we want to reflect the saved content (formatted).
         setJsonString(JSON.stringify(section.content, null, 2));
     }, [section.content]);
 
@@ -229,31 +598,40 @@ function SectionEditor({ section, onUpdate, onDelete, index }) {
     };
 
     return (
-        <Card>
+        <Card className={isOverlay ? "opacity-80 shadow-xl cursor-grabbing" : ""}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="space-y-1">
-                    <CardTitle className="text-base font-medium uppercase tracking-wide text-muted-foreground">
-                        {section.type} Section
-                    </CardTitle>
-                    <CardDescription>Order: {section.order}</CardDescription>
+                <div className="flex items-center gap-3">
+                    {!isDragDisabled && (
+                        <div
+                            {...dragHandleProps}
+                            className="cursor-grab active:cursor-grabbing p-2 hover:bg-muted rounded-md touch-none"
+                            title="Drag to reorder"
+                        >
+                            <GripVertical className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                    )}
+                    <div className="space-y-1">
+                        <CardTitle className="text-base font-medium uppercase tracking-wide text-muted-foreground">
+                            {section.type} Section
+                        </CardTitle>
+                        <CardDescription>Order: {section.order}</CardDescription>
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    {!['hero', 'technologies', 'about', 'services', 'recent-works', 'news-events', 'why-choose-us', 'call-to-action', 'clients', 'company'].includes(section.type?.toLowerCase()) && (
+                    {!['hero', 'technologies', 'about', 'services', 'recent-works', 'news-events', 'why-choose-us', 'call-to-action', 'clients', 'generic', 'executive', 'contact', 'footer', 'company'].includes(section.type?.toLowerCase()) && (
                         <div className="flex items-center space-x-2 mr-4">
                             <Switch
                                 id={`mode-${section.id}`}
                                 checked={jsonMode}
                                 onCheckedChange={(checked) => {
                                     if (checked) {
-                                        // Switching to JSON mode: update string from current content object
                                         setJsonString(JSON.stringify(content, null, 2));
                                     } else {
-                                        // Switching to UI mode: try to parse current string
                                         try {
                                             setContent(JSON.parse(jsonString));
                                         } catch (e) {
                                             toast.error("Invalid JSON, cannot switch to UI mode");
-                                            return; // Cancel switch
+                                            return;
                                         }
                                     }
                                     setJsonMode(checked);
@@ -287,6 +665,7 @@ function SectionEditor({ section, onUpdate, onDelete, index }) {
                         <DynamicContentEditor
                             content={content}
                             onChange={handleUiChange}
+                            uniqueId={section.id}
                         />
                     )}
                     <div className="flex justify-end">

@@ -46,6 +46,19 @@ export async function PUT(req) {
             });
         }
 
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "settings",
+                    action: "updated",
+                    title: "Site Settings",
+                    userId: session.user.id,
+                },
+            });
+        } catch (actErr) {
+            console.error("Failed to record settings update activity:", actErr);
+        }
+
         return NextResponse.json(settings);
     } catch (error) {
         console.error("Failed to update settings:", error);

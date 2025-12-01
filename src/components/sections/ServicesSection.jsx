@@ -106,7 +106,7 @@ export default function ServicesSection({ content }) {
       overflow-hidden group"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
-                                    Learn more
+                                    {content?.buttonText || "Learn more"}
                                 </span>
                             </ActionButton>
                             <div

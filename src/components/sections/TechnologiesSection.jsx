@@ -56,7 +56,7 @@ export default function TechnologiesSection({ content, themeColor }) {
 
     return (
         <section
-            className="w-full pt-2 md:pt-2 pb-18 md:pb-24 bg-gray-900"
+            className="w-full pt-2 md:pt-2 pb-24 md:pb-24 bg-gray-900"
             style={{ backgroundColor: themeColor || "#111827" }}
         >
             <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 md:px-12 text-center">

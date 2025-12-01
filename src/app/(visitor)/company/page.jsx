@@ -6,6 +6,7 @@ import Footer from "@/components/ui/footer";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import CompanySection from "@/components/sections/CompanySection";
+import { Loader2 } from "lucide-react";
 
 export default function Company() {
     const [pageTitle, setPageTitle] = React.useState(" ");
@@ -81,7 +82,7 @@ export default function Company() {
                 <div className="flex items-center gap-4 mb-4">
                     <div className="w-1 h-8 bg-gray-800 rounded-full"></div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
-                        {pageData?.title || "Company Information"}
+                        {pageTitle}
                     </h1>
                 </div>
                 <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
@@ -93,10 +94,12 @@ export default function Company() {
 
             <div className="bg-gray-50/50 min-h-[50vh]">
                 {loading ? (
-                    <div className="py-20 text-center">Loading...</div>
+                    <div className="flex justify-center items-center py-20">
+                        <Loader2 className="animate-spin text-gray-500" size={48} />
+                    </div>
                 ) : pageData && pageData.sections && pageData.sections.length > 0 ? (
                     pageData.sections.map((section) => {
-                        if (section.type === 'company' || section.type === 'company-section') {
+                        if (section.type === 'company' || section.type === 'company-section' || section.type === 'generic') {
                             return <CompanySection key={section.id} content={section.content} />;
                         }
                         // Fallback for other section types if needed, or just ignore

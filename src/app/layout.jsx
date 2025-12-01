@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Inter, Kanit } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
-import Loading from "../components/loading";
+
 import BackToTop from "@/components/ui/BackToTop";
 import prisma from "@/lib/prisma";
 import Providers from "@/components/providers";

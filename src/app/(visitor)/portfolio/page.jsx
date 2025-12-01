@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import { ExternalLink, ChevronDown } from "lucide-react";
+import { ExternalLink, ChevronDown, Loader2 } from "lucide-react";
 
 export default function Portfolio() {
   const [categories, setCategories] = useState([]);
@@ -133,7 +133,7 @@ export default function Portfolio() {
         <div className="flex items-center gap-4 mb-4">
           <div className="w-1 h-8 bg-gray-800 rounded-full"></div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-[0.1em] uppercase">
-            Completed Projects
+            {pageTitle}
           </h1>
         </div>
         <nav className="text-sm text-gray-600 mb-4 flex items-center gap-2">
@@ -232,8 +232,8 @@ export default function Portfolio() {
         <main className="flex-1 w-full md:w-3/4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
             {loading ? (
-              <div className="col-span-full text-center py-12">
-                <p className="text-gray-600">Loading...</p>
+              <div className="col-span-full flex justify-center items-center py-12">
+                <Loader2 className="animate-spin text-gray-500" size={48} />
               </div>
             ) : error ? (
               <div className="col-span-full text-center py-12">

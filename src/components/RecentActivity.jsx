@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FileText, Trash, User, Menu as MenuIcon, Link as LinkIcon, Tag } from "lucide-react";
+import { FileText, Trash, User, Menu as MenuIcon, Link as LinkIcon, Tag, Settings, Layout, Loader2 } from "lucide-react";
 
 function formatTimeAgo(date) {
   if (!date) return "unknown time";
@@ -71,6 +71,8 @@ export default function RecentActivity() {
               else if (t === "menu") Icon = MenuIcon;
               else if (t === "menuitem" || t === "menu-item" || t === "menu_item") Icon = LinkIcon;
               else if (t === "category") Icon = Tag;
+              else if (t === "settings") Icon = Settings;
+              else if (t === "page") Icon = Layout;
               else Icon = FileText; // default for posts/others
             }
 
@@ -173,7 +175,9 @@ export default function RecentActivity() {
 
       <div className="space-y-3">
         {loading ? (
-          <p className="text-gray-500 text-sm">Loading...</p>
+          <div className="flex justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+          </div>
         ) : activities.length === 0 ? (
           <p className="text-gray-500 text-sm">No activities yet</p>
         ) : (
@@ -206,6 +210,8 @@ export default function RecentActivity() {
                         if (t === "menu") return "[Menu]";
                         if (t === "category") return "[Category]";
                         if (t === "menuitem" || t === "menu-item" || t === "menu_item") return "[Menu Item]";
+                        if (t === "settings") return "[Settings]";
+                        if (t === "page") return "[Page]";
                         // fallback: infer from metadata
                         if (activity.metadata) {
                           try {

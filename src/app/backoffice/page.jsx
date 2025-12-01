@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import QuickActions from "@/components/QuickActions";
 import RecentActivity from "@/components/RecentActivity";
 import StatusCards from "@/components/StatusCards";
+import RecentlyEdited from "@/components/RecentlyEdited";
 
 export default function BackofficeDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <Button asChild>
             <Link
               href="/"
@@ -25,16 +27,21 @@ export default function BackofficeDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <StatusCards />
-            <div className="mt-6">
-              <QuickActions />
-            </div>
-          </div>
+        <div className="space-y-6">
+          {/* Overview Stats */}
+          <StatusCards />
 
-          <div className="lg:col-span-2">
-            <RecentActivity />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column */}
+            <div className="lg:col-span-1 space-y-6">
+              <QuickActions />
+              <RecentlyEdited />
+            </div>
+
+            {/* Right Column */}
+            <div className="lg:col-span-2">
+              <RecentActivity />
+            </div>
           </div>
         </div>
       </div>

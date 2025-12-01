@@ -26,6 +26,32 @@ export async function POST(req) {
             },
         });
 
+        try {
+            const page = await prisma.page.findUnique({
+                where: { id: pageId },
+                select: { title: true, slug: true }
+            });
+
+            if (page) {
+                await prisma.activity.create({
+                    data: {
+                        type: "page",
+                        action: "updated",
+                        title: page.title,
+                        userId: session.user.id,
+                        metadata: {
+                            id: pageId,
+                            slug: page.slug,
+                            sectionId: newSection.id,
+                            change: "section_created"
+                        },
+                    },
+                });
+            }
+        } catch (actErr) {
+            console.error("Failed to record section creation activity:", actErr);
+        }
+
         return NextResponse.json(newSection, { status: 201 });
     } catch (error) {
         console.error("Error creating section:", error);

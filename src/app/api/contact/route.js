@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import prisma from "@/lib/prisma";
 
 // POST /api/contact
 export async function POST(req) {
@@ -10,13 +11,31 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
     }
 
+    // Fetch recipient email from database
+    let dbRecipientEmail = null;
+    try {
+      const contactPage = await prisma.page.findUnique({
+        where: { slug: "contact" },
+        include: { sections: true }
+      });
+
+      if (contactPage && contactPage.sections) {
+        const contactSection = contactPage.sections.find(s => s.type === "contact");
+        if (contactSection && contactSection.content && contactSection.content.recipientEmail) {
+          dbRecipientEmail = contactSection.content.recipientEmail;
+        }
+      }
+    } catch (dbErr) {
+      console.error("Error fetching recipient email from DB:", dbErr);
+    }
+
     // Use env vars for SMTP credentials. Update .env.local accordingly.
     const SMTP_HOST = process.env.SMTP_HOST;
     const SMTP_PORT = process.env.SMTP_PORT;
     const SMTP_USER = process.env.SMTP_USER;
     const SMTP_PASS = process.env.SMTP_PASS;
     const EMAIL_FROM = process.env.EMAIL_FROM || SMTP_USER;
-    const EMAIL_TO = process.env.CONTACT_EMAIL || "natretroian@gmail.com";
+    const EMAIL_TO = dbRecipientEmail || process.env.CONTACT_EMAIL || "natretroian@gmail.com";
 
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
       console.error("SMTP credentials are not configured.");

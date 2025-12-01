@@ -8,6 +8,11 @@ import "tinymce/skins/ui/oxide/skin.min.css";
 
 export default function TinyMCEEditor({ content, onChange, id }) {
   const editorId = id || "tinymce-editor";
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   useEffect(() => {
     let mounted = true;
@@ -86,7 +91,7 @@ export default function TinyMCEEditor({ content, onChange, id }) {
               try {
                 if (!editor || typeof editor.getContent !== "function") return;
                 const html = editor.getContent();
-                if (typeof onChange === "function") onChange(html);
+                if (typeof onChangeRef.current === "function") onChangeRef.current(html);
               } catch (e) {
                 console.error("TinyMCE getContent error:", e);
               }

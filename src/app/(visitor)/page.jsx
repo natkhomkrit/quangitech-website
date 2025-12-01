@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Footer from "@/components/ui/footer";
+import { Loader2 } from "lucide-react";
 
 import HeroSection from "@/components/sections/HeroSection";
 import TechnologiesSection from "@/components/sections/TechnologiesSection";
@@ -76,7 +77,11 @@ export default function Page() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="animate-spin text-gray-500" size={48} />
+    </div>
+  );
 
   return (
     <div>

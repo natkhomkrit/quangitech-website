@@ -118,9 +118,9 @@ export default function WhyChooseUsSection({ content }) {
                                 alt="Why Choose Us"
                                 className="object-contain transition-transform duration-300 hover:scale-105"
                                 style={{
-                                    width: imageWidth || "120px",
-                                    height: imageHeight || "60px",
-                                    maxWidth: "100%"
+                                    width: imageWidth || "100%",
+                                    height: imageHeight || "auto",
+                                    maxWidth: imageMaxWidth || "100%"
                                 }}
                                 onError={(e) => {
                                     e.target.style.display = 'none';

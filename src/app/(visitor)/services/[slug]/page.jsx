@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function ServiceDetail() {
   const params = useParams();
@@ -85,7 +86,7 @@ export default function ServiceDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-600">Loading...</p>
+        <Loader2 className="animate-spin text-gray-500" size={48} />
       </div>
     );
   }

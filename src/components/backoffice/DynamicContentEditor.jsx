@@ -16,7 +16,7 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-export function DynamicContentEditor({ content, onChange }) {
+export function DynamicContentEditor({ content, onChange, uniqueId }) {
     const handleChange = (key, value) => {
         onChange({ ...content, [key]: value });
     };
@@ -33,20 +33,21 @@ export function DynamicContentEditor({ content, onChange }) {
                     fieldKey={key}
                     value={value}
                     onChange={(newValue) => handleChange(key, newValue)}
+                    uniqueId={uniqueId}
                 />
             ))}
         </div>
     );
 }
 
-function FieldEditor({ fieldKey, value, onChange }) {
+function FieldEditor({ fieldKey, value, onChange, uniqueId }) {
     // Helper to format key as label (camelCase to Title Case)
     const label = fieldKey
         .replace(/([A-Z])/g, " $1")
         .replace(/^./, (str) => str.toUpperCase());
 
     // Detect field type
-    const isImage = /image|img|photo|bg|background|src|url/i.test(fieldKey) && !/width|height|size|max|min/i.test(fieldKey) && typeof value === "string";
+    const isImage = /image|img|photo|bg|background|src|url|logo/i.test(fieldKey) && !/width|height|size|max|min|map|facebook/i.test(fieldKey) && typeof value === "string";
     const isIcon = /icon/i.test(fieldKey) && typeof value === "string";
     const isLongText = typeof value === "string" && value.length > 50;
     const isBoolean = typeof value === "boolean";
@@ -89,6 +90,7 @@ function FieldEditor({ fieldKey, value, onChange }) {
                 value={value}
                 onChange={onChange}
                 fieldKey={fieldKey}
+                uniqueId={uniqueId}
             />
         );
     }
@@ -97,12 +99,12 @@ function FieldEditor({ fieldKey, value, onChange }) {
         return (
             <div className="border rounded-md p-4 bg-gray-50/50">
                 <Label className="mb-2 block font-bold text-gray-700">{label}</Label>
-                <DynamicContentEditor content={value} onChange={onChange} />
+                <DynamicContentEditor content={value} onChange={onChange} uniqueId={uniqueId ? `${uniqueId}-${fieldKey}` : fieldKey} />
             </div>
         );
     }
 
-    const isRichText = /content|body|html/i.test(fieldKey) && typeof value === "string";
+    const isRichText = /content|body|html|quote/i.test(fieldKey) && typeof value === "string";
 
     if (isRichText) {
         return (
@@ -110,7 +112,7 @@ function FieldEditor({ fieldKey, value, onChange }) {
                 <Label htmlFor={fieldKey}>{label}</Label>
                 <div className="border rounded-md overflow-hidden">
                     <TinyMCEEditor
-                        id={`editor-${fieldKey}-${Math.random().toString(36).substr(2, 9)}`}
+                        id={uniqueId ? `editor-${uniqueId}-${fieldKey}` : `editor-${fieldKey}`}
                         content={value || ""}
                         onChange={onChange}
                     />
@@ -145,16 +147,16 @@ function FieldEditor({ fieldKey, value, onChange }) {
             ) : (
                 <Input
                     id={fieldKey}
-                    value={value || (fieldKey === "imageWidth" || fieldKey === "imageHeight" ? "0px" : fieldKey === "imageMaxWidth" ? "100%" : "")}
+                    value={value || (["imageWidth", "imageHeight", "logoWidth"].includes(fieldKey) ? "0px" : fieldKey === "imageMaxWidth" ? "100%" : "")}
                     onChange={(e) => onChange(e.target.value)}
-                    placeholder={fieldKey === "imageWidth" || fieldKey === "imageHeight" ? "0px" : fieldKey === "imageMaxWidth" ? "100%" : ""}
+                    placeholder={["imageWidth", "imageHeight", "logoWidth"].includes(fieldKey) ? "0px" : fieldKey === "imageMaxWidth" ? "100%" : ""}
                 />
             )}
         </div>
     );
 }
 
-function ArrayEditor({ label, value, onChange, fieldKey }) {
+function ArrayEditor({ label, value, onChange, fieldKey, uniqueId }) {
     const [isOpen, setIsOpen] = useState(true);
 
     const addItem = () => {
@@ -228,12 +230,14 @@ function ArrayEditor({ label, value, onChange, fieldKey }) {
                             <DynamicContentEditor
                                 content={item}
                                 onChange={(newItem) => updateItem(index, newItem)}
+                                uniqueId={uniqueId ? `${uniqueId}-${fieldKey}-${index}` : `${fieldKey}-${index}`}
                             />
                         ) : (
                             <FieldEditor
                                 fieldKey={`${fieldKey}Item${index + 1}`}
                                 value={item}
                                 onChange={(newItem) => updateItem(index, newItem)}
+                                uniqueId={uniqueId ? `${uniqueId}-${fieldKey}-${index}` : `${fieldKey}-${index}`}
                             />
                         )}
                     </div>

@@ -38,6 +38,20 @@ export async function POST(req) {
             data: { title, slug },
         });
 
+        try {
+            await prisma.activity.create({
+                data: {
+                    type: "page",
+                    action: "created",
+                    title: newPage.title,
+                    userId: session.user.id,
+                    metadata: { id: newPage.id, slug: newPage.slug },
+                },
+            });
+        } catch (actErr) {
+            console.error("Failed to record page creation activity:", actErr);
+        }
+
         return NextResponse.json(newPage, { status: 201 });
     } catch (error) {
         console.error("Error creating page:", error);

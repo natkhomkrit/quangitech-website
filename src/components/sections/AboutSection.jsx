@@ -13,7 +13,7 @@ export default function AboutSection({ content }) {
     };
 
     return (
-        <section className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-start gap-12 py-12 md:py-16 px-6">
+        <section className="max-w-[1140px] mx-auto flex flex-col md:flex-row items-center gap-12 py-12 md:py-16 px-6">
             <div className="flex-1 space-y-6" data-aos="fade-right">
                 <div className="inline-flex items-center space-x-3 mb-4">
                     <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
@@ -71,8 +71,8 @@ export default function AboutSection({ content }) {
                     })}
                 </div>
             </div>
-            <div data-aos="fade-left" className="relative">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[450px] w-full md:w-[500px]">
+            <div data-aos="fade-left" className="relative flex-1">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[300px] w-full">
                     {image ? (
                         <img
                             src={image}

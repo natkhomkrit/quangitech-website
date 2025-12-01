@@ -11,6 +11,7 @@ import {
   Copy,
   Plus,
   Pencil,
+  Loader2,
 } from "lucide-react";
 import {
   DndContext,
@@ -481,96 +482,102 @@ export default function Menus() {
         <div className="w-36 text-center">Items</div>
       </div>
 
-      {menus.map((menu) => (
-        <div key={menu.id}>
-          <div
-            className={`py-3 px-2 flex items-center border-l-4 border-y cursor-pointer transition-all duration-200 ${openMenuId === menu.id
-              ? "border-l-primary bg-muted/20"
-              : "border-l-white hover:border-l-primary hover:bg-muted/30"
-              }`}
-            onClick={() => handleToggleMenu(menu.id)}
-          >
-            <div className="flex-1 font-medium">{menu.name}</div>
-            <div className="w-36 text-center text-muted-foreground">
-              {menu.items.reduce(
-                (total, item) =>
-                  total + 1 + (item.children ? item.children.length : 0),
-                0
-              )}
-            </div>
-            <ChevronDown
-              className={`h-4 w-4 ml-2 transition-transform duration-200 ${openMenuId === menu.id ? "rotate-180" : ""
-                }`}
-            />
-          </div>
-
-          {openMenuId === menu.id && (
-            <div className="pl-6 my-4 space-y-2">
-              <AddMenuItemSheet
-                menu={menu}
-                onAdd={(newItem) => {
-                  setMenus((prev) =>
-                    prev.map((m) =>
-                      m.id === menu.id
-                        ? { ...m, items: [...m.items, newItem] }
-                        : m
-                    )
-                  );
-                  toast.success("Menu item added!");
-                }}
-              />
-
-              <DndContext
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={(e) => handleDragEnd(e, menu.id)}
-              >
-                <SortableContext
-                  items={menu.items.map((item) => item.id.toString())}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2">
-                    {menu.items
-                      .sort((a, b) => a.sortOrder - b.sortOrder)
-                      .map((item) => (
-                        <SortableItem
-                          key={item.id}
-                          id={item.id.toString()}
-                          isDragging={draggingItemId === item.id.toString()}
-                        >
-                          <RenderMenuItem
-                            item={item}
-                            draggingItemId={draggingItemId}
-                            onDelete={handleDeleteMenuItem}
-                            onAddSubmenu={handleAddSubmenu}
-                            onEdit={handleEditItem}
-                            menuId={menu.id}
-                          />
-                        </SortableItem>
-                      ))}
-                  </div>
-                </SortableContext>
-
-                <DragOverlay>
-                  {draggingItem && (
-                    <div>
-                      <MenuItemCard
-                        item={draggingItem}
-                        isDragging={false}
-                        isChild={false}
-                        onDelete={() => { }}
-                        onAddSubmenu={() => { }}
-                        onEdit={() => { }}
-                        menuId={menu.id}
-                      />
-                    </div>
-                  )}
-                </DragOverlay>
-              </DndContext>
-            </div>
-          )}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="animate-spin text-gray-500" size={32} />
         </div>
-      ))}
+      ) : (
+        menus.map((menu) => (
+          <div key={menu.id}>
+            <div
+              className={`py-3 px-2 flex items-center border-l-4 border-y cursor-pointer transition-all duration-200 ${openMenuId === menu.id
+                ? "border-l-primary bg-muted/20"
+                : "border-l-white hover:border-l-primary hover:bg-muted/30"
+                }`}
+              onClick={() => handleToggleMenu(menu.id)}
+            >
+              <div className="flex-1 font-medium">{menu.name}</div>
+              <div className="w-36 text-center text-muted-foreground">
+                {menu.items.reduce(
+                  (total, item) =>
+                    total + 1 + (item.children ? item.children.length : 0),
+                  0
+                )}
+              </div>
+              <ChevronDown
+                className={`h-4 w-4 ml-2 transition-transform duration-200 ${openMenuId === menu.id ? "rotate-180" : ""
+                  }`}
+              />
+            </div>
+
+            {openMenuId === menu.id && (
+              <div className="pl-6 my-4 space-y-2">
+                <AddMenuItemSheet
+                  menu={menu}
+                  onAdd={(newItem) => {
+                    setMenus((prev) =>
+                      prev.map((m) =>
+                        m.id === menu.id
+                          ? { ...m, items: [...m.items, newItem] }
+                          : m
+                      )
+                    );
+                    toast.success("Menu item added!");
+                  }}
+                />
+
+                <DndContext
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={(e) => handleDragEnd(e, menu.id)}
+                >
+                  <SortableContext
+                    items={menu.items.map((item) => item.id.toString())}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-2">
+                      {menu.items
+                        .sort((a, b) => a.sortOrder - b.sortOrder)
+                        .map((item) => (
+                          <SortableItem
+                            key={item.id}
+                            id={item.id.toString()}
+                            isDragging={draggingItemId === item.id.toString()}
+                          >
+                            <RenderMenuItem
+                              item={item}
+                              draggingItemId={draggingItemId}
+                              onDelete={handleDeleteMenuItem}
+                              onAddSubmenu={handleAddSubmenu}
+                              onEdit={handleEditItem}
+                              menuId={menu.id}
+                            />
+                          </SortableItem>
+                        ))}
+                    </div>
+                  </SortableContext>
+
+                  <DragOverlay>
+                    {draggingItem && (
+                      <div>
+                        <MenuItemCard
+                          item={draggingItem}
+                          isDragging={false}
+                          isChild={false}
+                          onDelete={() => { }}
+                          onAddSubmenu={() => { }}
+                          onEdit={() => { }}
+                          menuId={menu.id}
+                        />
+                      </div>
+                    )}
+                  </DragOverlay>
+                </DndContext>
+              </div>
+            )}
+          </div>
+        ))
+      )}
 
       {/* Submenu Sheet */}
       <AddSubmenuSheet
