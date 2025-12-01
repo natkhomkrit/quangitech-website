@@ -9,7 +9,7 @@ export default function ExecutiveSection({ content }) {
 
     return (
         <article className="group" data-aos="fade-up">
-            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100/50 hover:shadow-lg transition-all duration-700 overflow-hidden">
+            <div className="bg-white rounded-3xl p-6 md:p-12 shadow-sm border border-gray-100/50 hover:shadow-lg transition-all duration-700 overflow-hidden">
                 <header className="mb-10">
                     <div className="inline-flex items-center space-x-3 mb-4">
                         <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
@@ -21,12 +21,13 @@ export default function ExecutiveSection({ content }) {
 
                 {name ? (
                     <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-12">
-                        <div className="flex-shrink-0 mx-auto lg:mx-0">
+                        <div className="flex-shrink-0 mx-auto lg:mx-0 max-w-full">
                             <div
-                                className="relative"
+                                className="relative max-w-full"
                                 style={{
                                     width: imageWidth || "320px",
-                                    height: imageHeight || "320px"
+                                    height: imageHeight || "320px",
+                                    maxWidth: "100%"
                                 }}
                             >
                                 <div className="relative w-full h-full overflow-hidden rounded-3xl bg-white shadow-lg">

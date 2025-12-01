@@ -599,12 +599,12 @@ function SectionEditor({ section, onUpdate, onDelete, index, dragHandleProps, is
 
     return (
         <Card className={isOverlay ? "opacity-80 shadow-xl cursor-grabbing" : ""}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0 pb-2">
                 <div className="flex items-center gap-3">
                     {!isDragDisabled && (
                         <div
                             {...dragHandleProps}
-                            className="cursor-grab active:cursor-grabbing p-2 hover:bg-muted rounded-md touch-none"
+                            className="cursor-grab active:cursor-grabbing p-2 hover:bg-muted rounded-md touch-none flex-shrink-0"
                             title="Drag to reorder"
                         >
                             <GripVertical className="h-5 w-5 text-muted-foreground" />
@@ -617,7 +617,7 @@ function SectionEditor({ section, onUpdate, onDelete, index, dragHandleProps, is
                         <CardDescription>Order: {section.order}</CardDescription>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
                     {!['hero', 'technologies', 'about', 'services', 'recent-works', 'news-events', 'why-choose-us', 'call-to-action', 'clients', 'generic', 'executive', 'contact', 'footer', 'company'].includes(section.type?.toLowerCase()) && (
                         <div className="flex items-center space-x-2 mr-4">
                             <Switch

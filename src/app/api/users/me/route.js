@@ -30,6 +30,7 @@ export async function GET(req) {
         postalCode: true,
         avatarUrl: true,
         role: true,
+        permissions: true,
       },
     });
 

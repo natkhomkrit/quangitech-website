@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Footer from "@/components/ui/footer";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function NewsEventDetail() {
@@ -91,7 +92,7 @@ export default function NewsEventDetail() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+        <Loader2 className="animate-spin text-gray-500" size={48} />
       </div>
     );
   }

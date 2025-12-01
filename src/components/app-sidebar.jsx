@@ -84,6 +84,12 @@ export default function AppSidebar() {
   const isActive = (path) => pathname === path;
   const isParentActive = (basePath) => pathname?.startsWith(basePath);
 
+  const hasPermission = (menuId) => {
+    if (!currentUser) return false;
+    if (currentUser.role === "admin") return true;
+    return currentUser.permissions?.includes(menuId);
+  };
+
   return (
     <Sidebar collapsible="icon">
       {/* Header */}
@@ -118,62 +124,64 @@ export default function AppSidebar() {
               </SidebarMenuItem>
 
               {/* Posts Collapsible */}
-              <Collapsible defaultOpen={true}>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      className="flex-1 justify-between"
+              {hasPermission("posts") && (
+                <Collapsible defaultOpen={true}>
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton
+                        className="flex-1 justify-between"
 
-                    >
-                      <Link
-                        href={"/backoffice/posts"}
-                        className="flex items-center gap-2"
                       >
-                        <FileText size={16} />
-                        <span>Posts</span>
-                      </Link>
-                      <ChevronDown
-                        className={`transition-transform duration-200 ${isPostsOpen ? "rotate-180" : ""
-                          }`}
-                      />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-
-                  <CollapsibleContent className="mt-1">
-                    <SidebarMenuSub>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive("/backoffice/posts")}
-                      >
-                        <Link href="/backoffice/posts">
-                          <span>All Posts</span>
+                        <Link
+                          href={"/backoffice/posts"}
+                          className="flex items-center gap-2"
+                        >
+                          <FileText size={16} />
+                          <span>Posts</span>
                         </Link>
-                      </SidebarMenuSubButton>
+                        <ChevronDown
+                          className={`transition-transform duration-200 ${isPostsOpen ? "rotate-180" : ""
+                            }`}
+                        />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
 
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive("/backoffice/posts/create")}
-                      >
-                        <Link href="/backoffice/posts/create">
-                          <span>Add Post</span>
-                        </Link>
-                      </SidebarMenuSubButton>
+                    <CollapsibleContent className="mt-1">
+                      <SidebarMenuSub>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={isActive("/backoffice/posts")}
+                        >
+                          <Link href="/backoffice/posts">
+                            <span>All Posts</span>
+                          </Link>
+                        </SidebarMenuSubButton>
 
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={isActive("/backoffice/categories")}
-                      >
-                        <Link href="/backoffice/categories">
-                          <span>Categories</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={isActive("/backoffice/posts/create")}
+                        >
+                          <Link href="/backoffice/posts/create">
+                            <span>Add Post</span>
+                          </Link>
+                        </SidebarMenuSubButton>
 
-              {/* Users - Only visible to admin */}
-              {currentUser?.role === "admin" && (
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={isActive("/backoffice/categories")}
+                        >
+                          <Link href="/backoffice/categories">
+                            <span>Categories</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              )}
+
+              {/* Users */}
+              {hasPermission("users") && (
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
@@ -187,41 +195,50 @@ export default function AppSidebar() {
                 </SidebarMenuItem>
               )}
 
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/backoffice/menus")}
-                >
-                  <Link href="/backoffice/menus">
-                    <Menu />
-                    <span>Menus</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {/* Menus */}
+              {hasPermission("menus") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive("/backoffice/menus")}
+                  >
+                    <Link href="/backoffice/menus">
+                      <Menu />
+                      <span>Menus</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
 
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/backoffice/pages")}
-                >
-                  <Link href="/backoffice/pages">
-                    <LayoutTemplate />
-                    <span>Pages</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {/* Pages */}
+              {hasPermission("pages") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive("/backoffice/pages")}
+                  >
+                    <Link href="/backoffice/pages">
+                      <LayoutTemplate />
+                      <span>Pages</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
 
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/backoffice/settings")}
-                >
-                  <Link href="/backoffice/settings">
-                    <Settings2 />
-                    <span>Settings</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {/* Settings */}
+              {hasPermission("settings") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive("/backoffice/settings")}
+                  >
+                    <Link href="/backoffice/settings">
+                      <Settings2 />
+                      <span>Settings</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -233,7 +250,7 @@ export default function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <Avatar className="mr-2">
+                  <Avatar className="h-6 w-6 mr-2">
                     {currentUser?.avatarUrl ? (
                       <AvatarImage
                         src={currentUser.avatarUrl}

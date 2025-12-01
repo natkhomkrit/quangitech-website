@@ -118,50 +118,53 @@ function MenuItemCard({
       `}
       >
         <CardContent className="py-2">
-          <div className="flex justify-between items-center">
-            {/* Drag handle */}
-            {!isChild && (
-              <div
-                {...dragHandleProps}
-                className="
-                  cursor-grab active:cursor-grabbing 
-                  p-2 hover:bg-muted rounded-md mr-3
-                  transition-colors duration-150
-                  touch-none select-none
-                "
-                title="Drag to reorder"
-              >
-                <GripVertical className="h-4 w-4 text-muted-foreground" />
-              </div>
-            )}
-
-            <div className="flex-1 flex flex-col min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold truncate">{item.name}</span>
-                {item.children && item.children.length > 0 && (
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                    {item.children.length} submenu
-                    {item.children.length > 1 ? "s" : ""}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 w-fit group cursor-pointer transition-all">
-                <span
-                  onClick={handleCopyUrl}
-                  className="truncate max-w-xs text-muted-foreground"
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 justify-between">
+            <div className="flex items-center w-full sm:w-auto overflow-hidden">
+              {/* Drag handle */}
+              {!isChild && (
+                <div
+                  {...dragHandleProps}
+                  className="
+                    cursor-grab active:cursor-grabbing 
+                    p-2 hover:bg-muted rounded-md mr-2
+                    transition-colors duration-150
+                    touch-none select-none
+                    flex-shrink-0
+                  "
+                  title="Drag to reorder"
                 >
-                  {`http://localhost:3000${item.url}`}
-                </span>
-                <Copy
-                  size={16}
-                  className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 text-gray-500 hover:text-gray-700"
-                />
+                  <GripVertical className="h-4 w-4 text-muted-foreground" />
+                </div>
+              )}
+
+              <div className="flex-1 flex flex-col min-w-0 mr-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold truncate">{item.name}</span>
+                  {item.children && item.children.length > 0 && (
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full whitespace-nowrap">
+                      {item.children.length} submenu
+                      {item.children.length > 1 ? "s" : ""}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600 w-fit group cursor-pointer transition-all">
+                  <span
+                    onClick={handleCopyUrl}
+                    className="truncate max-w-[200px] sm:max-w-xs text-muted-foreground"
+                  >
+                    {`http://localhost:3000${item.url}`}
+                  </span>
+                  <Copy
+                    size={16}
+                    className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 text-gray-500 hover:text-gray-700 flex-shrink-0"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Action buttons */}
             {!isDragging && (
-              <div className="flex gap-2 ml-2">
+              <div className="flex gap-2 self-end sm:self-auto ml-0 sm:ml-2">
                 <Button
                   size="icon"
                   variant="outline"
@@ -316,7 +319,10 @@ export default function Menus() {
       const res = await fetch(`/api/menu-items/${itemId}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete menu item");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.details || errData.error || "Failed to delete menu item");
+      }
 
       setMenus((prevMenus) =>
         prevMenus.map((menu) => {

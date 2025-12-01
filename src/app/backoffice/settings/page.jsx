@@ -57,17 +57,24 @@ export default function SiteSettingsPage() {
     }
   };
 
+  const [initialSettings, setInitialSettings] = useState(null);
+
   const fetchSettings = async () => {
     try {
       const res = await fetch("/api/settings");
       if (!res.ok) throw new Error("Failed to fetch settings");
       const data = await res.json();
       if (data) {
-        setFormData((prev) => ({
-          ...prev,
-          ...data,
+        const settings = {
+          siteName: data.siteName || "",
+          siteUrl: data.siteUrl || "",
+          logoUrl: data.logoUrl || "",
+          description: data.description || "",
+          seoKeywords: data.seoKeywords || "",
           themeColor: data.themeColor || "#000000",
-        }));
+        };
+        setFormData(settings);
+        setInitialSettings(settings);
       }
     } catch (error) {
       console.error(error);
@@ -83,8 +90,11 @@ export default function SiteSettingsPage() {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
 
+  const [saving, setSaving] = useState(false);
+
   const handleSettingsSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       const res = await fetch("/api/settings", {
         method: "PUT",
@@ -92,13 +102,19 @@ export default function SiteSettingsPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Failed to update settings");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to update settings");
+      }
 
       toast.success("Settings updated successfully");
-      // router.refresh(); // Refresh to apply theme color
+      setInitialSettings(formData);
+      router.refresh(); // Refresh to apply theme color and other settings
     } catch (error) {
       console.error(error);
       toast.error("Failed to update settings");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -228,7 +244,7 @@ export default function SiteSettingsPage() {
                 <div className="flex items-center gap-4">
                   <div className="relative group">
                     <Avatar className="w-20 h-20 border-2 border-white shadow-sm cursor-pointer">
-                      <AvatarImage src={user?.avatarUrl || "https://github.com/shadcn.png"} />
+                      <AvatarImage src={user?.avatarUrl} />
                       <AvatarFallback className="text-xl bg-primary/10 text-primary">
                         {user?.fullName?.charAt(0) || "U"}
                       </AvatarFallback>
@@ -565,7 +581,13 @@ export default function SiteSettingsPage() {
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <Button type="submit">Save Changes</Button>
+                  <Button
+                    type="submit"
+                    disabled={saving || JSON.stringify(formData) === JSON.stringify(initialSettings)}
+                  >
+                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
                 </div>
               </form>
             </div>
@@ -585,7 +607,9 @@ export default function SiteSettingsPage() {
                     onChange={handleChange}
                     className="h-10 w-20 p-1"
                   />
-                  <Button type="submit">Save</Button>
+                  <Button type="submit" disabled={saving}>
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
                   <Button
                     type="button"
                     variant="outline"

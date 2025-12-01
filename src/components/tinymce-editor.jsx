@@ -122,11 +122,15 @@ export default function TinyMCEEditor({ content, onChange, id }) {
     if (typeof window === "undefined") return;
 
     const editor = window.tinymce?.get(editorId);
-    if (!editor) return;
+    if (!editor || !editor.initialized) return;
 
-    const current = editor.getContent();
-    if ((content || "") !== current) {
-      editor.setContent(content || "");
+    try {
+      const current = editor.getContent();
+      if ((content || "") !== current) {
+        editor.setContent(content || "");
+      }
+    } catch (err) {
+      console.warn("TinyMCE sync error:", err);
     }
   }, [content]);
 

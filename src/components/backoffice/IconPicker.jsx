@@ -37,7 +37,7 @@ export function IconPicker({ value, onChange, label = "Icon" }) {
     return (
         <div className="space-y-2">
             <Label>{label}</Label>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
                 {SelectedIcon ? (
                     <div className="flex items-center gap-2 p-2 border rounded-md bg-gray-50">
                         <SelectedIcon className="h-6 w-6" />

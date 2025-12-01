@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/components/loading";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,12 +66,37 @@ export default function page() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [permissions, setPermissions] = useState([]);
+  const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [sorting, setSorting] = useState([]);
+
+  const availableMenus = [
+    { id: "posts", label: "Posts" },
+    { id: "pages", label: "Pages" },
+    { id: "menus", label: "Menus" },
+    { id: "users", label: "Users" },
+    { id: "settings", label: "Settings" },
+  ];
+
+  const handlePermissionChange = (menuId, checked) => {
+    if (checked) {
+      setPermissions([...permissions, menuId]);
+    } else {
+      setPermissions(permissions.filter((id) => id !== menuId));
+    }
+  };
+
+  const handleSelectAllPermissions = (checked) => {
+    if (checked) {
+      setPermissions(availableMenus.map((menu) => menu.id));
+    } else {
+      setPermissions([]);
+    }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -119,6 +143,7 @@ export default function page() {
           email,
           password,
           role,
+          permissions: role === "admin" ? [] : permissions,
         }),
       });
 
@@ -134,12 +159,13 @@ export default function page() {
         setUsername("");
         setEmail("");
         setPassword("");
-        setRole("");
+        setRole("user");
+        setPermissions([]);
         setAddDialogOpen(false);
       } else {
         const errorData = await response.json();
-        console.error("Error adding user:", errorData);
-        toast.error(errorData.message || "Failed to add user");
+        console.log("API Error Data:", errorData);
+        toast.error(errorData.error || errorData.message || "Failed to add user");
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -167,11 +193,17 @@ export default function page() {
           email: selectedUser.email,
           status: selectedUser.status,
           password: password || undefined,
+          role: selectedUser.role,
+          permissions: selectedUser.role === "admin" ? [] : permissions,
         }),
       });
 
       if (response.ok) {
+        const updatedUser = await response.json();
         toast.success("User updated successfully");
+
+        // Update local state
+        setUsers((prev) => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
 
         // Reset state and close dialog
         setEditDialogOpen(false);
@@ -181,6 +213,7 @@ export default function page() {
         setUsername("");
         setEmail("");
         setPassword("");
+        setPermissions([]);
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Failed to update user");
@@ -202,7 +235,7 @@ export default function page() {
       if (!res.ok) throw new Error("Failed to delete user");
       toast.success("User deleted successfully");
 
-      // อัปเดต state ลบ user ออกจาก list
+      // Update state to remove user from list
       setUsers((prev) => prev.filter((user) => user.id !== id));
     } catch (error) {
       console.error("Error deleting user: ", error);
@@ -344,6 +377,7 @@ export default function page() {
                   setUsername(row.original.username);
                   setEmail(row.original.email);
                   setPassword("");
+                  setPermissions(row.original.permissions || []);
                   setEditDialogOpen(true);
                 }}
               >
@@ -390,7 +424,6 @@ export default function page() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-
   return (
     <div className="p-6">
       <div className="flex items-center mb-4 w-full justify-between">
@@ -398,7 +431,10 @@ export default function page() {
           <h1 className="text-2xl font-semibold">Users</h1>
           <p className="text-sm text-muted-foreground">Manage users here.</p>
         </div>
-        <Button onClick={() => setAddDialogOpen(true)}>Add User</Button>
+        <Button onClick={() => {
+          setPermissions([]);
+          setAddDialogOpen(true);
+        }}>Add User</Button>
       </div>
 
       <hr />
@@ -466,7 +502,7 @@ export default function page() {
 
       {/* Add User Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>
@@ -538,6 +574,41 @@ export default function page() {
                 </SelectContent>
               </Select>
             </div>
+
+            {role === "user" && (
+              <div className="space-y-2 border p-3 rounded-md">
+                <Label>Allowed Menus</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center space-x-2 col-span-2 border-b pb-2 mb-2">
+                    <input
+                      type="checkbox"
+                      id="add-perm-all"
+                      checked={permissions.length === availableMenus.length}
+                      onChange={(e) => handleSelectAllPermissions(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <label htmlFor="add-perm-all" className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Select All
+                    </label>
+                  </div>
+                  {availableMenus.map((menu) => (
+                    <div key={menu.id} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`add-perm-${menu.id}`}
+                        checked={permissions.includes(menu.id)}
+                        onChange={(e) => handlePermissionChange(menu.id, e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label htmlFor={`add-perm-${menu.id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {menu.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <DialogFooter>
               <Button type="submit" disabled={loading}>
                 {loading ? "Adding..." : "Add User"}
@@ -548,7 +619,7 @@ export default function page() {
       </Dialog>
 
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
@@ -647,6 +718,59 @@ export default function page() {
                 </SelectContent>
               </Select>
             </div>
+
+            <div>
+              <Label htmlFor="edit-role">Role</Label>
+              <Select
+                value={selectedUser?.role || "user"}
+                onValueChange={(val) => {
+                  if (selectedUser) setSelectedUser({ ...selectedUser, role: val });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedUser?.role === "user" && (
+              <div className="space-y-2 border p-3 rounded-md">
+                <Label>Allowed Menus</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center space-x-2 col-span-2 border-b pb-2 mb-2">
+                    <input
+                      type="checkbox"
+                      id="edit-perm-all"
+                      checked={permissions.length === availableMenus.length}
+                      onChange={(e) => handleSelectAllPermissions(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <label htmlFor="edit-perm-all" className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Select All
+                    </label>
+                  </div>
+                  {availableMenus.map((menu) => (
+                    <div key={menu.id} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`edit-perm-${menu.id}`}
+                        checked={permissions.includes(menu.id)}
+                        onChange={(e) => handlePermissionChange(menu.id, e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label htmlFor={`edit-perm-${menu.id}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {menu.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <DialogFooter>
               <Button type="submit" disabled={loading}>
                 {loading ? "Saving..." : "Save Changes"}

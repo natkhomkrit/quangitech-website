@@ -27,14 +27,22 @@ export async function POST(req) {
     }
 
     // ถ้าอยากเช็ค role ด้วย
-    if (session.user.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    // if (session.user.role !== "admin") {
+    //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // }
 
     const { name, description, slug } = await req.json();
 
+    // Ensure unique slug
+    let uniqueSlug = slug;
+    let count = 1;
+    while (await prisma.category.findUnique({ where: { slug: uniqueSlug } })) {
+      uniqueSlug = `${slug}-${count}`;
+      count++;
+    }
+
     const newCategory = await prisma.category.create({
-      data: { name, slug, description },
+      data: { name, slug: uniqueSlug, description },
     });
 
     try {

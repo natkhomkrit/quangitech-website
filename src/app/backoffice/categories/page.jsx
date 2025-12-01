@@ -97,7 +97,10 @@ export default function categories() {
         body: JSON.stringify({ name, slug, description }),
       });
 
-      if (!res.ok) throw new Error("Failed to save category");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save category");
+      }
 
       const savedCategory = await res.json();
 

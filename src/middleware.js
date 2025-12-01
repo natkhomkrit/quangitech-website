@@ -24,10 +24,10 @@ export default withAuth(
           }
 
           // Restrict /backoffice/users to admin only
-          if (pathname.startsWith("/backoffice/users") && token.role !== "admin") {
-            console.log(`[Middleware] User role '${token.role}' tried to access restricted route. Access denied.`);
-            return false;
-          }
+          // if (pathname.startsWith("/backoffice/users") && token.role !== "admin") {
+          //   console.log(`[Middleware] User role '${token.role}' tried to access restricted route. Access denied.`);
+          //   return false;
+          // }
 
           // Allow both admin and user to access other backoffice routes
           // You might want to add more specific checks here if needed

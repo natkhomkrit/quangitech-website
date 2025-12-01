@@ -112,6 +112,7 @@ export const authOptions = {
         token.name = user.fullName || user.name;
         token.picture = user.avatarUrl || user.image;
         token.role = user.role;
+        token.permissions = user.permissions;
       }
       return token;
     },
@@ -123,6 +124,7 @@ export const authOptions = {
         session.user.name = token.name;
         session.user.image = token.picture;
         session.user.role = token.role;
+        session.user.permissions = token.permissions;
       }
       return session;
     },

@@ -54,11 +54,19 @@ export async function POST(req) {
     thumbnailPath = thumbnailFile;
   }
 
+  // Ensure unique slug
+  let uniqueSlug = slug;
+  let count = 1;
+  while (await prisma.post.findUnique({ where: { slug: uniqueSlug } })) {
+    uniqueSlug = `${slug}-${count}`;
+    count++;
+  }
+
   try {
     const newPost = await prisma.post.create({
       data: {
         title,
-        slug,
+        slug: uniqueSlug,
         excerpt,
         content,
         status,
