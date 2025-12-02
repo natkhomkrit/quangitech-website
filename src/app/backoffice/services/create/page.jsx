@@ -57,10 +57,12 @@ export default function CreateServicePage() {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <div className="mb-6">
-                <Link href="/backoffice/services" className="text-sm text-gray-500 hover:text-gray-900 flex items-center mb-2">
-                    <ArrowLeft size={16} className="mr-1" /> Back to Services
-                </Link>
+            <div className="flex items-center gap-4 mb-6">
+                <Button variant="outline" size="icon" asChild>
+                    <Link href="/backoffice/services">
+                        <ArrowLeft className="h-4 w-4" />
+                    </Link>
+                </Button>
                 <h1 className="text-2xl font-bold">Add New Service</h1>
             </div>
 

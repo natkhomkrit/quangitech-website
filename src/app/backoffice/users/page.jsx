@@ -80,6 +80,7 @@ export default function page() {
     { id: "menus", label: "Menus" },
     { id: "users", label: "Users" },
     { id: "settings", label: "Settings" },
+    { id: "services", label: "Services" },
   ];
 
   const handlePermissionChange = (menuId, checked) => {

@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Save, Trash, Plus, GripVertical, Search, Loader2 } from "lucide-react";
+import { Save, Trash, Plus, GripVertical, Search, Loader2, ArrowLeft } from "lucide-react";
 import {
     DndContext,
     closestCenter,
@@ -418,9 +419,16 @@ export default function PageEditor() {
         <div className="p-6 max-w-5xl mx-auto">
             <div className="flex flex-col gap-6 mb-6">
                 <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-2xl font-bold">Edit Page: {page.title}</h1>
-                        <p className="text-gray-500">Slug: {page.slug}</p>
+                    <div className="flex items-center gap-4">
+                        <Button variant="outline" size="icon" asChild>
+                            <Link href="/backoffice/pages">
+                                <ArrowLeft className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                        <div>
+                            <h1 className="text-2xl font-bold">Edit Page: {page.title}</h1>
+                            <p className="text-gray-500">Slug: {page.slug}</p>
+                        </div>
                     </div>
                     {page.slug === "executives" ? (
                         <DropdownMenu>

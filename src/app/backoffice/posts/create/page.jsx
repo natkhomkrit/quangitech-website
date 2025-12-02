@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Save, Upload } from "lucide-react";
+import { Save, Upload, ArrowLeft } from "lucide-react";
 import TinyMCEEditor from "@/components/tinymce-editor";
+import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ThumbnailPicker } from "@/components/thumbnail-picker";
 import CategorySelector from "@/components/category-selector";
@@ -118,7 +119,14 @@ export default function create() {
   return (
     <div className="flex flex-col p-6">
       <div className="flex flex-col md:flex-row items-start md:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-semibold flex-1">Add New Post</h1>
+        <div className="flex items-center gap-4 flex-1">
+          <Button variant="outline" size="icon" asChild>
+            <Link href="/backoffice/posts">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <h1 className="text-2xl font-semibold">Add New Post</h1>
+        </div>
         <div className="w-full md:w-80">
           <div className="flex gap-2 mt-0 md:mt-4">
             <Button

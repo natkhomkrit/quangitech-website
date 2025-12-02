@@ -55,6 +55,8 @@ export default function AppSidebar() {
   const { open } = useSidebar();
   const pathname = usePathname();
   const [currentUser, setCurrentUser] = useState(null);
+  const [siteName, setSiteName] = useState("Dashboard");
+  const [logoUrl, setLogoUrl] = useState("/logo.svg");
 
   // Posts collapsible open state
   const [isPostsOpen, setIsPostsOpen] = useState(
@@ -78,7 +80,21 @@ export default function AppSidebar() {
       }
     };
 
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.siteName) setSiteName(data.siteName);
+          if (data.logoUrl) setLogoUrl(data.logoUrl);
+        }
+      } catch (error) {
+        console.error("Failed to fetch settings:", error);
+      }
+    };
+
     fetchUser();
+    fetchSettings();
   }, []);
 
   const isActive = (path) => pathname === path;
@@ -95,20 +111,21 @@ export default function AppSidebar() {
       {/* Header */}
       <SidebarHeader>
         <div className="flex items-center">
-          <img src="/logo.svg" alt="logo" className="size-12" />
+          <img src={logoUrl} alt="logo" className="size-12 object-contain" />
           <span
-            className={`text-xl font-bold transition-all duration-300 ${open
+            className={`text-xl font-bold transition-all duration-300 ml-2 truncate ${open
               ? "opacity-100 translate-x-0 w-auto block"
               : "opacity-0 -translate-x-4 w-0 overflow-hidden hidden"
               }`}
           >
-            Dashboard
+            {siteName}
           </span>
         </div>
       </SidebarHeader>
 
       {/* Sidebar Content */}
       <SidebarContent>
+        {/* General Group */}
         <SidebarGroup>
           <SidebarGroupLabel>General</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -122,16 +139,21 @@ export default function AppSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
+        {/* Content Management Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Content Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
               {/* Posts Collapsible */}
               {hasPermission("posts") && (
                 <Collapsible defaultOpen={true}>
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        className="flex-1 justify-between"
-
-                      >
+                      <SidebarMenuButton className="flex-1 justify-between">
                         <Link
                           href={"/backoffice/posts"}
                           className="flex items-center gap-2"
@@ -180,8 +202,23 @@ export default function AppSidebar() {
                 </Collapsible>
               )}
 
+              {/* Pages */}
+              {hasPermission("pages") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive("/backoffice/pages")}
+                  >
+                    <Link href="/backoffice/pages">
+                      <LayoutTemplate />
+                      <span>Pages</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+
               {/* Services */}
-              {hasPermission("posts") && (
+              {hasPermission("services") && (
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
@@ -194,22 +231,15 @@ export default function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-              {/* Users */}
-              {hasPermission("users") && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive("/backoffice/users")}
-                  >
-                    <Link href="/backoffice/users">
-                      <User2 />
-                      <span>Users</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
-
+        {/* System & Settings Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>System & Settings</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
               {/* Menus */}
               {hasPermission("menus") && (
                 <SidebarMenuItem>
@@ -225,16 +255,16 @@ export default function AppSidebar() {
                 </SidebarMenuItem>
               )}
 
-              {/* Pages */}
-              {hasPermission("pages") && (
+              {/* Users */}
+              {hasPermission("users") && (
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={isActive("/backoffice/pages")}
+                    isActive={isActive("/backoffice/users")}
                   >
-                    <Link href="/backoffice/pages">
-                      <LayoutTemplate />
-                      <span>Pages</span>
+                    <Link href="/backoffice/users">
+                      <User2 />
+                      <span>Users</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

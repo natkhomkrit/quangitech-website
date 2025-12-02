@@ -77,7 +77,7 @@ export default function PagesManagement() {
                                     <TableCell className="text-right">
                                         <Button asChild variant="outline" size="sm">
                                             <Link href={`/backoffice/pages/${page.slug}`}>
-                                                <Edit size={16} /> Edit Content
+                                                <Edit size={16} /> Edit
                                             </Link>
                                         </Button>
                                     </TableCell>

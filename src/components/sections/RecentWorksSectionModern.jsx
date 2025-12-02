@@ -92,7 +92,7 @@ export default function RecentWorksSectionModern({ content, themeColor }) {
                                     <div className="text-center">
                                         <Link
                                             href={`/portfolio/${item.slug}`}
-                                            className="text-gray-400 font-normal hover:text-gray-600 transition-colors text-base"
+                                            className="text-gray-700 font-normal hover:text-gray-900 transition-colors text-base"
                                         >
                                             {item.title}
                                         </Link>
@@ -134,7 +134,7 @@ export default function RecentWorksSectionModern({ content, themeColor }) {
                                             <div className="text-center">
                                                 <Link
                                                     href={`/portfolio/${item.slug}`}
-                                                    className="text-black font-normal text-lg"
+                                                    className="text-gray-700 font-normal text-lg"
                                                 >
                                                     {item.title}
                                                 </Link>

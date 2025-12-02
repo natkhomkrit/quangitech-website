@@ -21,7 +21,7 @@ export default function RecentlyEdited() {
 
                 const combined = [
                     ...pages.map((p) => ({ ...p, type: "page", url: `/backoffice/pages/${p.slug}` })),
-                    ...posts.map((p) => ({ ...p, type: "post", url: `/backoffice/posts/${p.id}` })),
+                    ...posts.map((p) => ({ ...p, type: "post", url: `/backoffice/posts/${p.slug}/edit` })),
                 ];
 
                 // Sort by updatedAt descending
@@ -39,7 +39,7 @@ export default function RecentlyEdited() {
     }, []);
 
     return (
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h3 className="text-sm font-semibold text-gray-700 tracking-wide mb-4">Recently Edited</h3>
             <div className="space-y-3">
                 {loading ? (
