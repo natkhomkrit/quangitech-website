@@ -50,9 +50,11 @@ export async function POST(req) {
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
     thumbnailPath = `/uploads/${filename}`;
-  } else if (typeof thumbnailFile === "string") {
+  } else if (typeof thumbnailFile === "string" && thumbnailFile.trim() !== "") {
     thumbnailPath = thumbnailFile;
   }
+
+
 
   // Ensure unique slug
   let uniqueSlug = slug;

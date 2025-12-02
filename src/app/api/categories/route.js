@@ -7,7 +7,11 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({
+      include: {
+        parent: true,
+      },
+    });
     return NextResponse.json(categories);
   } catch (err) {
     console.error(err);
@@ -31,7 +35,7 @@ export async function POST(req) {
     //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     // }
 
-    const { name, description, slug } = await req.json();
+    const { name, description, slug, parentId, subcategories } = await req.json();
 
     // Ensure unique slug
     let uniqueSlug = slug;
@@ -41,9 +45,39 @@ export async function POST(req) {
       count++;
     }
 
+    const data = { name, slug: uniqueSlug, description };
+    if (parentId && parentId !== "none") {
+      data.parentId = parentId;
+    }
+
     const newCategory = await prisma.category.create({
-      data: { name, slug: uniqueSlug, description },
+      data,
     });
+
+    // Handle Subcategories Creation
+    if (subcategories && Array.isArray(subcategories) && subcategories.length > 0) {
+      for (const sub of subcategories) {
+        if (!sub.name) continue;
+
+        // Generate slug for subcategory
+        let subSlug = sub.slug || sub.name.toLowerCase().replace(/\s+/g, "-");
+        // Ensure unique slug
+        let subCount = 1;
+        let uniqueSubSlug = subSlug;
+        while (await prisma.category.findUnique({ where: { slug: uniqueSubSlug } })) {
+          uniqueSubSlug = `${subSlug}-${subCount}`;
+          subCount++;
+        }
+
+        await prisma.category.create({
+          data: {
+            name: sub.name,
+            slug: uniqueSubSlug,
+            parentId: newCategory.id
+          }
+        });
+      }
+    }
 
     try {
       await prisma.activity.create({

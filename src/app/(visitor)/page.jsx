@@ -6,11 +6,14 @@ import "aos/dist/aos.css";
 import Footer from "@/components/ui/footer";
 import { Loader2 } from "lucide-react";
 
-import HeroSection from "@/components/sections/HeroSection";
+// Modern Components
+import HeroSectionModern from "@/components/sections/HeroSectionModern";
+import ServicesSectionInteractive from "@/components/sections/ServicesSectionInteractive";
+import RecentWorksSectionModern from "@/components/sections/RecentWorksSectionModern";
+
+// Legacy Components (kept for other sections)
 import TechnologiesSection from "@/components/sections/TechnologiesSection";
 import AboutSection from "@/components/sections/AboutSection";
-import ServicesSection from "@/components/sections/ServicesSection";
-import RecentWorksSection from "@/components/sections/RecentWorksSection";
 import NewsEventsSection from "@/components/sections/NewsEventsSection";
 import WhyChooseUsSection from "@/components/sections/WhyChooseUsSection";
 import CallToActionSection from "@/components/sections/CallToActionSection";
@@ -55,15 +58,18 @@ export default function Page() {
     const { type, content, id } = section;
     switch (type) {
       case "hero":
-        return <HeroSection key={id} content={content} themeColor={themeColor} />;
-      case "technologies":
-        return <TechnologiesSection key={id} content={content} themeColor={themeColor} />;
+        // Use Modern Hero
+        return <HeroSectionModern key={id} content={content} themeColor={themeColor} />;
+      // case "technologies":
+      //   return <TechnologiesSection key={id} content={content} themeColor={themeColor} />;
       case "about":
         return <AboutSection key={id} content={content} />;
       case "services":
-        return <ServicesSection key={id} content={content} />;
+        // Use Interactive Services
+        return <ServicesSectionInteractive key={id} content={content} />;
       case "recent-works":
-        return <RecentWorksSection key={id} content={content} />;
+        // Use Modern Recent Works
+        return <RecentWorksSectionModern key={id} content={content} themeColor={themeColor} />;
       case "news-events":
         return <NewsEventsSection key={id} content={content} />;
       case "why-choose-us":

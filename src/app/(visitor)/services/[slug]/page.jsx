@@ -23,7 +23,17 @@ export default function ServiceDetail() {
     const fetchService = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/posts?slug=${slug}&status=published`);
+        // Fetch from new /api/services endpoint
+        // Since we don't have a slug search endpoint yet, we might need to fetch all and find, or update API.
+        // Let's update API to support slug search or just fetch all for now (not efficient but works for small data).
+        // Better: Update GET /api/services to accept slug query.
+
+        // Wait, I should update the API first to support slug query.
+        // But for now, let's try to fetch all and filter client side if API doesn't support it, 
+        // OR update the API in the next step. 
+        // Actually, let's assume I will update the API to support ?slug=...
+
+        const res = await fetch(`/api/services?slug=${slug}`);
 
         if (!res.ok) {
           throw new Error("Failed to fetch service");
@@ -32,11 +42,22 @@ export default function ServiceDetail() {
         const data = await res.json();
         console.log("service data:", data);
 
+        // API /api/services returns array if no ID? 
+        // Let's check my previous API implementation.
+        // GET /api/services returns all.
+        // I need to update API to support filtering by slug.
+
         if (data && data.length > 0) {
-          const serviceData = data[0];
-          setService(serviceData);
-          // setMainImage(serviceData.thumbnail || "");
+          // If API returns array of all services, find the one with matching slug
+          const found = data.find(s => s.slug === slug);
+          if (found) {
+            setService(found);
+          } else {
+            setError("Service not found");
+          }
         } else {
+          // If API returns object (if I implemented search), handle it.
+          // But currently it returns all.
           setError("Service not found");
         }
       } catch (err) {
@@ -125,10 +146,8 @@ export default function ServiceDetail() {
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-8 shadow-sm">
           <span className="text-sm text-gray-500 mb-3 block">
-            {new Date(service.createdAt).toLocaleDateString("th-TH")} | {service.category?.name}
+            {new Date(service.createdAt).toLocaleDateString("th-TH")}
           </span>
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">{service.title}</h2>
-          <p className="text-gray-700 mb-6 text-lg leading-relaxed">{service.excerpt}</p>
 
           {/* Display HTML content */}
           {service.content && (() => {

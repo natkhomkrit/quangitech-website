@@ -52,8 +52,24 @@ export default function create() {
 
   const handleSave = async (publish = false) => {
     // Client-side validation for required fields
-    if (!title || !slug || !content || !categoryId) {
-      toast.error("Please fill Title, Slug, Content, and Category before saving");
+    if (!title) {
+      toast.error("Please enter a Title");
+      return;
+    }
+    if (!slug) {
+      toast.error("Please enter a Slug");
+      return;
+    }
+    if (!content) {
+      toast.error("Please enter Content");
+      return;
+    }
+    if (!thumbnail) {
+      toast.error("Please select a Thumbnail");
+      return;
+    }
+    if (!categoryId) {
+      toast.error("Please select a Category");
       return;
     }
 

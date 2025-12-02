@@ -17,16 +17,16 @@ export default function ClientsSection({ content }) {
 
     return (
         <section className="bg-white py-16 pt-8 relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-6" data-aos="fade-up">
                 <div className="text-center mb-12">
-                    <h2 className="text-sm font-bold text-gray-400 tracking-[0.2em] uppercase">
+                    <h2 className="text-sm font-bold text-gray-400 tracking-[0.2em] uppercase" data-aos="fade-up" data-aos-delay="100">
                         {title}
                     </h2>
                 </div>
 
                 {clients.length > 0 ? (
                     shouldSlide ? (
-                        <div className="relative">
+                        <div className="relative" data-aos="fade-up" data-aos-delay="200">
                             <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
                             <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
                             <Swiper
@@ -78,7 +78,7 @@ export default function ClientsSection({ content }) {
                             </Swiper>
                         </div>
                     ) : (
-                        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+                        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12" data-aos="fade-up" data-aos-delay="200">
                             {clients.map((logo, idx) => (
                                 <div
                                     key={idx}

@@ -35,13 +35,13 @@ export default function WhyChooseUsSection({ content }) {
     };
 
     return (
-        <section className="bg-gradient-to-br from-gray-50 to-white py-10">
+        <section className="bg-white py-10">
             <div className="max-w-[1140px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div data-aos="fade-right" className="space-y-8">
                     <div>
                         <div className="inline-flex items-center space-x-3 mb-4">
-                            <div className="w-1 h-8 bg-gradient-to-b from-orange-400 to-orange-500 rounded-full"></div>
-                            <span className="text-xs font-medium text-gray-400 tracking-[0.2em]">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                            <span className="text-xs font-normal text-gray-400 tracking-[0.2em]">
                                 {subtitle || subTitle || " "}
                             </span>
                         </div>
@@ -75,7 +75,7 @@ export default function WhyChooseUsSection({ content }) {
                                         <Icon className="text-blue-500 text-xl" />
                                     </div>
                                     <div>
-                                        <h3 className="text-base md:text-lg font-medium text-gray-800 leading-snug mb-1">
+                                        <h3 className="text-base md:text-lg font-normal text-gray-800 leading-snug mb-1">
                                             {feature.title}
                                         </h3>
                                         <p className="text-sm md:text-base font-light text-gray-600 leading-relaxed">
@@ -97,21 +97,21 @@ export default function WhyChooseUsSection({ content }) {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6" data-aos="fade-up">
                         <div className="text-center" ref={projectRef}>
-                            <div className="text-4xl font-bold text-gray-800">{projectCount}+</div>
+                            <div className="text-4xl font-normal text-gray-800">{projectCount}+</div>
                             <div className="text-sm text-gray-600">โปรเจกต์สำเร็จ</div>
                         </div>
                         <div className="text-center" ref={experienceRef}>
-                            <div className="text-4xl font-bold text-gray-800">{experienceCount}+</div>
+                            <div className="text-4xl font-normal text-gray-800">{experienceCount}+</div>
                             <div className="text-sm text-gray-600">ปีประสบการณ์</div>
                         </div>
                         <div className="text-center" ref={satisfactionRef}>
-                            <div className="text-4xl font-bold text-gray-800">{satisfactionCount}%</div>
+                            <div className="text-4xl font-normal text-gray-800">{satisfactionCount}%</div>
                             <div className="text-sm text-gray-600">ความพึงพอใจ</div>
                         </div>
                     </div>
                 </div>
-                <div data-aos="fade-left" className="relative">
-                    <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[450px] w-full md:w-[600px]">
+                <div data-aos="fade-left" className="relative flex justify-center md:justify-end">
+                    <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[300px] md:min-h-[450px] w-full md:w-[500px]">
                         {image ? (
                             <img
                                 src={image}
@@ -131,7 +131,7 @@ export default function WhyChooseUsSection({ content }) {
                             <div className="flex flex-col items-center justify-center text-gray-400 p-10">
                                 <ImageIcon size={48} className="mb-4 opacity-50" />
                                 <span className="text-sm font-medium">No Image Available</span>
-                                <span className="text-xs mt-2 opacity-70">Recommended Size: 600 x 450 px</span>
+                                <span className="text-xs mt-2 opacity-70">Recommended Size: 500 x 450 px</span>
                             </div>
                         )}
                         {/* Fallback for broken image link */}

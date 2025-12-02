@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+
 import {
   Table,
   TableBody,
@@ -42,6 +44,9 @@ export default function categories() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
+
+
+
   const [sorting, setSorting] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -66,14 +71,20 @@ export default function categories() {
       setName(selectedCategory.name || "");
       setSlug(selectedCategory.slug || "");
       setDescription(selectedCategory.description || "");
+
+
+
       setIsEditMode(true);
     } else {
       setName("");
       setSlug("");
       setDescription("");
+
       setIsEditMode(false);
     }
   }, [selectedCategory]);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,10 +102,17 @@ export default function categories() {
         : "/api/categories";
       const method = isEdit ? "PUT" : "POST";
 
+      const payload = {
+        name,
+        slug,
+        description,
+
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, slug, description }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -104,20 +122,22 @@ export default function categories() {
 
       const savedCategory = await res.json();
 
+      // Refresh categories to get updated info
+      const response = await fetch("/api/categories");
+      const data = await response.json();
+      setCategories(data);
+
       if (isEdit) {
-        setCategories((prev) =>
-          prev.map((cat) => (cat.id === savedCategory.id ? savedCategory : cat))
-        );
         toast.success("Category updated successfully");
       } else {
-        setCategories((prev) => [...prev, savedCategory]);
         toast.success("Category created successfully");
       }
 
-      // เคลียร์ฟอร์ม
+      // Clear form
       setName("");
       setSlug("");
       setDescription("");
+
       setSelectedCategory(null);
     } catch (error) {
       console.error("Failed to save category:", error);
@@ -166,7 +186,6 @@ export default function categories() {
         ),
         cell: ({ row }) => {
           const name = row.getValue("name");
-          const id = row.original.id;
           return (
             <div>
               <span className="font-semibold">{name}</span>
@@ -186,6 +205,7 @@ export default function categories() {
           </div>
         ),
       },
+
       {
         accessorKey: "description",
         header: "Description",
@@ -319,6 +339,9 @@ export default function categories() {
               </Button>
             </div>
           </div>
+
+
+
           <div>
             <Label
               htmlFor="description"
@@ -342,6 +365,7 @@ export default function categories() {
                 setName("");
                 setSlug("");
                 setDescription("");
+
                 setSelectedCategory(null);
                 setIsEditMode(false);
               }}

@@ -60,6 +60,7 @@ import { toast } from "sonner";
 import {
   Select,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -72,6 +73,7 @@ export default function PostsTable() {
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -86,7 +88,18 @@ export default function PostsTable() {
         setLoading(false);
       }
     };
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
     fetchPosts();
+    fetchCategories();
   }, []);
 
   const handleDelete = async (postSlug) => {
@@ -383,6 +396,24 @@ export default function PostsTable() {
           }
           className="max-w-sm"
         />
+        <Select
+          value={(table.getColumn("category")?.getFilterValue() ?? "all").toString()}
+          onValueChange={(value) =>
+            table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)
+          }
+        >
+          <SelectTrigger className="w-[180px] ml-2 cursor-pointer hover:bg-gray-50 transition-colors">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.name}>
+                {cat.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -443,6 +474,7 @@ export default function PostsTable() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-gray-50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

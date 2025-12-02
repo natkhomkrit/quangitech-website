@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import { ExternalLink, ChevronDown, Loader2 } from "lucide-react";
+import { ExternalLink, ChevronDown, Loader2, Image as ImageIcon } from "lucide-react";
 
 export default function Portfolio() {
   const [categories, setCategories] = useState([]);
@@ -33,16 +33,16 @@ export default function Portfolio() {
         if (!catRes.ok) throw new Error("Failed to fetch categories");
         const allCategories = await catRes.json();
 
-        // 2. Filter out unwanted categories
+        // 2. Filter out unwanted categories and structure them
         const excluded = ["News", "Service", "Events"];
-        const filteredCats = allCategories.filter(
+        const validCategories = allCategories.filter(
           (c) => !excluded.includes(c.name)
         );
 
-        const catNames = filteredCats.map(c => c.name);
-        setCategories(catNames);
+        setCategories(validCategories);
 
-        // 3. Fetch posts for each category
+        // 3. Fetch posts for ALL valid categories
+        const catNames = validCategories.map(c => c.name);
         const requests = catNames.map(cat =>
           fetch(`/api/posts?category=${encodeURIComponent(cat)}&status=published`).then(res => {
             if (!res.ok) throw new Error(`Error fetching ${cat}`);
@@ -114,11 +114,17 @@ export default function Portfolio() {
   }, []);
 
 
-  // Filter works by category (category may be in item.category.name)
+  // Filter works by category
   const filteredWorks =
     selectedCategory === "All"
       ? items
-      : items.filter((w) => (w.category?.name || w.category) === selectedCategory);
+      : items.filter((w) => {
+        const workCatName = w.category?.name || w.category;
+        // Direct match
+        if (workCatName === selectedCategory) return true;
+
+        return false;
+      });
 
   const totalPages = Math.ceil(filteredWorks.length / worksPerPage);
   const startIndex = (currentPage - 1) * worksPerPage;
@@ -162,19 +168,20 @@ export default function Portfolio() {
               All
             </li>
             {categories.map((cat) => (
-              <li
-                key={cat}
-                className={`px-4 py-2 rounded-lg transition cursor-pointer ${selectedCategory === cat
-                  ? "bg-gray-900 text-white shadow-md"
-                  : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
-                  }`}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setCurrentPage(1);
-                }}
-              >
-                {cat}
-              </li>
+              <React.Fragment key={cat.id}>
+                <li
+                  className={`px-4 py-2 rounded-lg transition cursor-pointer flex justify-between items-center ${selectedCategory === cat.name
+                    ? "bg-gray-900 text-white shadow-md"
+                    : "text-gray-700 hover:bg-gray-50 hover:shadow-md"
+                    }`}
+                  onClick={() => {
+                    setSelectedCategory(cat.name);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <span>{cat.name}</span>
+                </li>
+              </React.Fragment>
             ))}
           </ul>
         </aside>
@@ -210,20 +217,21 @@ export default function Portfolio() {
                 All
               </li>
               {categories.map((cat) => (
-                <li
-                  key={cat}
-                  className={`px-4 py-2 cursor-pointer ${selectedCategory === cat
-                    ? "text-[#1a5c48]"
-                    : "text-gray-700"
-                    }`}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setCurrentPage(1);
-                    setIsAccordionOpen(false);
-                  }}
-                >
-                  {cat}
-                </li>
+                <React.Fragment key={cat.id}>
+                  <li
+                    className={`px-4 py-2 cursor-pointer font-medium ${selectedCategory === cat.name
+                      ? "text-[#1a5c48]"
+                      : "text-gray-700"
+                      }`}
+                    onClick={() => {
+                      setSelectedCategory(cat.name);
+                      setCurrentPage(1);
+                      setIsAccordionOpen(false);
+                    }}
+                  >
+                    {cat.name}
+                  </li>
+                </React.Fragment>
               ))}
             </ul>
           )}
@@ -254,11 +262,18 @@ export default function Portfolio() {
                     className="bg-white rounded-md overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
                   >
                     <div className="relative group overflow-hidden">
-                      <img
-                        src={imgSrc}
-                        alt={work.title}
-                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
+                      {imgSrc && imgSrc !== "/img/default.png" ? (
+                        <img
+                          src={imgSrc}
+                          alt={work.title}
+                          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-64 bg-gray-100 flex flex-col items-center justify-center text-gray-400 group-hover:bg-gray-200 transition-colors duration-500">
+                          <ImageIcon size={48} strokeWidth={1.5} />
+                          <span className="text-sm mt-2 font-medium">No Image Available</span>
+                        </div>
+                      )}
 
                       <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 

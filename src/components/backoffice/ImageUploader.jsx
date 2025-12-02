@@ -59,6 +59,7 @@ export function ImageUploader({ value, onChange, label = "Image" }) {
                             className="w-full h-full object-contain"
                         />
                         <Button
+                            type="button"
                             variant="destructive"
                             size="icon"
                             className="absolute top-2 right-2 h-8 w-8"
@@ -77,6 +78,7 @@ export function ImageUploader({ value, onChange, label = "Image" }) {
 
                 <div className="flex gap-2 flex-wrap">
                     <Button
+                        type="button"
                         variant="outline"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
@@ -89,6 +91,7 @@ export function ImageUploader({ value, onChange, label = "Image" }) {
                         Upload New
                     </Button>
                     <Button
+                        type="button"
                         variant="outline"
                         onClick={() => setLibraryOpen(true)}
                         disabled={uploading}

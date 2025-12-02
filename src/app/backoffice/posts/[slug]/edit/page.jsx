@@ -64,6 +64,24 @@ export default function EditPost() {
 
   // บันทึกโพสต์ (PUT)
   const handleSave = async (publish = false) => {
+    // Client-side validation for required fields
+    if (!title) {
+      toast.error("Please enter a Title");
+      return;
+    }
+    if (!slug) {
+      toast.error("Please enter a Slug");
+      return;
+    }
+    if (!content) {
+      toast.error("Please enter Content");
+      return;
+    }
+    if (!categoryId) {
+      toast.error("Please select a Category");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -90,13 +108,19 @@ export default function EditPost() {
       const updated = await res.json();
       console.log("Updated:", updated);
       toast.success("Post updated successfully");
-      // router.replace("/backoffice/posts"); // Keep user on the same page
+
+      // Redirect to posts list after a short delay
+      setTimeout(() => {
+        router.push("/backoffice/posts");
+      }, 1000);
 
       // If slug changed, we might want to update the URL, but for now let's just update the local state if needed.
       // Ideally we would do: router.replace(`/backoffice/posts/${updated.slug}/edit`) if slug changed.
+      /*
       if (updated.slug && updated.slug !== routeSlug) {
         router.replace(`/backoffice/posts/${updated.slug}/edit`);
       }
+      */
     } catch (error) {
       console.error("Error updating post:", error);
       toast.error("Error updating post", {
@@ -152,7 +176,7 @@ export default function EditPost() {
           {/* Title */}
           <div className="mb-4">
             <Label htmlFor="title" className="text-sm font-medium">
-              Title
+              Title <span className="text-red-500">*</span>
             </Label>
             <Input
               id="title"
@@ -167,7 +191,7 @@ export default function EditPost() {
           {/* Slug */}
           <div className="mb-4">
             <Label htmlFor="slug" className="text-sm font-medium">
-              Slug
+              Slug <span className="text-red-500">*</span>
             </Label>
             <div className="flex items-center gap-2 mt-2">
               <Input
@@ -205,7 +229,9 @@ export default function EditPost() {
 
           {/* Content */}
           <div className="mb-4">
-            <Label className="text-sm font-medium mb-2 block">Content</Label>
+            <Label className="text-sm font-medium mb-2 block">
+              Content <span className="text-red-500">*</span>
+            </Label>
             <TinyMCEEditor content={content} onChange={setContent} />
           </div>
         </div>
@@ -228,7 +254,9 @@ export default function EditPost() {
             />
           </div>
           <div className="mb-4">
-            <Label className="text-sm font-medium">Category</Label>
+            <Label className="text-sm font-medium">
+              Category <span className="text-red-500">*</span>
+            </Label>
             <CategorySelector
               value={categoryId}
               onChange={(id) => setCategoryId(id)}

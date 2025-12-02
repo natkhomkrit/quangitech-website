@@ -180,6 +180,21 @@ export default function AppSidebar() {
                 </Collapsible>
               )}
 
+              {/* Services */}
+              {hasPermission("posts") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive("/backoffice/services")}
+                  >
+                    <Link href="/backoffice/services">
+                      <LayoutTemplate />
+                      <span>Services</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+
               {/* Users */}
               {hasPermission("users") && (
                 <SidebarMenuItem>

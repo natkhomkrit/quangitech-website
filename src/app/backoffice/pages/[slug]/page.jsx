@@ -295,14 +295,9 @@ export default function PageEditor() {
                 if (type === "hero") {
                     defaultContent = {
                         title: "Empowering Your Digital Future",
-                        subtitle: "Welcome to Quangitech",
                         description: "We provide cutting-edge solutions for your business needs.",
                         buttonText: "Get Started",
                         buttonLink: "/contact"
-                    };
-                } else if (type === "technologies") {
-                    defaultContent = {
-                        title: "Our Technologies"
                     };
                 } else if (type === "about") {
                     defaultContent = {
@@ -320,15 +315,11 @@ export default function PageEditor() {
                 } else if (type === "services") {
                     defaultContent = {
                         title: "Our Services",
-                        subtitle: "What We Offer",
-                        description: "Comprehensive IT solutions for your business.",
-                        buttonText: "View All Services",
-                        buttonLink: "/services"
+                        description: "Comprehensive IT solutions for your business."
                     };
                 } else if (type === "recent-works") {
                     defaultContent = {
                         title: "Recent Works",
-                        subtitle: "Portfolio",
                         description: "Check out our latest projects.",
                         buttonText: "View All Projects",
                         buttonLink: "/portfolio"
@@ -336,7 +327,6 @@ export default function PageEditor() {
                 } else if (type === "news-events") {
                     defaultContent = {
                         title: "News & Events",
-                        subtitle: "Updates",
                         description: "Stay updated with our latest news.",
                         buttonText: "View All News",
                         buttonLink: "/news"
@@ -457,7 +447,6 @@ export default function PageEditor() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="max-h-[400px] overflow-y-auto">
                                 <DropdownMenuItem onClick={() => handleAddSection("hero")}>Hero Section</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleAddSection("technologies")}>Technologies</DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleAddSection("about")}>About Us</DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleAddSection("services")}>Services</DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleAddSection("recent-works")}>Recent Works</DropdownMenuItem>
@@ -618,7 +607,7 @@ function SectionEditor({ section, onUpdate, onDelete, index, dragHandleProps, is
                     </div>
                 </div>
                 <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
-                    {!['hero', 'technologies', 'about', 'services', 'recent-works', 'news-events', 'why-choose-us', 'call-to-action', 'clients', 'generic', 'executive', 'contact', 'footer', 'company'].includes(section.type?.toLowerCase()) && (
+                    {!['hero', 'about', 'services', 'recent-works', 'news-events', 'why-choose-us', 'call-to-action', 'clients', 'generic', 'executive', 'contact', 'footer', 'company'].includes(section.type?.toLowerCase()) && (
                         <div className="flex items-center space-x-2 mr-4">
                             <Switch
                                 id={`mode-${section.id}`}
