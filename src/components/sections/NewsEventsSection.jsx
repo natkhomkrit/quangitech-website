@@ -187,7 +187,7 @@ export default function NewsEventsSection({ content, themeColor }) {
                                         </span>
                                     </Link>
                                 </div>
-                                <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2 border border-gray-200 rounded-lg p-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
+                                <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2 border border-gray-200 rounded-lg p-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-500 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-600">
                                     {listItems.map((item, index) => (
                                         <ListItem
                                             key={index}
