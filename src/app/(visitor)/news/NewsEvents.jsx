@@ -270,10 +270,10 @@ export default function NewsEvents() {
                         <span className="text-xs text-gray-500">{dateStr}</span>
                         <Link
                           href={`/news/${item.slug}`}
-                          className="text-sm text-primary hover:underline flex items-center gap-2"
+                          className="flex items-center gap-2 bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full hover:bg-gray-300 transition-colors text-xs"
                         >
-                          อ่านต่อ
-                          <span className="flex items-center justify-center w-6 h-6 bg-black text-white rounded-full">
+                          อ่านเพิ่มเติม
+                          <span className="flex items-center justify-center w-5 h-5 bg-gray-200 text-black rounded-full">
                             <ArrowRight size={12} />
                           </span>
                         </Link>

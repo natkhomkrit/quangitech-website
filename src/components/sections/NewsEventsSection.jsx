@@ -123,14 +123,18 @@ export default function NewsEventsSection({ content, themeColor }) {
                     <h4 className={`text-lg font-normal leading-snug line-clamp-2 transition-colors mb-1 ${isSelected ? 'text-primary' : 'text-gray-800 group-hover:text-primary'}`}>
                         {item.title}
                     </h4>
-                    <Link
-                        href={`/news/${item.slug}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors ${isSelected ? 'text-white' : 'bg-black text-white group-hover:bg-primary'}`}
-                        style={{ backgroundColor: isSelected ? (themeColor || 'var(--primary)') : undefined }}
-                    >
-                        <ArrowRight size={12} />
-                    </Link>
+                    <div className="flex items-center gap-2 mt-1">
+                        <Link
+                            href={`/news/${item.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-2 bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full hover:bg-gray-300 transition-colors text-xs"
+                        >
+                            อ่านต่อ
+                            <span className="flex items-center justify-center w-5 h-5 bg-gray-200 text-black rounded-full">
+                                <ArrowRight size={12} />
+                            </span>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

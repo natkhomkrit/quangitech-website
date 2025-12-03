@@ -67,7 +67,7 @@ export default function RecentWorksSectionModern({ content, themeColor }) {
                     <h2 className="text-4xl md:text-5xl font-normal text-gray-900 mb-2 tracking-tight">
                         <TitleWithHighlight title={title || "Recent Works"} />
                     </h2>
-                    <div className="w-24 h-1 bg-gray-800 mx-auto rounded-full mb-4"></div>
+                    {/* <div className="w-24 h-1 bg-gray-800 mx-auto rounded-full mb-4"></div> */}
                     <p className="text-lg text-gray-600 leading-relaxed font-normal">
                         {Array.isArray(description) ? description.join(" ") : description}
                     </p>
