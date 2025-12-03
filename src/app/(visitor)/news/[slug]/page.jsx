@@ -137,7 +137,7 @@ export default function NewsEventDetail() {
           <span className="text-sm text-gray-500 mb-3 block">
             {new Date(item.createdAt).toLocaleDateString("th-TH")} | {item.category?.name}
           </span>
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-900">{item.title}</h2>
+          <h2 className="text-2xl md:text-3xl font-normal mb-6 text-gray-900">{item.title}</h2>
           <p className="text-gray-700 mb-6 text-lg leading-relaxed">{item.excerpt}</p>
 
           {/* Display HTML content */}

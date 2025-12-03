@@ -251,9 +251,6 @@ export default function PageEditor() {
                         image: "",
                         imageWidth: "320px",
                         imageHeight: "320px",
-                        name: "Name Surname",
-                        position: "Position",
-                        company: "Company Name",
                         quote: "Quote goes here..."
                     };
                 }
@@ -329,7 +326,8 @@ export default function PageEditor() {
                     defaultContent = {
                         title: "News & Events",
                         description: "Stay updated with our latest news.",
-                        buttonText: "View All News",
+                        listTitle: "ข่าวสารล่าสุด",
+                        buttonText: "ดูทั้งหมด",
                         buttonLink: "/news"
                     };
                 } else if (type === "why-choose-us") {
@@ -550,16 +548,29 @@ export default function PageEditor() {
 }
 
 function SectionEditor({ section, onUpdate, onDelete, index, dragHandleProps, isOverlay, isDragDisabled }) {
-    const [content, setContent] = useState(section.content);
+    const [content, setContent] = useState(() => {
+        let initialContent = section.content;
+        if (section.type === 'executive') {
+            const { name, position, company, ...rest } = initialContent || {};
+            initialContent = rest;
+        }
+        return initialContent;
+    });
     const [jsonMode, setJsonMode] = useState(false);
     const [jsonString, setJsonString] = useState(JSON.stringify(section.content, null, 2));
     const [isDirty, setIsDirty] = useState(false);
 
     // Sync state with prop when section updates (e.g. after save)
     useEffect(() => {
-        setContent(section.content);
-        setJsonString(JSON.stringify(section.content, null, 2));
-    }, [section.content]);
+        let newContent = section.content;
+        if (section.type === 'executive') {
+            // Filter out name, position, company for executive sections
+            const { name, position, company, ...rest } = newContent || {};
+            newContent = rest;
+        }
+        setContent(newContent);
+        setJsonString(JSON.stringify(newContent, null, 2));
+    }, [section.content, section.type]);
 
     // Sync jsonString when content changes from UI
     useEffect(() => {

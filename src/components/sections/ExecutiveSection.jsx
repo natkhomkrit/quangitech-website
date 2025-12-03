@@ -19,7 +19,7 @@ export default function ExecutiveSection({ content }) {
                     </div>
                 </header>
 
-                {name ? (
+                {image !== undefined ? (
                     <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-12">
                         <div className="flex-shrink-0 mx-auto lg:mx-0 max-w-full">
                             <div
@@ -34,7 +34,7 @@ export default function ExecutiveSection({ content }) {
                                     {image ? (
                                         <img
                                             src={image}
-                                            alt={name}
+                                            alt={subtitle || "Executive"}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         />
                                     ) : (
@@ -48,25 +48,12 @@ export default function ExecutiveSection({ content }) {
                             </div>
                         </div>
                         <div className="flex-1 text-center lg:text-left space-y-6">
-                            <div>
-                                <h2 className="text-2xl lg:text-3xl font-light text-gray-900 mb-3 leading-tight">
-                                    {name}
-                                </h2>
 
-                                <div className="space-y-2 mb-6">
-                                    <p className="text-lg font-medium text-gray-800">
-                                        {position}
-                                    </p>
-                                    <p className="text-base text-gray-600 font-light">
-                                        {company}
-                                    </p>
-                                </div>
-                            </div>
                             {quote && (
                                 <blockquote className="relative">
                                     <div>
                                         <div
-                                            className="text-lg font-light italic text-gray-700 leading-relaxed mb-4"
+                                            className="text-lg text-gray-700 leading-relaxed mb-4"
                                             dangerouslySetInnerHTML={{ __html: quote }}
                                         />
                                     </div>
@@ -78,7 +65,7 @@ export default function ExecutiveSection({ content }) {
                     <div className="max-w-none">
                         {quote && (
                             <div
-                                className="prose max-w-none"
+                                className="prose max-w-none text-lg text-gray-700 leading-relaxed"
                                 dangerouslySetInnerHTML={{ __html: quote }}
                             />
                         )}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import { ExternalLink, ChevronDown, Loader2 } from "lucide-react";
+import { ExternalLink, ChevronDown, Loader2, ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export default function NewsEvents() {
@@ -194,7 +194,7 @@ export default function NewsEvents() {
           {isAccordionOpen && (
             <ul className="mt-2 bg-white border border-gray-200 rounded-lg shadow divide-y">
               <li
-                className={`px-4 py-2 cursor-pointer ${selectedCategory === "All" ? "text-[#1a5c48]" : "text-gray-700"
+                className={`px-4 py-2 cursor-pointer ${selectedCategory === "All" ? "bg-gray-900 text-white" : "text-gray-700"
                   }`}
                 onClick={() => {
                   setSelectedCategory("All");
@@ -207,7 +207,7 @@ export default function NewsEvents() {
               {categories.map((cat) => (
                 <li
                   key={cat}
-                  className={`px-4 py-2 cursor-pointer ${selectedCategory === cat ? "text-[#1a5c48]" : "text-gray-700"
+                  className={`px-4 py-2 cursor-pointer ${selectedCategory === cat ? "bg-gray-900 text-white" : "text-gray-700"
                     }`}
                   onClick={() => {
                     setSelectedCategory(cat);
@@ -270,9 +270,12 @@ export default function NewsEvents() {
                         <span className="text-xs text-gray-500">{dateStr}</span>
                         <Link
                           href={`/news/${item.slug}`}
-                          className="inline-flex items-center gap-1 text-sm text-gray-800 font-semibold hover:underline"
+                          className="text-sm text-primary hover:underline flex items-center gap-2"
                         >
-                          อ่านต่อ <ExternalLink size={14} />
+                          อ่านต่อ
+                          <span className="flex items-center justify-center w-6 h-6 bg-black text-white rounded-full">
+                            <ArrowRight size={12} />
+                          </span>
                         </Link>
                       </div>
                     </div>

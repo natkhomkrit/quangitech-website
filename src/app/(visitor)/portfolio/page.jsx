@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/ui/footer";
-import { ExternalLink, ChevronDown, Loader2, Image as ImageIcon } from "lucide-react";
+import { ExternalLink, ChevronDown, Loader2, Image as ImageIcon, ArrowRight } from "lucide-react";
 
 export default function Portfolio() {
   const [categories, setCategories] = useState([]);
@@ -205,7 +205,7 @@ export default function Portfolio() {
             <ul className="mt-2 bg-white border border-gray-200 rounded-lg shadow divide-y">
               <li
                 className={`px-4 py-2 cursor-pointer ${selectedCategory === "All"
-                  ? "text-[#1a5c48]"
+                  ? "bg-gray-900 text-white"
                   : "text-gray-700"
                   }`}
                 onClick={() => {
@@ -220,7 +220,7 @@ export default function Portfolio() {
                 <React.Fragment key={cat.id}>
                   <li
                     className={`px-4 py-2 cursor-pointer font-medium ${selectedCategory === cat.name
-                      ? "text-[#1a5c48]"
+                      ? "bg-gray-900 text-white"
                       : "text-gray-700"
                       }`}
                     onClick={() => {
@@ -290,9 +290,12 @@ export default function Portfolio() {
                         <span className="text-xs text-gray-500">{dateStr}</span>
                         <Link
                           href={`/portfolio/${work.slug}`}
-                          className="inline-flex items-center gap-1 text-sm text-gray-700 font-semibold hover:underline"
+                          className="text-sm text-primary hover:underline flex items-center gap-2"
                         >
-                          รายละเอียด <ExternalLink size={14} />
+                          รายละเอียด
+                          <span className="flex items-center justify-center w-6 h-6 bg-black text-white rounded-full">
+                            <ArrowRight size={12} />
+                          </span>
                         </Link>
                       </div>
                     </div>

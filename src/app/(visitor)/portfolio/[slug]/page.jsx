@@ -141,7 +141,7 @@ export default function PortfolioDetail() {
           <span className="text-sm text-gray-500 mb-3 block">
             {new Date(portfolio.createdAt).toLocaleDateString("th-TH")} | {portfolio.category?.name}
           </span>
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">{portfolio.title}</h2>
+          <h2 className="text-2xl md:text-3xl font-normal mb-6 text-gray-900">{portfolio.title}</h2>
           <p className="text-gray-700 mb-6 text-lg leading-relaxed">{portfolio.excerpt}</p>
 
           {/* Display HTML content */}

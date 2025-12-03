@@ -13,7 +13,7 @@ export default function CallToActionSection({ content }) {
                 <h2 className="text-2xl md:text-4xl font-normal text-gray-800 tracking-[0.1em] mb-6" data-aos="fade-up" data-aos-delay="100">
                     <TitleWithHighlight title={title} />
                 </h2>
-                <div className="w-24 h-1 bg-gray-400 mx-auto rounded-full mb-8" data-aos="fade-up" data-aos-delay="200"></div>
+                <div className="w-24 h-1 bg-gray-800 mx-auto rounded-full mb-8" data-aos="fade-up" data-aos-delay="200"></div>
 
                 <p className="text-gray-600 text-lg md:text-xl leading-relaxed mb-10 font-light" data-aos="fade-up" data-aos-delay="300">
                     {Array.isArray(description) ? (

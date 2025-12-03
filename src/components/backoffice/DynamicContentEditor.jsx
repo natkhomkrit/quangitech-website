@@ -110,7 +110,7 @@ function FieldEditor({ fieldKey, value, onChange, uniqueId }) {
         return (
             <div className="space-y-2">
                 <Label htmlFor={fieldKey}>{label}</Label>
-                <div className="border rounded-md overflow-hidden">
+                <div className="border rounded-md">
                     <TinyMCEEditor
                         id={uniqueId ? `editor-${uniqueId}-${fieldKey}` : `editor-${fieldKey}`}
                         content={value || ""}

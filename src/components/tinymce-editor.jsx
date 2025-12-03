@@ -135,6 +135,6 @@ export default function TinyMCEEditor({ content, onChange, id }) {
   }, [content]);
 
   return (
-    <textarea id={editorId} defaultValue={content} style={{ visibility: "hidden" }} />
+    <textarea id={editorId} defaultValue={content} />
   );
 }

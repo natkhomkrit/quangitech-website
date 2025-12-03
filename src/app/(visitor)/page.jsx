@@ -71,7 +71,7 @@ export default function Page() {
         // Use Modern Recent Works
         return <RecentWorksSectionModern key={id} content={content} themeColor={themeColor} />;
       case "news-events":
-        return <NewsEventsSection key={id} content={content} />;
+        return <NewsEventsSection key={id} content={content} themeColor={themeColor} />;
       case "why-choose-us":
         return <WhyChooseUsSection key={id} content={content} />;
       case "call-to-action":
