@@ -13,9 +13,9 @@ export default function AboutSection({ content }) {
     };
 
     return (
-        <section className="max-w-[1140px] mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12 py-12 md:py-16 px-6">
+        <section className="w-full px-4 md:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 items-center gap-12 py-12 md:py-16">
             <div data-aos="fade-right" className="relative flex justify-center lg:justify-start order-2 lg:order-1">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[300px] md:min-h-[450px] w-full md:w-[500px]">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-gray-100 flex items-center justify-center bg-gray-50 min-h-[300px] md:min-h-[550px] w-full">
                     {image ? (
                         <img
                             src={image}
@@ -35,7 +35,7 @@ export default function AboutSection({ content }) {
                         <div className="flex flex-col items-center justify-center text-gray-400 p-10">
                             <ImageIcon size={48} className="mb-4 opacity-50" />
                             <span className="text-sm font-medium">No Image Available</span>
-                            <span className="text-xs mt-2 opacity-70">Recommended Size: 500 x 450 px</span>
+                            <span className="text-xs mt-2 opacity-70">Recommended Size: 550 x 550 px</span>
                         </div>
                     )}
                     {/* Fallback for broken image link */}

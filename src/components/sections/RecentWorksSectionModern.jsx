@@ -19,27 +19,36 @@ export default function RecentWorksSectionModern({ content, themeColor }) {
         const fetchPortfolios = async () => {
             try {
                 setLoading(true);
-                const categories = [
-                    "System Development",
-                    "Office Supplies",
-                    "Data Analysis & Cleaning",
-                    "Printing Services",
-                    "Computer Training",
-                    "Package Programs"
-                ];
-                const requests = categories.map(cat =>
-                    fetch(`/api/posts?category=${encodeURIComponent(cat)}&status=published&isFeatured=true`).then(r => r.json())
+                // 1. Fetch all categories
+                const catRes = await fetch("/api/categories");
+                if (!catRes.ok) throw new Error("Failed to fetch categories");
+                const allCategories = await catRes.json();
+
+                // 2. Filter out unwanted categories
+                const excluded = ["News", "Events", "Service"]; // Exclude Service as well if it's not a portfolio item
+                const validCategories = allCategories.filter(
+                    (c) => !excluded.includes(c.name)
+                );
+
+                // 3. Fetch posts for valid categories
+                const requests = validCategories.map(cat =>
+                    fetch(`/api/posts?category=${encodeURIComponent(cat.name)}&status=published&isFeatured=true`).then(r => r.json())
                 );
                 const results = await Promise.all(requests);
                 const merged = results.flat();
 
+                // 4. Deduplicate and Sort
                 const map = new Map();
                 for (const itm of merged) {
                     if (itm.slug && itm.status === "published" && itm.isFeatured) {
                         map.set(itm.slug, itm);
                     }
                 }
-                setPortfolios(Array.from(map.values()).slice(0, 6));
+
+                // Sort by createdAt desc
+                const sorted = Array.from(map.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                setPortfolios(sorted);
             } catch (err) {
                 console.error(err);
             } finally {

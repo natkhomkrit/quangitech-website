@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import Link from "next/link";
 import "swiper/css";
-import "swiper/css/pagination";
+
 import "swiper/css/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -53,7 +53,7 @@ export default function RelatedWorks({ categoryId, currentSlug }) {
                 <div className="text-center mb-8">
                     <h3 className="text-2xl md:text-3xl font-normal text-gray-800 tracking-[0.1em] relative inline-block uppercase">
                         Related Works
-                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-gray-800 rounded-full"></span>
+                        {/* <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-gray-800 rounded-full"></span> */}
                     </h3>
                     <p className="mt-4 text-gray-600 font-light">
                         ผลงานที่เกี่ยวข้อง
@@ -64,9 +64,8 @@ export default function RelatedWorks({ categoryId, currentSlug }) {
                     <Swiper
                         spaceBetween={24}
                         loop={relatedPortfolios.length > 3}
-                        modules={[Pagination, Autoplay, Navigation]}
+                        modules={[Autoplay, Navigation]}
                         autoplay={{ delay: 3000 }}
-                        pagination={{ clickable: true }}
                         navigation={{
                             prevEl: '.related-prev',
                             nextEl: '.related-next',
@@ -94,7 +93,7 @@ export default function RelatedWorks({ categoryId, currentSlug }) {
                                     <div className="text-center px-2">
                                         <Link
                                             href={`/portfolio/${item.slug}`}
-                                            className="text-gray-700 font-normal hover:text-orange-500 transition-colors text-lg line-clamp-2"
+                                            className="text-gray-700 font-normal hover:text-gray-800 transition-colors text-lg line-clamp-2"
                                         >
                                             {item.title}
                                         </Link>
@@ -106,10 +105,10 @@ export default function RelatedWorks({ categoryId, currentSlug }) {
 
                     {/* Custom Navigation Buttons */}
                     <div className="flex justify-center gap-4 mt-4">
-                        <button className="related-prev w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white transition-all duration-300">
+                        <button className="related-prev w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300 hover:text-white transition-colors">
                             <ChevronLeft size={24} />
                         </button>
-                        <button className="related-next w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white transition-all duration-300">
+                        <button className="related-next w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300 hover:text-white transition-colors">
                             <ChevronRight size={24} />
                         </button>
                     </div>

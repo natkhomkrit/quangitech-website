@@ -138,7 +138,7 @@ export default function NewsEventsSection({ content, themeColor }) {
 
     return (
         <section className="bg-white py-12 md:py-20">
-            <div className="max-w-[1200px] mx-auto px-6">
+            <div className="w-full px-4 md:px-8 lg:px-12">
                 <div className="text-center mb-12 flex flex-col items-center" data-aos="fade-up">
                     <h2 className="text-2xl md:text-5xl font-normal text-gray-800 mb-4">
                         <TitleWithHighlight title={title} />
@@ -157,7 +157,7 @@ export default function NewsEventsSection({ content, themeColor }) {
                     </p>
                 </div>
 
-                <div className="max-w-6xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                <div className="w-full" data-aos="fade-up" data-aos-delay="200">
                     {loading && (
                         <div className="flex justify-center items-center py-20">
                             <div className="loader2 ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
@@ -189,9 +189,9 @@ export default function NewsEventsSection({ content, themeColor }) {
                                 </div>
                                 <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2 border border-gray-200 rounded-lg p-2
     [&::-webkit-scrollbar]:w-1.5
-    [&::-webkit-scrollbar-track]:bg-gray-200
-    [&::-webkit-scrollbar-thumb]:bg-gray-600
-    hover:[&::-webkit-scrollbar-thumb]:bg-gray-700
+    [&::-webkit-scrollbar-track]:bg-gray-100
+    [&::-webkit-scrollbar-thumb]:bg-gray-300
+    hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
     [&::-webkit-scrollbar-thumb]:rounded-full">
                                     {listItems.map((item, index) => (
                                         <ListItem
