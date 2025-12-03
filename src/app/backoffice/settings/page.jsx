@@ -613,7 +613,7 @@ export default function SiteSettingsPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setFormData({ ...formData, themeColor: "#03172C" })}
+                    onClick={() => setFormData({ ...formData, themeColor: "#090614" })}
                   >
                     Reset to Default
                   </Button>
